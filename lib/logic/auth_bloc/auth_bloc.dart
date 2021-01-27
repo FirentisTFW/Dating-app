@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,8 +23,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await _repository.signInUser(event.email, event.password);
         yield AuthLoginSuccess();
+      } on FirebaseAuthException catch (err) {
+        yield AuthLoginFailure(err.message);
       } catch (err) {
-        yield AuthLoginError();
+        yield AuthLoginError(err.message);
+      }
+    } else if (event is AuthCheckIfLoggedIn) {
+      try {
+        if (_repository.isUserLoggedIn) {
+          yield AuthLoginSuccess();
+        }
+      } catch (err) {
+        yield AuthLoginError(err.message);
       }
     }
   }

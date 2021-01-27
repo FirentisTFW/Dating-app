@@ -5,4 +5,6 @@ class AuthenticationRepository {
 
   Future signInUser(String email, String password) async =>
       await _provider.signInUser(email, password);
+
+  bool get isUserLoggedIn => _provider.isUserLoggedIn;
 }

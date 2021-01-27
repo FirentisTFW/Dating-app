@@ -13,6 +13,14 @@ class AuthWaiting extends AuthState {}
 
 class AuthLoginSuccess extends AuthState {}
 
-class AuthLoginFailure extends AuthState {}
+class AuthLoginFailure extends AuthState {
+  final String message;
 
-class AuthLoginError extends AuthState {}
+  AuthLoginFailure(this.message);
+}
+
+class AuthLoginError extends AuthState {
+  final String message;
+
+  AuthLoginError(this.message);
+}

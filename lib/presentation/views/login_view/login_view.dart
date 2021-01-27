@@ -1,8 +1,10 @@
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/views/main_view/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import 'login_form.dart';
 
@@ -16,18 +18,31 @@ class LoginView extends StatelessWidget {
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-          child: BlocBuilder<AuthBloc, AuthState>(
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthLoginFailure) {
+                Get.snackbar('Authentication failure', state.message,
+                    snackPosition: SnackPosition.BOTTOM);
+              } else if (state is AuthLoginError) {
+                Get.snackbar('Error occured', state.message,
+                    snackPosition: SnackPosition.BOTTOM);
+              } else if (state is AuthLoginSuccess) {
+                goToMainView();
+              }
+            },
             builder: (context, state) {
+              if (state is AuthInitial) {
+                checkIfUserIsLoggedIn(context);
+                return LoadingSpinner();
+              }
               if (state is AuthWaiting) {
                 return LoadingSpinner();
-              } else if (state is AuthLoginSuccess) {
-                return Text('Logged in! Hurraaaa!');
-              } else if (state is AuthLoginFailure) {
-                return Text('Failure!');
-              } else if (state is AuthLoginError) {
-                return Text('Error!');
               }
-              return buildSignInForm(context);
+              if (state is AuthLoginSuccess) {
+                // show empty container before the new screen loads up
+                return Container();
+              }
+              return buildLoginForm(context);
             },
           ),
         ),
@@ -35,7 +50,7 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Widget buildSignInForm(BuildContext context) {
+  Widget buildLoginForm(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -68,4 +83,9 @@ class LoginView extends StatelessWidget {
       ],
     );
   }
+
+  void checkIfUserIsLoggedIn(BuildContext context) =>
+      BlocProvider.of<AuthBloc>(context).add(AuthCheckIfLoggedIn());
+
+  void goToMainView() => Get.off(MainView());
 }
