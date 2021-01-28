@@ -21,10 +21,15 @@ class LoginView extends StatelessWidget {
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthLoginFailure) {
-                Get.snackbar('Authentication failure', state.message,
-                    snackPosition: SnackPosition.BOTTOM);
+                Get.rawSnackbar(
+                  title: 'Authentication failure',
+                  message: state.message,
+                  snackPosition: SnackPosition.BOTTOM,
+                );
               } else if (state is AuthLoginError) {
-                Get.snackbar('Error occured', state.message,
+                Get.rawSnackbar(
+                    title: 'Error occured',
+                    message: state.message,
                     snackPosition: SnackPosition.BOTTOM);
               } else if (state is AuthLoginSuccess) {
                 goToMainView();
@@ -51,36 +56,38 @@ class LoginView extends StatelessWidget {
   }
 
   Widget buildLoginForm(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Sign in',
-            style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+    return Center(
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Sign in',
+              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        SizedBox(height: 30),
-        LoginForm(),
-        Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Don\'t have an account? ',
-                style: TextStyle(fontSize: 16),
-              ),
-              Text(
-                'Sign up.',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor, fontSize: 16),
-              ),
-            ],
+          SizedBox(height: 30),
+          LoginForm(),
+          Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Don\'t have an account? ',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Sign up.',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor, fontSize: 16),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

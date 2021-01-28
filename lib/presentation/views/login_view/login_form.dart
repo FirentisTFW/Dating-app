@@ -12,6 +12,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   GlobalKey<FormState> _formKey;
+  FocusNode _focusNode;
   String _email;
   String _password;
 
@@ -19,6 +20,13 @@ class _LoginFormState extends State<LoginForm> {
   void initState() {
     super.initState();
     _formKey = GlobalKey<FormState>();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -32,17 +40,21 @@ class _LoginFormState extends State<LoginForm> {
           TextFormField(
             decoration: InputDecoration(hintText: 'Email Address'),
             cursorColor: Theme.of(context).primaryColor,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
             validator: Validators.compose([
               Validators.required('This field can\'t be empty'),
               Validators.email('Not valid e-mail address'),
             ]),
             onSaved: setEmail,
+            onFieldSubmitted: (_) => _focusNode.nextFocus(),
           ),
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(hintText: 'Password'),
             cursorColor: Theme.of(context).primaryColor,
             obscureText: true,
+            textInputAction: TextInputAction.go,
             validator: Validators.required('This field can\'t be empty'),
             onSaved: setPassword,
           ),
@@ -53,6 +65,9 @@ class _LoginFormState extends State<LoginForm> {
               LoginButton(signIn),
               FlatButton(
                 onPressed: () {},
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        const BorderRadius.all(const Radius.circular(20))),
                 child: const Text(
                   'Need help?',
                   style: TextStyle(fontSize: 14),
@@ -66,6 +81,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void signIn() {
+    FocusScope.of(context).unfocus();
     var isValid = _formKey.currentState.validate();
 
     if (isValid) {

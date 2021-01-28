@@ -32,6 +32,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         if (_repository.isUserLoggedIn) {
           yield AuthLoginSuccess();
+        } else {
+          yield AuthReady();
         }
       } catch (err) {
         yield AuthLoginError(err.message);
