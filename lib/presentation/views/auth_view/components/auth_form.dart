@@ -1,20 +1,25 @@
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({Key key}) : super(key: key);
+class AuthForm extends StatefulWidget {
+  final AuthType formType;
+
+  const AuthForm(this.formType, {Key key}) : super(key: key);
 
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _AuthFormState createState() => _AuthFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _AuthFormState extends State<AuthForm> {
   GlobalKey<FormState> _formKey;
   FocusNode _focusNode;
   String _email;
   String _password;
+  String _repeatPassword;
 
   @override
   void initState() {
@@ -54,25 +59,43 @@ class _LoginFormState extends State<LoginForm> {
             decoration: InputDecoration(hintText: 'Password'),
             cursorColor: Theme.of(context).primaryColor,
             obscureText: true,
-            textInputAction: TextInputAction.go,
+            textInputAction: widget.formType == AuthType.Login
+                ? TextInputAction.go
+                : TextInputAction.next,
             validator: Validators.required('This field can\'t be empty'),
             onSaved: setPassword,
+            onFieldSubmitted: (_) => _focusNode.nextFocus(),
           ),
+          if (widget.formType == AuthType.Registration) ...{
+            SizedBox(height: 20),
+            TextFormField(
+              decoration: InputDecoration(hintText: 'Repeat Password'),
+              cursorColor: Theme.of(context).primaryColor,
+              obscureText: true,
+              textInputAction: TextInputAction.go,
+              validator: Validators.required('This field can\'t be empty'),
+              onSaved: setRepeatPassword,
+            ),
+          },
           SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LoginButton(signIn),
-              FlatButton(
-                onPressed: () {},
-                shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        const BorderRadius.all(const Radius.circular(20))),
-                child: const Text(
-                  'Need help?',
-                  style: TextStyle(fontSize: 14),
-                ),
+              AuthenticateButton(
+                widget.formType == AuthType.Login ? signIn : signUp,
+                widget.formType,
               ),
+              if (widget.formType == AuthType.Login)
+                FlatButton(
+                  onPressed: () {},
+                  shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          const BorderRadius.all(const Radius.circular(20))),
+                  child: const Text(
+                    'Need help?',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
             ],
           ),
         ],
@@ -90,28 +113,46 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
+  void signUp() {
+    FocusScope.of(context).unfocus();
+    var isValid = _formKey.currentState.validate();
+
+    if (isValid) {
+      _formKey.currentState.save();
+      if (_password == _repeatPassword) {
+        BlocProvider.of<AuthBloc>(context).add(AuthRegister(_email, _password));
+      } else {
+        Get.rawSnackbar(message: 'Passwords don\'t match.');
+      }
+    }
+  }
+
   void setEmail(String value) => _email = value;
 
   void setPassword(String value) => _password = value;
+
+  void setRepeatPassword(String value) => _repeatPassword = value;
 }
 
-class LoginButton extends StatelessWidget {
-  final Function signIn;
+class AuthenticateButton extends StatelessWidget {
+  final Function authenticate;
+  final AuthType _formType;
 
-  const LoginButton(this.signIn, {Key key}) : super(key: key);
+  const AuthenticateButton(this.authenticate, this._formType, {Key key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: signIn,
+      onTap: authenticate,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           borderRadius: const BorderRadius.all(const Radius.circular(30)),
         ),
-        child: const Text(
-          'Login',
+        child: Text(
+          _formType == AuthType.Login ? 'Login' : 'Register',
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),

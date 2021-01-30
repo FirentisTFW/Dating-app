@@ -24,9 +24,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _repository.signInUser(event.email, event.password);
         yield AuthLoginSuccess();
       } on FirebaseAuthException catch (err) {
-        yield AuthLoginFailure(err.message);
+        yield AuthFailure(err.message);
       } catch (err) {
-        yield AuthLoginError(err.message);
+        yield AuthError(err.message);
       }
     } else if (event is AuthCheckIfLoggedIn) {
       try {
@@ -36,7 +36,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield AuthReady();
         }
       } catch (err) {
-        yield AuthLoginError(err.message);
+        yield AuthError(err.message);
+      }
+    } else if (event is AuthRegister) {
+      try {
+        await _repository.registerUser(event.email, event.password);
+        yield AuthRegistrationSuccess();
+      } on FirebaseAuthException catch (err) {
+        yield AuthFailure(err.message);
+      } catch (err) {
+        yield AuthError(err.message);
       }
     }
   }

@@ -3,8 +3,11 @@ import 'package:Dating_app/data/data_providers/authentication_provider.dart';
 class AuthenticationRepository {
   final AuthenticationProvider _provider = AuthenticationProvider();
 
+  bool get isUserLoggedIn => _provider.isUserLoggedIn;
+
   Future signInUser(String email, String password) async =>
       await _provider.signInUser(email, password);
 
-  bool get isUserLoggedIn => _provider.isUserLoggedIn;
+  Future registerUser(String email, String password) async =>
+      await _provider.registerUser(email, password);
 }

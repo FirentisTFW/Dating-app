@@ -14,4 +14,11 @@ class AuthLogin extends AuthEvent {
   AuthLogin(this.email, this.password);
 }
 
+class AuthRegister extends AuthEvent {
+  final String email;
+  final String password;
+
+  AuthRegister(this.email, this.password);
+}
+
 class AuthCheckIfLoggedIn extends AuthEvent {}
