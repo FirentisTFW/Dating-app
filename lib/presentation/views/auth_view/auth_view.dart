@@ -35,7 +35,7 @@ class _AuthViewState extends State<AuthView> {
             } else if (state is AuthError) {
               Get.rawSnackbar(
                   title: 'Error occured',
-                  message: state.message,
+                  message: state.message ?? 'Please try again.',
                   snackPosition: SnackPosition.BOTTOM);
             } else if (state is AuthLoginSuccess) {
               goToMainView();
@@ -44,9 +44,6 @@ class _AuthViewState extends State<AuthView> {
             }
           },
           builder: (context, state) {
-            if (state is AuthWaiting) {
-              return LoadingSpinner();
-            }
             if (state is AuthLoginSuccess || state is AuthRegistrationSuccess) {
               // show empty container before the new screen loads up
               return Container();

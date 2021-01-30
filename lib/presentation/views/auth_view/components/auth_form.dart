@@ -1,5 +1,6 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
+import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
-  GlobalKey<FormState> _formKey;
+  final _formKey = GlobalKey<FormState>();
   FocusNode _focusNode;
   String _email;
   String _password;
@@ -24,7 +25,6 @@ class _AuthFormState extends State<AuthForm> {
   @override
   void initState() {
     super.initState();
-    _formKey = GlobalKey<FormState>();
     _focusNode = FocusNode();
   }
 
@@ -43,7 +43,7 @@ class _AuthFormState extends State<AuthForm> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextFormField(
-            decoration: InputDecoration(hintText: 'Email Address'),
+            decoration: const InputDecoration(hintText: 'Email Address'),
             cursorColor: Theme.of(context).primaryColor,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -54,9 +54,9 @@ class _AuthFormState extends State<AuthForm> {
             onSaved: setEmail,
             onFieldSubmitted: (_) => _focusNode.nextFocus(),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
-            decoration: InputDecoration(hintText: 'Password'),
+            decoration: const InputDecoration(hintText: 'Password'),
             cursorColor: Theme.of(context).primaryColor,
             obscureText: true,
             textInputAction: widget.formType == AuthType.Login
@@ -67,9 +67,9 @@ class _AuthFormState extends State<AuthForm> {
             onFieldSubmitted: (_) => _focusNode.nextFocus(),
           ),
           if (widget.formType == AuthType.Registration) ...{
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
-              decoration: InputDecoration(hintText: 'Repeat Password'),
+              decoration: const InputDecoration(hintText: 'Repeat Password'),
               cursorColor: Theme.of(context).primaryColor,
               obscureText: true,
               textInputAction: TextInputAction.go,
@@ -77,13 +77,23 @@ class _AuthFormState extends State<AuthForm> {
               onSaved: setRepeatPassword,
             ),
           },
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AuthenticateButton(
-                widget.formType == AuthType.Login ? signIn : signUp,
-                widget.formType,
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthWaiting) {
+                    return const Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: LoadingSpinner(),
+                    );
+                  }
+                  return AuthenticateButton(
+                    widget.formType == AuthType.Login ? signIn : signUp,
+                    widget.formType,
+                  );
+                },
               ),
               if (widget.formType == AuthType.Login)
                 FlatButton(
@@ -154,7 +164,7 @@ class AuthenticateButton extends StatelessWidget {
         child: Text(
           _formType == AuthType.Login ? 'Login' : 'Register',
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
