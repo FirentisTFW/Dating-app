@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   bloc: ^6.1.1
+  bloc_test: ^7.1.0
   cloud_firestore: ^0.16.0
   cupertino_icons: ^1.0.0
   equatable: ^1.2.5
@@ -31,7 +32,9 @@ dependencies:
   firebase_core: ^0.7.0
   firebase_storage: ^7.0.0
   flutter_bloc: ^6.1.1
+  flutter_datetime_picker: ^1.4.0
   get: ^3.24.0
+  intl: ^0.16.1
   wc_form_validators: ^0.1.1
 
 dev_dependencies:

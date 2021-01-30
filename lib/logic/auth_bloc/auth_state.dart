@@ -21,10 +21,16 @@ class AuthFailure extends AuthState {
   final String message;
 
   AuthFailure(this.message);
+
+  @override
+  List<Object> get props => [message];
 }
 
 class AuthError extends AuthState {
   final String message;
 
-  AuthError(this.message);
+  AuthError({this.message});
+
+  @override
+  List<Object> get props => [message];
 }

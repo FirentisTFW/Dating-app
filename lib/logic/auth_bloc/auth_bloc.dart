@@ -26,7 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on FirebaseAuthException catch (err) {
         yield AuthFailure(err.message);
       } catch (err) {
-        yield AuthError(err.message);
+        yield AuthError();
       }
     } else if (event is AuthCheckIfLoggedIn) {
       try {
@@ -36,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield AuthReady();
         }
       } catch (err) {
-        yield AuthError(err.message);
+        yield AuthError();
       }
     } else if (event is AuthRegister) {
       try {
@@ -45,7 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on FirebaseAuthException catch (err) {
         yield AuthFailure(err.message);
       } catch (err) {
-        yield AuthError(err.message);
+        yield AuthError();
       }
     }
   }
