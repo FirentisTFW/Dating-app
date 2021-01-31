@@ -17,6 +17,12 @@ class CurrentUserReady extends CurrentUserState {
   CurrentUserReady({this.user});
 }
 
+class CurrentUserProfileIncomplete extends CurrentUserState {
+  final User user;
+
+  CurrentUserProfileIncomplete({this.user});
+}
+
 class CurrentUserError extends CurrentUserState {
   final String message;
   final User user;

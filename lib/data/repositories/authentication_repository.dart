@@ -1,7 +1,8 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/authentication_provider.dart';
 
 class AuthenticationRepository {
-  final AuthenticationProvider _provider = AuthenticationProvider();
+  final AuthenticationProvider _provider = locator<AuthenticationProvider>();
 
   bool get isUserLoggedIn => _provider.isUserLoggedIn;
 

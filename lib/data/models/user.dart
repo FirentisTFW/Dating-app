@@ -13,6 +13,7 @@ class User {
   final Gender gender;
   final String caption;
   final SimpleLocation location;
+  final List<String> photosRef;
 
   User({
     @required this.id,
@@ -21,6 +22,7 @@ class User {
     @required this.gender,
     this.caption,
     this.location,
+    this.photosRef,
   });
 
   // JSON AND MAP SERIALIZATION
@@ -33,6 +35,7 @@ class User {
       'gender': GenderExtension.toMap(gender),
       'caption': caption,
       'location': location?.toMap(),
+      'photosRef': photosRef,
     };
   }
 
@@ -46,6 +49,7 @@ class User {
       gender: GenderExtension.fromMap(map['gender']),
       caption: map['caption'],
       location: SimpleLocation.fromMap(map['location']),
+      photosRef: map['photosRef'],
     );
   }
 
