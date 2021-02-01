@@ -39,7 +39,7 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     emit(CurrentUserWaiting());
 
     try {
-      final user = await fetchUserData();
+      final user = await _fetchUserData();
       if (user.name == null) {
         emit(CurrentUserProfileIncomplete(user: user));
       } else {
@@ -50,7 +50,7 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     }
   }
 
-  Future<User> fetchUserData() async {
+  Future<User> _fetchUserData() async {
     try {
       final uid = _authRepository.userId;
       final user = await _repository.getUser(uid);
