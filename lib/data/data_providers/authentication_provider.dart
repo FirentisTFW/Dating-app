@@ -5,6 +5,8 @@ class AuthenticationProvider {
 
   bool get isUserLoggedIn => _auth.currentUser != null;
 
+  String get userId => _auth.currentUser.uid;
+
   Future signInUser(String email, String password) async =>
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 

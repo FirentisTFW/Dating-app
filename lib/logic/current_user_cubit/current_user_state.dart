@@ -15,12 +15,18 @@ class CurrentUserReady extends CurrentUserState {
   final User user;
 
   CurrentUserReady({this.user});
+
+  @override
+  List<Object> get props => [user];
 }
 
 class CurrentUserProfileIncomplete extends CurrentUserState {
   final User user;
 
   CurrentUserProfileIncomplete({this.user});
+
+  @override
+  List<Object> get props => [user];
 }
 
 class CurrentUserError extends CurrentUserState {
@@ -28,4 +34,7 @@ class CurrentUserError extends CurrentUserState {
   final User user;
 
   CurrentUserError({this.user, this.message});
+
+  @override
+  List<Object> get props => [message, user];
 }

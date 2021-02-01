@@ -23,15 +23,19 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final _authRepository = AuthenticationRepository();
+  final _usersRepository = UsersRepository();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(AuthenticationRepository()),
+          create: (context) => AuthBloc(_authRepository),
         ),
         BlocProvider<CurrentUserCubit>(
-          create: (context) => CurrentUserCubit(UsersRepository()),
+          create: (context) =>
+              CurrentUserCubit(_usersRepository, _authRepository),
         ),
       ],
       child: GetMaterialApp(

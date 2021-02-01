@@ -1,15 +1,17 @@
 import 'package:Dating_app/data/models/user.dart';
+import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase;
 
 part 'current_user_state.dart';
 
 class CurrentUserCubit extends Cubit<CurrentUserState> {
   final UsersRepository _repository;
+  final AuthenticationRepository _authRepository;
 
-  CurrentUserCubit(this._repository) : super(CurrentUserInitial());
+  CurrentUserCubit(this._repository, this._authRepository)
+      : super(CurrentUserInitial());
 
   Future<void> updateUser({User updatedUser, User oldUser}) async {
     emit(CurrentUserWaiting());
@@ -50,7 +52,7 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
 
   Future<User> fetchUserData() async {
     try {
-      final uid = firebase.FirebaseAuth.instance.currentUser.uid;
+      final uid = _authRepository.userId;
       final user = await _repository.getUser(uid);
       return user;
     } catch (err) {

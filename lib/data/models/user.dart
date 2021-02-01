@@ -61,4 +61,24 @@ class User {
   String toString() {
     return 'User(id: $id, name: $name, birthDate: $birthDate, gender: $gender, caption: $caption, location: $location)';
   }
+
+  User copyWith({
+    String id,
+    String name,
+    DateTime birthDate,
+    Gender gender,
+    String caption,
+    SimpleLocation location,
+    List<String> photosRef,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      birthDate: birthDate ?? this.birthDate,
+      gender: gender ?? this.gender,
+      caption: caption ?? this.caption,
+      location: location ?? this.location,
+      photosRef: photosRef ?? this.photosRef,
+    );
+  }
 }

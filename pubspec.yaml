@@ -34,6 +34,7 @@ dependencies:
   flutter_bloc: ^6.1.1
   flutter_datetime_picker: ^1.4.0
   get: ^3.24.0
+  get_it: ^5.0.6
   intl: ^0.16.1
   wc_form_validators: ^0.1.1
 
