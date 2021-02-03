@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
+import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -13,10 +14,14 @@ class UsersRepositoryMock extends Mock implements UsersRepository {}
 class AuthenticationRepositoryMock extends Mock
     implements AuthenticationRepository {}
 
+class PhotosRepositoryMock extends Mock implements PhotosRepository {}
+
 void main() {
   group('CurrentUserCubitTest -', () {
     UsersRepositoryMock usersRepository;
     AuthenticationRepositoryMock authenticationRepository;
+    PhotosRepositoryMock photosRepository;
+
     final user = User(
       id: '1',
       birthDate: DateTime(1995, 1, 1),
@@ -38,13 +43,14 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserReady(updatedUser)]',
         build: () {
           when(usersRepository.updateUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) =>
             cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserReady(user: updatedUser),
+          CurrentUserReady(updatedUser),
         ],
       );
       blocTest(
@@ -52,7 +58,8 @@ void main() {
           build: () {
             when(usersRepository.updateUser(any))
                 .thenThrow(ErrorDescription('An error occured'));
-            return CurrentUserCubit(usersRepository, authenticationRepository);
+            return CurrentUserCubit(
+                usersRepository, authenticationRepository, photosRepository);
           },
           act: (cubit) =>
               cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
@@ -66,12 +73,13 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserProfileIncomplete(user)]',
         build: () {
           when(usersRepository.createUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserProfileIncomplete(user: user),
+          CurrentUserProfileIncomplete(user),
         ],
       );
       blocTest(
@@ -79,7 +87,8 @@ void main() {
         build: () {
           when(usersRepository.createUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
@@ -94,12 +103,13 @@ void main() {
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any)).thenAnswer((_) async => user);
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserReady(user: user),
+          CurrentUserReady(user),
         ],
       );
       blocTest(
@@ -108,12 +118,13 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
               .thenAnswer((_) async => incompleteUser);
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserProfileIncomplete(user: incompleteUser),
+          CurrentUserProfileIncomplete(incompleteUser),
         ],
       );
       blocTest(
@@ -122,7 +133,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [

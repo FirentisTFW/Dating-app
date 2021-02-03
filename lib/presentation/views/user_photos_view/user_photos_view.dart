@@ -1,20 +1,26 @@
 import 'dart:io';
 
+import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class UserPhotosView extends StatelessWidget {
-  const UserPhotosView({Key key}) : super(key: key);
+  List<PickedFile> _pickedImages = [];
+
+  UserPhotosView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: _appBarTitle,
         actions: [
           FlatButton(
             padding: const EdgeInsets.only(right: 10),
-            onPressed: () {},
-            child: Text(
+            onPressed: () => uploadPhotos(context),
+            child: const Text(
               'Next',
               style: TextStyle(color: Colors.white, fontSize: 24),
             ),
@@ -26,22 +32,43 @@ class UserPhotosView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PhotosRow(),
+            PhotosRow(addImage),
             const Expanded(child: SizedBox()),
-            PhotosRow(),
+            PhotosRow(addImage),
             const Expanded(child: SizedBox()),
-            PhotosRow(),
+            PhotosRow(addImage),
           ],
         ),
       ),
     );
   }
+
+  final _appBarTitle = const Padding(
+    padding: EdgeInsets.only(left: 20),
+    child: Text(
+      'Add photos',
+      style: TextStyle(
+          color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
+    ),
+  );
+
+  void addImage(PickedFile image) => _pickedImages.add(image);
+
+  void uploadPhotos(BuildContext context) {
+    // TODO: all pictures
+    final currentState = BlocProvider.of<CurrentUserCubit>(context).state
+        as CurrentUserWithUserInstance;
+
+    final user = currentState.user;
+    BlocProvider.of<CurrentUserCubit>(context)
+        .uploadPhoto(user, _pickedImages[0]);
+  }
 }
 
 class PhotosRow extends StatelessWidget {
-  const PhotosRow({
-    Key key,
-  }) : super(key: key);
+  final Function addImage;
+
+  const PhotosRow(this.addImage, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +77,11 @@ class PhotosRow extends StatelessWidget {
       child: Row(
         children: [
           const Expanded(child: SizedBox()),
-          PhotoItem(),
+          PhotoItem(addImage),
           const Expanded(child: SizedBox()),
-          PhotoItem(),
+          PhotoItem(addImage),
           const Expanded(child: SizedBox()),
-          PhotoItem(),
+          PhotoItem(addImage),
           const Expanded(child: SizedBox()),
         ],
       ),
@@ -63,7 +90,9 @@ class PhotosRow extends StatelessWidget {
 }
 
 class PhotoItem extends StatefulWidget {
-  const PhotoItem({Key key}) : super(key: key);
+  final Function addImage;
+
+  const PhotoItem(this.addImage, {Key key}) : super(key: key);
 
   @override
   _PhotoItemState createState() => _PhotoItemState();
@@ -84,22 +113,7 @@ class _PhotoItemState extends State<PhotoItem> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
           child: _image != null
-              ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  ),
-                  height: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: Image.file(
-                        File(_image.path),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                )
+              ? _showImage()
               : Center(
                   child: Icon(
                     Icons.add,
@@ -112,11 +126,30 @@ class _PhotoItemState extends State<PhotoItem> {
     );
   }
 
+  Widget _showImage() => Container(
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
+        height: double.infinity,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: Image.file(
+              File(_image.path),
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+        ),
+      );
+
   Future _getPhotoFromGallery() async {
     final imagePicker = ImagePicker();
-    final image = await imagePicker.getImage(
+    final pickedImage = await imagePicker.getImage(
         source: ImageSource.gallery, imageQuality: 50);
 
-    setState(() => _image = image);
+    if (pickedImage != null) {
+      widget.addImage(pickedImage);
+      setState(() => _image = pickedImage);
+    }
   }
 }

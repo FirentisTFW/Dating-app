@@ -11,30 +11,31 @@ class CurrentUserInitial extends CurrentUserState {}
 
 class CurrentUserWaiting extends CurrentUserState {}
 
-class CurrentUserReady extends CurrentUserState {
+abstract class CurrentUserWithUserInstance extends CurrentUserState {
+  /// Extendable class which stores user instance
   final User user;
 
-  CurrentUserReady({this.user});
+  CurrentUserWithUserInstance(this.user);
 
   @override
   List<Object> get props => [user];
 }
 
-class CurrentUserProfileIncomplete extends CurrentUserState {
-  final User user;
-
-  CurrentUserProfileIncomplete({this.user});
-
-  @override
-  List<Object> get props => [user];
+class CurrentUserReady extends CurrentUserWithUserInstance {
+  /// Profile complete, no errors occured
+  CurrentUserReady(user) : super(user);
 }
 
-class CurrentUserError extends CurrentUserState {
+class CurrentUserProfileIncomplete extends CurrentUserWithUserInstance {
+  /// Profile incomplete - it is missing either personal data (name, birthDate etc.) or searching criteria
+  CurrentUserProfileIncomplete(user) : super(user);
+}
+
+class CurrentUserError extends CurrentUserWithUserInstance {
   final String message;
-  final User user;
 
-  CurrentUserError({this.user, this.message});
+  CurrentUserError({user, this.message}) : super(user);
 
   @override
-  List<Object> get props => [message, user];
+  List<Object> get props => [message];
 }
