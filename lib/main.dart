@@ -46,18 +46,15 @@ class MyApp extends StatelessWidget {
         theme: lightTheme,
         home: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            // TEST ONLY
-            // if (state is AuthLoginSuccess) {
-            //   Get.off(MainView());
-            // }
+            if (state is AuthLoginSuccess) {
+              Get.off(MainView());
+            }
           },
           builder: (context, state) {
             if (state is AuthInitial) {
               BlocProvider.of<AuthBloc>(context).add(AuthCheckIfLoggedIn());
               return SplashView();
             }
-            // TEST ONLY
-            return UserPhotosView();
             return AuthView();
           },
           buildWhen: (previous, current) => !(current is AuthWaiting),

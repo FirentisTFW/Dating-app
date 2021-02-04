@@ -2,14 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingSpinner extends StatelessWidget {
-  const LoadingSpinner({Key key}) : super(key: key);
+  final Color color;
+
+  const LoadingSpinner({Key key, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-        valueColor:
-            AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+        valueColor: AlwaysStoppedAnimation<Color>(
+            color ?? Theme.of(context).primaryColor),
       ),
     );
   }

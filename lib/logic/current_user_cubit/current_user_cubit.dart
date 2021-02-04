@@ -39,15 +39,17 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     }
   }
 
-  Future<void> uploadPhoto(User user, PickedFile photo) async {
+  Future<bool> uploadPhoto(User user, PickedFile photo) async {
     emit(CurrentUserWaiting());
 
     try {
       final userId = _authRepository.userId;
       await _photosRepository.uploadPhoto(photo, userId);
-      emit(CurrentUserProfileIncomplete(user));
+      emit(CurrentUserReady(user));
+      return true;
     } catch (err) {
       emit(CurrentUserError(user: user));
+      return false;
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/user_photos_view/user_photos_view.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
@@ -31,14 +32,10 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
     return Scaffold(
       body: BlocListener<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
-          if (state is CurrentUserError) {
-            Get.rawSnackbar(
-              title: 'Error occured',
-              message: state.message ?? 'Please try again.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          } else if (state is CurrentUserProfileIncomplete) {
+          if (state is CurrentUserProfileIncomplete) {
             goToUserPhotosView();
+          } else if (state is CurrentUserError) {
+            CurrentUserCubitHelpers.showErrorSnackbar(state);
           }
         },
         child: Padding(

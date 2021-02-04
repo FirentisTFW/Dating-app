@@ -1,5 +1,6 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
+import 'package:Dating_app/presentation/helpers/auth_bloc_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
@@ -26,21 +27,14 @@ class _AuthViewState extends State<AuthView> {
         padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthFailure) {
-              Get.rawSnackbar(
-                title: 'Authentication failure',
-                message: state.message,
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            } else if (state is AuthError) {
-              Get.rawSnackbar(
-                  title: 'Error occured',
-                  message: state.message ?? 'Please try again.',
-                  snackPosition: SnackPosition.BOTTOM);
-            } else if (state is AuthLoginSuccess) {
+            if (state is AuthLoginSuccess) {
               goToMainView();
             } else if (state is AuthRegistrationSuccess) {
               goToProfileCreationView();
+            } else if (state is AuthFailure) {
+              AuthBlocHelpers.showFailureSnackbar(state);
+            } else if (state is AuthError) {
+              AuthBlocHelpers.showErrorSnackbar(state);
             }
           },
           builder: (context, state) {
