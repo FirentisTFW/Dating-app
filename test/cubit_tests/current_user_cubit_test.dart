@@ -7,6 +7,7 @@ import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mockito/mockito.dart';
 
 class UsersRepositoryMock extends Mock implements UsersRepository {}
@@ -34,6 +35,7 @@ void main() {
     setUp(() {
       usersRepository = UsersRepositoryMock();
       authenticationRepository = AuthenticationRepositoryMock();
+      photosRepository = PhotosRepositoryMock();
     });
     group('updateUser -', () {
       final oldUser = user;
@@ -140,6 +142,37 @@ void main() {
         expect: [
           CurrentUserWaiting(),
           CurrentUserError(),
+        ],
+      );
+    });
+    group('uploadPhoto -', () {
+      final photo = PickedFile('photoPath');
+      blocTest(
+        'When successful, returns [CurrentUserWaiting, CurrentUserReady]',
+        build: () {
+          when(photosRepository.uploadPhoto(any, any))
+              .thenAnswer((_) async => null);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
+        },
+        act: (cubit) => cubit.uploadPhoto(user, photo),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserReady(user),
+        ],
+      );
+      blocTest(
+        'When failure, returns [CurrentUserWaiting, CurrentUserError]',
+        build: () {
+          when(photosRepository.uploadPhoto(any, any))
+              .thenThrow(ErrorDescription('An error occured'));
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
+        },
+        act: (cubit) => cubit.uploadPhoto(user, photo),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserError(user: user),
         ],
       );
     });
