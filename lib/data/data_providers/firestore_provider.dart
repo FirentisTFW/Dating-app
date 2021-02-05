@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,4 +12,10 @@ class FirestoreProvider {
       await _usersCollection.doc(user.id).set(user.toMap());
 
   Future getUser(String uid) async => await _usersCollection.doc(uid).get();
+
+  Future updateDiscoverySettings(
+          String uid, DiscoverySettings discoverySettings) async =>
+      await _usersCollection
+          .doc(uid)
+          .update({'discoverySettings': discoverySettings.toMap()});
 }

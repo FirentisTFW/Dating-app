@@ -2,6 +2,7 @@ import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
 import 'package:Dating_app/presentation/views/user_photos_view/user_photos_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,12 +39,12 @@ class MainView extends StatelessWidget {
           } else if (state is CurrentUserError) {
             return LoadingSpinner();
           } else if (state is CurrentUserProfileIncomplete) {
-            // show empty container before the new screen load up
+            // show empty container before the new screen loads up
             return Container();
           }
           return FlatButton(
               child: Text('Test fest'),
-              onPressed: () => Get.off(UserPhotosView()));
+              onPressed: () => Get.off(DiscoverySettingsView()));
           return Center(
             child: Text('I am logged in!'),
           );

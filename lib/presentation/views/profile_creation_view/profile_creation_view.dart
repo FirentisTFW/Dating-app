@@ -11,7 +11,7 @@ import 'package:get/route_manager.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 
 import 'components/date_selection_field.dart';
-import 'components/next_button.dart';
+import '../../universal_components/next_button.dart';
 
 class ProfileCreationView extends StatefulWidget {
   const ProfileCreationView({Key key}) : super(key: key);

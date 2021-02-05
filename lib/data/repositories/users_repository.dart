@@ -1,5 +1,6 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
+import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/user.dart';
 
 class UsersRepository {
@@ -10,6 +11,10 @@ class UsersRepository {
 
   Future createUser(User user) async =>
       await _firestoreProvider.createUser(user);
+
+  Future updateDiscoverySettings(
+          String uid, DiscoverySettings discoverySettings) async =>
+      await _firestoreProvider.updateDiscoverySettings(uid, discoverySettings);
 
   Future<User> getUser(String uid) async {
     final userData = await _firestoreProvider.getUser(uid);

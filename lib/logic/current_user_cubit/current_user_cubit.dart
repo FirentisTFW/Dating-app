@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/photos_repository.dart';
@@ -50,6 +51,19 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     } catch (err) {
       emit(CurrentUserError(user: user));
       return false;
+    }
+  }
+
+  Future<void> updateDiscoverySettings(
+      User user, DiscoverySettings discoverySettings) async {
+    emit(CurrentUserWaiting());
+
+    try {
+      final userId = _authRepository.userId;
+      await _repository.updateDiscoverySettings(userId, discoverySettings);
+      emit(CurrentUserReady(user));
+    } catch (err) {
+      emit(CurrentUserError(user: user));
     }
   }
 
