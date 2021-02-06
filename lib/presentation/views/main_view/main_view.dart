@@ -24,8 +24,9 @@ class MainView extends StatelessWidget {
           if (state is CurrentUserProfileIncomplete) {
             if (state.user.name == null) {
               goToProfileCreationView();
+            } else if (state.user.discoverySettings == null) {
+              goToDiscoverySettingsView();
             }
-            // TODO: if searching criteria is missing, go to the screen with it
           } else if (state is CurrentUserError) {
             CurrentUserCubitHelpers.showErrorSnackbar(state);
             BlocProvider.of<CurrentUserCubit>(context)
@@ -54,4 +55,6 @@ class MainView extends StatelessWidget {
   }
 
   void goToProfileCreationView() => Get.off(ProfileCreationView());
+
+  void goToDiscoverySettingsView() => Get.off(DiscoverySettingsView());
 }

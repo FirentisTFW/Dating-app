@@ -9,6 +9,7 @@ class PhotosRepository {
 
   Future uploadPhoto(PickedFile photo, String userId) async {
     final photoFile = File(photo.path);
-    await _storageProvider.uploadPhoto(photoFile, userId);
+    final photoName = DateTime.now().millisecondsSinceEpoch.toString();
+    await _storageProvider.uploadPhoto(photoFile, photoName, userId);
   }
 }

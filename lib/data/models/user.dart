@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class User {
   final Gender gender;
   final String caption;
   final SimpleLocation location;
+  final DiscoverySettings discoverySettings;
   final List<String> photosRef;
 
   User({
@@ -22,6 +24,7 @@ class User {
     @required this.gender,
     this.caption,
     this.location,
+    this.discoverySettings,
     this.photosRef,
   });
 
@@ -35,6 +38,7 @@ class User {
       'gender': GenderExtension.toMap(gender),
       'caption': caption,
       'location': location?.toMap(),
+      'discoverySettings': discoverySettings?.toMap(),
       'photosRef': photosRef,
     };
   }
@@ -49,6 +53,7 @@ class User {
       gender: GenderExtension.fromMap(map['gender']),
       caption: map['caption'],
       location: SimpleLocation.fromMap(map['location']),
+      discoverySettings: DiscoverySettings.fromMap(map['discoverySettings']),
       photosRef: map['photosRef'],
     );
   }

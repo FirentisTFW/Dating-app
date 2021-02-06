@@ -73,7 +73,7 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     try {
       final user = await _fetchUserData();
 
-      if (user.name == null) {
+      if (user.name == null || user.discoverySettings == null) {
         emit(CurrentUserProfileIncomplete(user));
       } else {
         emit(CurrentUserReady(user));

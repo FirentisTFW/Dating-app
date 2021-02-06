@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/next_button.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
@@ -31,6 +32,8 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
         listener: (context, state) {
           if (state is CurrentUserReady) {
             goToMainView();
+          } else if (state is CurrentUserError) {
+            CurrentUserCubitHelpers.showErrorSnackbar(state);
           }
         },
         child: DefaultTextStyle(
@@ -47,7 +50,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
                   if (state is CurrentUserWaiting) {
                     return LoadingSpinner();
                   }
-                  return NextButton(_saveDiscoverySettings);
+                  return NextButton(saveDiscoverySettings);
                 },
               )
             ],
@@ -57,7 +60,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
     );
   }
 
-  void _saveDiscoverySettings() {
+  void saveDiscoverySettings() {
     final discoverySettings = DiscoverySettings(
       gender: gender,
       ageMin: ageMin,
