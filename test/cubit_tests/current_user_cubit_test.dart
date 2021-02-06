@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
@@ -23,12 +24,14 @@ void main() {
     AuthenticationRepositoryMock authenticationRepository;
     PhotosRepositoryMock photosRepository;
 
+    final discoverySettings = DiscoverySettings(
+        gender: Gender.Woman, ageMin: 20, ageMax: 30, distance: 30);
     final user = User(
-      id: '1',
-      birthDate: DateTime(1995, 1, 1),
-      gender: Gender.Man,
-      name: 'Tester',
-    );
+        id: '1',
+        birthDate: DateTime(1995, 1, 1),
+        gender: Gender.Man,
+        name: 'Tester',
+        discoverySettings: discoverySettings);
     final incompleteUser =
         User(id: '11', birthDate: null, name: null, gender: null);
 
@@ -148,8 +151,9 @@ void main() {
     group('uploadPhoto -', () {
       final photo = PickedFile('photoPath');
       blocTest(
-        'When successful, returns [CurrentUserWaiting, CurrentUserReady]',
+        'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
         build: () {
+          when(authenticationRepository.userId).thenReturn('1');
           when(photosRepository.uploadPhoto(any, any))
               .thenAnswer((_) async => null);
           return CurrentUserCubit(
@@ -162,14 +166,47 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, returns [CurrentUserWaiting, CurrentUserError]',
+        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
         build: () {
+          when(authenticationRepository.userId).thenReturn('1');
           when(photosRepository.uploadPhoto(any, any))
               .thenThrow(ErrorDescription('An error occured'));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, photosRepository);
         },
         act: (cubit) => cubit.uploadPhoto(user, photo),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserError(user: user),
+        ],
+      );
+    });
+    group('updateDiscoverySettings -', () {
+      blocTest(
+        'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
+        build: () {
+          when(authenticationRepository.userId).thenReturn('1');
+          when(usersRepository.updateDiscoverySettings(any, any))
+              .thenAnswer((_) async => null);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
+        },
+        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserReady(user),
+        ],
+      );
+      blocTest(
+        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        build: () {
+          when(authenticationRepository.userId).thenReturn('1');
+          when(usersRepository.updateDiscoverySettings(any, any))
+              .thenThrow(ErrorDescription('An error occured'));
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, photosRepository);
+        },
+        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
           CurrentUserWaiting(),
           CurrentUserError(user: user),

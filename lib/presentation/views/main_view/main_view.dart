@@ -3,6 +3,7 @@ import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
+import 'package:Dating_app/presentation/views/my_profile_view/my_profile_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
 import 'package:Dating_app/presentation/views/user_photos_view/user_photos_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +19,25 @@ class MainView extends StatelessWidget {
     BlocProvider.of<CurrentUserCubit>(context).checkIfProfileIsComplete();
     // FirebaseAuth.instance.signOut();
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: Icon(Icons.account_circle, size: 28),
+              onPressed: goToMyProfileView,
+            ),
+            IconButton(
+              icon: Icon(Icons.add_circle, size: 34),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.chat, size: 28),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
       body: BlocConsumer<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
           if (state is CurrentUserProfileIncomplete) {
@@ -53,6 +72,8 @@ class MainView extends StatelessWidget {
       ),
     );
   }
+
+  void goToMyProfileView() => Get.to(MyProfileView());
 
   void goToProfileCreationView() => Get.off(ProfileCreationView());
 

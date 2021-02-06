@@ -28,6 +28,17 @@ class User {
     this.photosRef,
   });
 
+  int getAge() {
+    final currentDate = DateTime.now();
+    if (birthDate.month < currentDate.month) {
+      return currentDate.year - birthDate.year;
+    } else if (birthDate.month == currentDate.month &&
+        birthDate.day <= currentDate.day) {
+      return currentDate.year - birthDate.year;
+    }
+    return currentDate.year - birthDate.year - 1;
+  }
+
   // JSON AND MAP SERIALIZATION
 
   Map<String, dynamic> toMap() {
