@@ -9,4 +9,11 @@ class FirebaseStorageProvider {
         _storage.ref().child('users_images').child(userId).child(photoName);
     await storagePath.putFile(photo);
   }
+
+  Future getPhotoUrl(String userId, String photoName) async => _storage
+      .ref()
+      .child('users_images')
+      .child(userId)
+      .child(photoName)
+      .getDownloadURL();
 }

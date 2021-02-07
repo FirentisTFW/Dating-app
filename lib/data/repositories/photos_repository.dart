@@ -12,4 +12,7 @@ class PhotosRepository {
     final photoName = DateTime.now().millisecondsSinceEpoch.toString();
     await _storageProvider.uploadPhoto(photoFile, photoName, userId);
   }
+
+  Future getPhotoUrl(String userId, String photoName) async =>
+      await _storageProvider.getPhotoUrl(userId, photoName);
 }

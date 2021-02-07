@@ -7,12 +7,15 @@ class MyProfileView extends StatelessWidget {
   MyProfileView({Key key}) : super(key: key);
 
   final fakeUser = User(
-    id: 'asd',
-    name: 'Chad',
-    birthDate: DateTime(1996, 03, 02),
-    gender: Gender.Man,
-    caption: 'Jestem dobrym ziomem.\nFwb, Netflix and chill?',
-  );
+      id: 'gIzISF1o6Gfau0SqV1arDCZNtKO2',
+      name: 'Chad',
+      birthDate: DateTime(1996, 03, 02),
+      gender: Gender.Man,
+      caption: 'Jestem dobrym ziomem.\nFwb, Netflix and chill?',
+      photosRef: [
+        '1612459337933',
+        '1612459339204',
+      ]);
 
   @override
   Widget build(BuildContext context) {
