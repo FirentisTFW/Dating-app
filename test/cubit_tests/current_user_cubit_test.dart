@@ -1,7 +1,9 @@
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
+import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
+import 'package:Dating_app/data/repositories/location_repository.dart';
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
@@ -18,11 +20,14 @@ class AuthenticationRepositoryMock extends Mock
 
 class PhotosRepositoryMock extends Mock implements PhotosRepository {}
 
+class LocationRepositoryMock extends Mock implements LocationRepository {}
+
 void main() {
   group('CurrentUserCubitTest -', () {
     UsersRepositoryMock usersRepository;
     AuthenticationRepositoryMock authenticationRepository;
     PhotosRepositoryMock photosRepository;
+    LocationRepositoryMock locationRepository;
 
     final discoverySettings = DiscoverySettings(
         gender: Gender.Woman, ageMin: 20, ageMax: 30, distance: 30);
@@ -39,6 +44,7 @@ void main() {
       usersRepository = UsersRepositoryMock();
       authenticationRepository = AuthenticationRepositoryMock();
       photosRepository = PhotosRepositoryMock();
+      locationRepository = LocationRepositoryMock();
     });
     group('updateUser -', () {
       final oldUser = user;
@@ -48,8 +54,8 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserReady(updatedUser)]',
         build: () {
           when(usersRepository.updateUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) =>
             cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
@@ -63,8 +69,8 @@ void main() {
           build: () {
             when(usersRepository.updateUser(any))
                 .thenThrow(ErrorDescription('An error occured'));
-            return CurrentUserCubit(
-                usersRepository, authenticationRepository, photosRepository);
+            return CurrentUserCubit(usersRepository, authenticationRepository,
+                photosRepository, locationRepository);
           },
           act: (cubit) =>
               cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
@@ -78,8 +84,8 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserProfileIncomplete(user)]',
         build: () {
           when(usersRepository.createUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
@@ -92,8 +98,8 @@ void main() {
         build: () {
           when(usersRepository.createUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
@@ -108,8 +114,8 @@ void main() {
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any)).thenAnswer((_) async => user);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
@@ -123,8 +129,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
               .thenAnswer((_) async => incompleteUser);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
@@ -138,8 +144,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
@@ -156,8 +162,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(photosRepository.uploadPhoto(any, any))
               .thenAnswer((_) async => null);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.uploadPhoto(user, photo),
         expect: [
@@ -171,8 +177,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(photosRepository.uploadPhoto(any, any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.uploadPhoto(user, photo),
         expect: [
@@ -188,8 +194,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.updateDiscoverySettings(any, any))
               .thenAnswer((_) async => null);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
@@ -203,13 +209,44 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.updateDiscoverySettings(any, any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, photosRepository);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
         },
         act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
           CurrentUserWaiting(),
           CurrentUserError(user: user),
+        ],
+      );
+    });
+    group('getCurrentLocation -', () {
+      final location = SimpleLocation(latitude: 12.34, longitude: 12.34);
+      blocTest(
+        'When successful, emits [CurrentUserWaiting, CurrentUserLocationReceived]',
+        build: () {
+          when(locationRepository.getCurrentLocation())
+              .thenAnswer((_) async => location);
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
+        },
+        act: (cubit) => cubit.getCurrentLocation(),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserLocationReceived(location),
+        ],
+      );
+      blocTest(
+        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        build: () {
+          when(locationRepository.getCurrentLocation())
+              .thenThrow(ErrorDescription('An error occured'));
+          return CurrentUserCubit(usersRepository, authenticationRepository,
+              photosRepository, locationRepository);
+        },
+        act: (cubit) => cubit.getCurrentLocation(),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserError(message: 'Check device location permissions'),
         ],
       );
     });
