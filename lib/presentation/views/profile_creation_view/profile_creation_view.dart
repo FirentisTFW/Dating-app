@@ -1,4 +1,5 @@
 import 'package:Dating_app/data/models/enums.dart';
+import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
@@ -24,8 +25,15 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
   String _name;
   Gender _gender;
   DateTime _birthDate;
-  String _caption;
+  String _caption = '';
+  SimpleLocation _location;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<CurrentUserCubit>(context).getCurrentLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +42,8 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
         listener: (context, state) {
           if (state is CurrentUserProfileIncomplete) {
             goToUserPhotosView();
+          } else if (state is CurrentUserLocationReceived) {
+            _location = state.location;
           } else if (state is CurrentUserError) {
             CurrentUserCubitHelpers.showErrorSnackbar(state);
           }
@@ -111,7 +121,6 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
 
   void createUser() {
     FocusScope.of(context).unfocus();
-    var isValid = _formKey.currentState.validate();
 
     if (_birthDate == null) {
       Get.rawSnackbar(
@@ -121,7 +130,17 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
       return;
     }
 
-    if (isValid && _birthDate != null) {
+    if (_location == null) {
+      Get.rawSnackbar(
+        title: 'Location missing',
+        message: 'Please allow application to use device location.',
+      );
+      return;
+    }
+
+    final isValid = _formKey.currentState.validate();
+
+    if (isValid) {
       _formKey.currentState.save();
 
       final uid = firebase.FirebaseAuth.instance.currentUser.uid;
@@ -131,6 +150,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
         birthDate: _birthDate,
         gender: _gender,
         caption: _caption,
+        location: _location,
       );
 
       BlocProvider.of<CurrentUserCubit>(context).createUser(newUser);

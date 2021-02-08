@@ -11,6 +11,15 @@ class CurrentUserInitial extends CurrentUserState {}
 
 class CurrentUserWaiting extends CurrentUserState {}
 
+class CurrentUserLocationReceived extends CurrentUserState {
+  final SimpleLocation location;
+
+  CurrentUserLocationReceived(this.location);
+
+  @override
+  List<Object> get props => [location];
+}
+
 abstract class CurrentUserWithUserInstance extends CurrentUserState {
   /// Extendable class which stores user instance
   final User user;

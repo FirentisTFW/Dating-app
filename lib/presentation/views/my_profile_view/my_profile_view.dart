@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/models/enums.dart';
+import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
-import 'package:Dating_app/presentation/universal_components/user_profile_item.dart';
+import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
 import 'package:flutter/material.dart';
 
 class MyProfileView extends StatelessWidget {
@@ -12,6 +13,7 @@ class MyProfileView extends StatelessWidget {
       birthDate: DateTime(1996, 03, 02),
       gender: Gender.Man,
       caption: 'Jestem dobrym ziomem.\nFwb, Netflix and chill?',
+      location: SimpleLocation(latitude: 37.429836, longitude: -122.169428),
       photosRef: [
         '1612459337933',
         '1612459339204',

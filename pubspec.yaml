@@ -34,6 +34,10 @@ dependencies:
   firebase_storage: ^7.0.0
   flutter_bloc: ^6.1.1
   flutter_datetime_picker: ^1.4.0
+  geolocator: ^6.2.0
+  geoflutterfire:
+    git:
+      url: https://github.com/awaik/GeoFlutterFire
   get: ^3.24.0
   get_it: ^5.0.6
   image_picker: ^0.6.7+22

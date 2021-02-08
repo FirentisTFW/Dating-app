@@ -53,7 +53,6 @@ class MainView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          print(state);
           if (state is CurrentUserWaiting) {
             return LoadingSpinner();
           } else if (state is CurrentUserError) {
@@ -63,10 +62,8 @@ class MainView extends StatelessWidget {
             return Container();
           }
           return FlatButton(
-              child: Text('Test fest'),
-              onPressed: () => Get.off(DiscoverySettingsView()));
-          return Center(
-            child: Text('I am logged in!'),
+            child: Text('Test fest'),
+            onPressed: () => Get.off(DiscoverySettingsView()),
           );
         },
       ),

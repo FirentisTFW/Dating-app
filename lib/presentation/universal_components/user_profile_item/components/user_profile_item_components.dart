@@ -1,82 +1,13 @@
+import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
-import 'package:Dating_app/data/repositories/photos_repository.dart';
+import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-class UserProfileItem extends StatelessWidget {
-  final User user;
-  final bool isMine;
-
-  UserProfileItem({Key key, this.user, this.isMine = false}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PhotosCubit(PhotosRepository()),
-      child: Builder(
-        builder: (context) {
-          BlocProvider.of<PhotosCubit>(context)
-              .getMultiplePhotosUrls(user.id, user.photosRef);
-
-          return Column(
-            children: [
-              PhotosSlider(),
-              NameAgeLocationBar(user: user, isMine: isMine),
-              Divider(color: Colors.grey[500]),
-              buildCaption(),
-              if (!isMine) buildMatchRejectBar(),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buildCaption() {
-    return Expanded(
-      flex: isMine ? 3 : 2,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: SingleChildScrollView(
-          child: Container(
-            width: double.infinity,
-            child: Text(
-              '${user.caption}',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildMatchRejectBar() {
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Icon(
-              Icons.close,
-              size: 38,
-              color: Colors.red,
-            ),
-            Icon(
-              Icons.check,
-              size: 38,
-              color: Colors.green,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class PhotosSlider extends StatelessWidget {
   const PhotosSlider({Key key}) : super(key: key);
@@ -115,12 +46,12 @@ class PhotosSlider extends StatelessWidget {
 }
 
 class NameAgeLocationBar extends StatelessWidget {
+  final User user;
+  final bool isMine;
+
   const NameAgeLocationBar(
       {Key key, @required this.user, @required this.isMine})
       : super(key: key);
-
-  final User user;
-  final bool isMine;
 
   @override
   Widget build(BuildContext context) {
@@ -142,15 +73,36 @@ class NameAgeLocationBar extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  // TODO: get real distance
-                  child: Text('18 kilometers away',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 18)),
-                ),
+                    padding: const EdgeInsets.only(right: 20),
+                    child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
+                      builder: (context, state) {
+                        if (state is CurrentUserWithUserInstance) {
+                          return Text(
+                            getDistance(context, state.user.location,
+                                        user.location)
+                                    .toStringAsFixed(2) +
+                                ' kilometers away',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 18),
+                          );
+                        }
+                        return LoadingSpinner();
+                      },
+                    )),
               ),
             ),
         ],
       ),
     );
+  }
+
+  double getDistance(BuildContext context, SimpleLocation firstLocation,
+      SimpleLocation secondLocation) {
+    final geo = Geoflutterfire();
+
+    GeoFirePoint firstGeoLocation = geo.point(
+        latitude: firstLocation.latitude, longitude: firstLocation.longitude);
+    return firstGeoLocation.distance(
+        lat: secondLocation.latitude, lng: secondLocation.longitude);
   }
 }
