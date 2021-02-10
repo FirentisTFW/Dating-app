@@ -13,24 +13,21 @@ class UserProfileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PhotosCubit(PhotosRepository()),
-      child: Builder(
-        builder: (context) {
-          BlocProvider.of<PhotosCubit>(context)
-              .getMultiplePhotosUrls(user.id, user.photosRef);
+    return Builder(
+      builder: (context) {
+        BlocProvider.of<PhotosCubit>(context)
+            .getMultiplePhotosUrls(user.id, user.photosRef);
 
-          return Column(
-            children: [
-              PhotosSlider(),
-              NameAgeLocationBar(user: user, isMine: isMine),
-              Divider(color: Colors.grey[500]),
-              buildCaption(),
-              if (!isMine) buildMatchRejectBar(),
-            ],
-          );
-        },
-      ),
+        return Column(
+          children: [
+            PhotosSlider(),
+            NameAgeLocationBar(user: user, isMine: isMine),
+            Divider(color: Colors.grey[500]),
+            buildCaption(),
+            if (!isMine) buildMatchRejectBar(),
+          ],
+        );
+      },
     );
   }
 

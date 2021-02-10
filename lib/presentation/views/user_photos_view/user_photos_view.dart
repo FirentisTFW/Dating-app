@@ -1,8 +1,8 @@
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
-import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
+import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
+import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
@@ -22,22 +22,28 @@ class UserPhotosView extends StatelessWidget {
       appBar: AppBar(
         title: _appBarTitle,
         actions: [
-          BlocConsumer<CurrentUserCubit, CurrentUserState>(
+          BlocConsumer<PhotosCubit, PhotosState>(
             listener: (context, state) {
-              if (state is CurrentUserReady && _pickedImages.length == 0) {
+              if (state is PhotosSingleUploaded && _pickedImages.length == 0) {
                 goToMainView();
               }
-              if (state is CurrentUserError) {
-                CurrentUserCubitHelpers.showErrorSnackbar(state);
+              if (state is PhotosError) {
+                PhotosCubitHelpers.showErrorSnackbar(state);
               }
             },
             builder: (context, state) {
-              if (state is CurrentUserWaiting) {
+              if (state is PhotosWaiting) {
                 return _loadingSpinner;
               } else {
                 return FlatButton(
                   padding: const EdgeInsets.only(right: 10),
-                  onPressed: () async => await uploadPhotos(context),
+                  onPressed: () async {
+                    if (_pickedImages.length > 0) {
+                      await uploadPhotos(context);
+                    } else {
+                      goToMainView();
+                    }
+                  },
                   child: const Text(
                     'Next',
                     style: TextStyle(color: Colors.white, fontSize: 24),
@@ -85,17 +91,13 @@ class UserPhotosView extends StatelessWidget {
   void addImage(PickedFile image) => _pickedImages.add(image);
 
   Future<void> uploadPhotos(BuildContext context) async {
-    if (_pickedImages.length == 0) {
-      goToMainView();
-    }
-
     final currentState = BlocProvider.of<CurrentUserCubit>(context).state
         as CurrentUserWithUserInstance;
-    final user = currentState.user;
+    final userId = currentState.user.id;
 
     while (_pickedImages.length > 0) {
-      final wasPhotoUploaded = await BlocProvider.of<CurrentUserCubit>(context)
-          .uploadPhoto(user, _pickedImages.first);
+      final wasPhotoUploaded = await BlocProvider.of<PhotosCubit>(context)
+          .uploadPhoto(userId, _pickedImages.first);
 
       if (wasPhotoUploaded) {
         _pickedImages.removeAt(0);

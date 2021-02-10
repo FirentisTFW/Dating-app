@@ -2,6 +2,7 @@ import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/views/auth_view/auth_view.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
 import 'package:Dating_app/presentation/views/splash_view/splash_view.dart';
@@ -37,8 +38,11 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthBloc(_authRepository),
         ),
         BlocProvider<CurrentUserCubit>(
-          create: (context) => CurrentUserCubit(_usersRepository,
-              _authRepository, _photosRepository, _locationRepository),
+          create: (context) => CurrentUserCubit(
+              _usersRepository, _authRepository, _locationRepository),
+        ),
+        BlocProvider<PhotosCubit>(
+          create: (context) => PhotosCubit(_photosRepository),
         ),
       ],
       child: GetMaterialApp(

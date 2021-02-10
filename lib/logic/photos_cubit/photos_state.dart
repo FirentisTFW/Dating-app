@@ -11,6 +11,8 @@ class PhotosInitial extends PhotosState {}
 
 class PhotosWaiting extends PhotosState {}
 
+class PhotosSingleUploaded extends PhotosState {}
+
 class PhotosSingleFetched extends PhotosState {
   final String photoUrl;
 

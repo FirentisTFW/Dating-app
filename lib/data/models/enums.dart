@@ -7,3 +7,8 @@ enum AuthType {
   Login,
   Registration,
 }
+
+enum ProfileStatus {
+  MissingPersonalData,
+  MissingDiscoverySettings,
+}

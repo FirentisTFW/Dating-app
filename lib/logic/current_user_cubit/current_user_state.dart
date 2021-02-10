@@ -37,7 +37,13 @@ class CurrentUserReady extends CurrentUserWithUserInstance {
 
 class CurrentUserProfileIncomplete extends CurrentUserWithUserInstance {
   /// Profile incomplete - it is missing either personal data (name, birthDate etc.) or searching criteria
-  CurrentUserProfileIncomplete(user) : super(user);
+  final ProfileStatus profileStatus;
+
+  CurrentUserProfileIncomplete({@required user, @required this.profileStatus})
+      : super(user);
+
+  @override
+  List<Object> get props => [profileStatus];
 }
 
 class CurrentUserError extends CurrentUserWithUserInstance {

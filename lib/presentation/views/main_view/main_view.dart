@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
@@ -41,9 +42,10 @@ class MainView extends StatelessWidget {
       body: BlocConsumer<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
           if (state is CurrentUserProfileIncomplete) {
-            if (state.user.name == null) {
+            if (state.profileStatus == ProfileStatus.MissingPersonalData) {
               goToProfileCreationView();
-            } else if (state.user.discoverySettings == null) {
+            } else if (state.profileStatus ==
+                ProfileStatus.MissingDiscoverySettings) {
               goToDiscoverySettingsView();
             }
           } else if (state is CurrentUserError) {
@@ -63,7 +65,7 @@ class MainView extends StatelessWidget {
           }
           return FlatButton(
             child: Text('Test fest'),
-            onPressed: () => Get.off(DiscoverySettingsView()),
+            onPressed: () => Get.off(UserPhotosView()),
           );
         },
       ),

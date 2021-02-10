@@ -4,13 +4,11 @@ import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';
-import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mockito/mockito.dart';
 
 class UsersRepositoryMock extends Mock implements UsersRepository {}
@@ -18,15 +16,12 @@ class UsersRepositoryMock extends Mock implements UsersRepository {}
 class AuthenticationRepositoryMock extends Mock
     implements AuthenticationRepository {}
 
-class PhotosRepositoryMock extends Mock implements PhotosRepository {}
-
 class LocationRepositoryMock extends Mock implements LocationRepository {}
 
 void main() {
   group('CurrentUserCubitTest -', () {
     UsersRepositoryMock usersRepository;
     AuthenticationRepositoryMock authenticationRepository;
-    PhotosRepositoryMock photosRepository;
     LocationRepositoryMock locationRepository;
 
     final discoverySettings = DiscoverySettings(
@@ -37,13 +32,18 @@ void main() {
         gender: Gender.Man,
         name: 'Tester',
         discoverySettings: discoverySettings);
-    final incompleteUser =
+    final userMissingName =
         User(id: '11', birthDate: null, name: null, gender: null);
+    final userMissingDiscoverySettings = User(
+        id: '1',
+        birthDate: DateTime(1995, 1, 1),
+        gender: Gender.Man,
+        name: 'Tester',
+        discoverySettings: null);
 
     setUp(() {
       usersRepository = UsersRepositoryMock();
       authenticationRepository = AuthenticationRepositoryMock();
-      photosRepository = PhotosRepositoryMock();
       locationRepository = LocationRepositoryMock();
     });
     group('updateUser -', () {
@@ -54,8 +54,8 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserReady(updatedUser)]',
         build: () {
           when(usersRepository.updateUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) =>
             cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
@@ -69,8 +69,8 @@ void main() {
           build: () {
             when(usersRepository.updateUser(any))
                 .thenThrow(ErrorDescription('An error occured'));
-            return CurrentUserCubit(usersRepository, authenticationRepository,
-                photosRepository, locationRepository);
+            return CurrentUserCubit(
+                usersRepository, authenticationRepository, locationRepository);
           },
           act: (cubit) =>
               cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
@@ -84,13 +84,15 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserProfileIncomplete(user)]',
         build: () {
           when(usersRepository.createUser(any)).thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserProfileIncomplete(user),
+          CurrentUserProfileIncomplete(
+              user: user,
+              profileStatus: ProfileStatus.MissingDiscoverySettings),
         ],
       );
       blocTest(
@@ -98,8 +100,8 @@ void main() {
         build: () {
           when(usersRepository.createUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
@@ -114,8 +116,8 @@ void main() {
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any)).thenAnswer((_) async => user);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
@@ -124,18 +126,37 @@ void main() {
         ],
       );
       blocTest(
-        'When profile is incomplete, emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
+        'When profile is incomplete (missing personal data), emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
-              .thenAnswer((_) async => incompleteUser);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+              .thenAnswer((_) async => userMissingName);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserProfileIncomplete(incompleteUser),
+          CurrentUserProfileIncomplete(
+              user: userMissingName,
+              profileStatus: ProfileStatus.MissingPersonalData),
+        ],
+      );
+      blocTest(
+        'When profile is incomplete (missing discovery settings), emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
+        build: () {
+          when(authenticationRepository.userId).thenReturn('1');
+          when(usersRepository.getUser(any))
+              .thenAnswer((_) async => userMissingDiscoverySettings);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
+        },
+        act: (cubit) => cubit.checkIfProfileIsComplete(),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserProfileIncomplete(
+              user: userMissingName,
+              profileStatus: ProfileStatus.MissingDiscoverySettings),
         ],
       );
       blocTest(
@@ -144,46 +165,13 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.getUser(any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
           CurrentUserWaiting(),
           CurrentUserError(),
-        ],
-      );
-    });
-    group('uploadPhoto -', () {
-      final photo = PickedFile('photoPath');
-      blocTest(
-        'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
-        build: () {
-          when(authenticationRepository.userId).thenReturn('1');
-          when(photosRepository.uploadPhoto(any, any))
-              .thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
-        },
-        act: (cubit) => cubit.uploadPhoto(user, photo),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserReady(user),
-        ],
-      );
-      blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
-        build: () {
-          when(authenticationRepository.userId).thenReturn('1');
-          when(photosRepository.uploadPhoto(any, any))
-              .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
-        },
-        act: (cubit) => cubit.uploadPhoto(user, photo),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserError(user: user),
         ],
       );
     });
@@ -194,8 +182,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.updateDiscoverySettings(any, any))
               .thenAnswer((_) async => null);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
@@ -209,8 +197,8 @@ void main() {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.updateDiscoverySettings(any, any))
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
@@ -226,8 +214,8 @@ void main() {
         build: () {
           when(locationRepository.getCurrentLocation())
               .thenAnswer((_) async => location);
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.getCurrentLocation(),
         expect: [
@@ -240,8 +228,8 @@ void main() {
         build: () {
           when(locationRepository.getCurrentLocation())
               .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(usersRepository, authenticationRepository,
-              photosRepository, locationRepository);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.getCurrentLocation(),
         expect: [

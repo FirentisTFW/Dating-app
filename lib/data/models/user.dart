@@ -85,6 +85,7 @@ class User {
     Gender gender,
     String caption,
     SimpleLocation location,
+    DiscoverySettings discoverySettings,
     List<String> photosRef,
   }) {
     return User(
@@ -94,6 +95,7 @@ class User {
       gender: gender ?? this.gender,
       caption: caption ?? this.caption,
       location: location ?? this.location,
+      discoverySettings: discoverySettings ?? this.discoverySettings,
       photosRef: photosRef ?? this.photosRef,
     );
   }

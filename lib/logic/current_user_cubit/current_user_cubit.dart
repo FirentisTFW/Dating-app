@@ -1,24 +1,23 @@
 import 'package:Dating_app/data/models/discovery_settings.dart';
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';
-import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
 
 part 'current_user_state.dart';
 
 class CurrentUserCubit extends Cubit<CurrentUserState> {
   final UsersRepository _usersRepository;
   final AuthenticationRepository _authRepository;
-  final PhotosRepository _photosRepository;
   final LocationRepository _locationRepository;
 
-  CurrentUserCubit(this._usersRepository, this._authRepository,
-      this._photosRepository, this._locationRepository)
+  CurrentUserCubit(
+      this._usersRepository, this._authRepository, this._locationRepository)
       : super(CurrentUserInitial());
 
   Future<void> updateUser({User updatedUser, User oldUser}) async {
@@ -37,23 +36,10 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
 
     try {
       await _usersRepository.createUser(user);
-      emit(CurrentUserProfileIncomplete(user));
+      emit(CurrentUserProfileIncomplete(
+          user: user, profileStatus: ProfileStatus.MissingDiscoverySettings));
     } catch (err) {
       emit(CurrentUserError());
-    }
-  }
-
-  Future<bool> uploadPhoto(User user, PickedFile photo) async {
-    emit(CurrentUserWaiting());
-
-    try {
-      final userId = _authRepository.userId;
-      await _photosRepository.uploadPhoto(photo, userId);
-      emit(CurrentUserReady(user));
-      return true;
-    } catch (err) {
-      emit(CurrentUserError(user: user));
-      return false;
     }
   }
 
@@ -87,8 +73,12 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     try {
       final user = await _fetchUserData();
 
-      if (user.name == null || user.discoverySettings == null) {
-        emit(CurrentUserProfileIncomplete(user));
+      if (user.name == null) {
+        emit(CurrentUserProfileIncomplete(
+            user: user, profileStatus: ProfileStatus.MissingPersonalData));
+      } else if (user.discoverySettings == null) {
+        emit(CurrentUserProfileIncomplete(
+            user: user, profileStatus: ProfileStatus.MissingDiscoverySettings));
       } else {
         emit(CurrentUserReady(user));
       }

@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'photos_state.dart';
 
@@ -33,6 +34,19 @@ class PhotosCubit extends Cubit<PhotosState> {
       emit(PhotosMultipleFetched(photosUrls));
     } catch (err) {
       emit(PhotosError());
+    }
+  }
+
+  Future<bool> uploadPhoto(String userId, PickedFile photo) async {
+    emit(PhotosWaiting());
+
+    try {
+      await _photosRepository.uploadPhoto(photo, userId);
+      emit(PhotosSingleUploaded());
+      return true;
+    } catch (err) {
+      emit(PhotosError());
+      return false;
     }
   }
 }
