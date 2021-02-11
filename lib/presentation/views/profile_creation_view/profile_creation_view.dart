@@ -1,5 +1,5 @@
 import 'package:Dating_app/data/models/enums.dart';
-import 'package:Dating_app/data/models/simple_location.dart';
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
@@ -26,7 +26,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
   Gender _gender;
   DateTime _birthDate;
   String _caption = '';
-  SimpleLocation _location;
+  CustomLocation _location;
   final _formKey = GlobalKey<FormState>();
 
   @override

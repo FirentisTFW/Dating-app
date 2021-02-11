@@ -1,4 +1,4 @@
-import 'package:Dating_app/data/models/simple_location.dart';
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
@@ -7,7 +7,6 @@ import 'package:Dating_app/presentation/universal_components/loading_spinner.dar
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 
 class PhotosSlider extends StatelessWidget {
   const PhotosSlider({Key key}) : super(key: key);
@@ -96,13 +95,9 @@ class NameAgeLocationBar extends StatelessWidget {
     );
   }
 
-  double getDistance(BuildContext context, SimpleLocation firstLocation,
-      SimpleLocation secondLocation) {
-    final geo = Geoflutterfire();
-
-    GeoFirePoint firstGeoLocation = geo.point(
-        latitude: firstLocation.latitude, longitude: firstLocation.longitude);
-    return firstGeoLocation.distance(
+  double getDistance(BuildContext context, CustomLocation firstLocation,
+      CustomLocation secondLocation) {
+    return firstLocation.distance(
         lat: secondLocation.latitude, lng: secondLocation.longitude);
   }
 }

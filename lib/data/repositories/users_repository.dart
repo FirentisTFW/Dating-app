@@ -12,6 +12,11 @@ class UsersRepository {
     return User.fromMap(userMap);
   }
 
+  Future getUsersByDiscoverySettings(
+      DiscoverySettings discoverySettings) async {
+    // ...
+  }
+
   Future updateUser(User user) async =>
       await _firestoreProvider.updateUser(user.id, user.toMap());
 

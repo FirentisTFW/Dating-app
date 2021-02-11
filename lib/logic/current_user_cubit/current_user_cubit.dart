@@ -1,6 +1,6 @@
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
-import 'package:Dating_app/data/models/simple_location.dart';
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';

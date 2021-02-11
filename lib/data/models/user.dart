@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
-import 'package:Dating_app/data/models/simple_location.dart';
 import 'package:flutter/material.dart';
 
 import 'enums.dart';
@@ -13,7 +13,7 @@ class User {
   final DateTime birthDate;
   final Gender gender;
   final String caption;
-  final SimpleLocation location;
+  final CustomLocation location;
   final DiscoverySettings discoverySettings;
   final List<String> photosRef;
 
@@ -48,7 +48,7 @@ class User {
       'birthDate': birthDate?.millisecondsSinceEpoch,
       'gender': GenderExtension.toMap(gender),
       'caption': caption,
-      'location': location?.toMap(),
+      'location': location.data,
       'discoverySettings': discoverySettings?.toMap(),
       'photosRef': photosRef,
     };
@@ -63,7 +63,7 @@ class User {
       birthDate: DateTime.fromMillisecondsSinceEpoch(map['birthDate']),
       gender: GenderExtension.fromMap(map['gender']),
       caption: map['caption'],
-      location: SimpleLocation.fromMap(map['location']),
+      location: CustomLocation.fromMap(map['location']),
       discoverySettings: DiscoverySettings.fromMap(map['discoverySettings']),
       photosRef: map['photosRef'],
     );
@@ -75,7 +75,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, birthDate: $birthDate, gender: $gender, caption: $caption, location: $location)';
+    return 'User(id: $id, name: $name, birthDate: $birthDate, gender: $gender, caption: $caption, location: $location, discoverySettings: $discoverySettings, photosRef: $photosRef)';
   }
 
   User copyWith({
@@ -84,7 +84,7 @@ class User {
     DateTime birthDate,
     Gender gender,
     String caption,
-    SimpleLocation location,
+    CustomLocation location,
     DiscoverySettings discoverySettings,
     List<String> photosRef,
   }) {

@@ -1,5 +1,4 @@
 import 'package:Dating_app/data/models/enums.dart';
-import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
@@ -50,8 +49,10 @@ class MainView extends StatelessWidget {
             }
           } else if (state is CurrentUserError) {
             CurrentUserCubitHelpers.showErrorSnackbar(state);
-            BlocProvider.of<CurrentUserCubit>(context)
-                .checkIfProfileIsComplete();
+            Future.delayed(Duration(seconds: 4), () {
+              BlocProvider.of<CurrentUserCubit>(context)
+                  .checkIfProfileIsComplete();
+            });
           }
         },
         builder: (context, state) {

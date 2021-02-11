@@ -12,7 +12,7 @@ class CurrentUserInitial extends CurrentUserState {}
 class CurrentUserWaiting extends CurrentUserState {}
 
 class CurrentUserLocationReceived extends CurrentUserState {
-  final SimpleLocation location;
+  final CustomLocation location;
 
   CurrentUserLocationReceived(this.location);
 

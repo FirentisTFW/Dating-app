@@ -1,6 +1,6 @@
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
-import 'package:Dating_app/data/models/simple_location.dart';
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';
@@ -208,12 +208,12 @@ void main() {
       );
     });
     group('getCurrentLocation -', () {
-      final location = SimpleLocation(latitude: 12.34, longitude: 12.34);
+      final location = CustomLocation(latitude: 12.34, longitude: 12.34);
       blocTest(
         'When successful, emits [CurrentUserWaiting, CurrentUserLocationReceived]',
         build: () {
-          when(locationRepository.getCurrentLocation())
-              .thenAnswer((_) async => location);
+          when(locationRepository.getCurrentLocation()).thenAnswer(
+              (_) async => CustomLocation(latitude: 12.34, longitude: 12.34));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
