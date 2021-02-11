@@ -21,16 +21,11 @@ class PhotosCubit extends Cubit<PhotosState> {
     }
   }
 
-  Future<void> getMultiplePhotosUrls(
-      String userId, List<String> photoNames) async {
+  Future<void> getMultiplePhotosUrls(String userId) async {
     emit(PhotosWaiting());
 
     try {
-      List<String> photosUrls = [];
-      for (int i = 0; i < photoNames.length; i++) {
-        final url = await _photosRepository.getPhotoUrl(userId, photoNames[i]);
-        photosUrls.add(url);
-      }
+      final photosUrls = await _photosRepository.getPhotosUrlsForUser(userId);
       emit(PhotosMultipleFetched(photosUrls));
     } catch (err) {
       emit(PhotosError());

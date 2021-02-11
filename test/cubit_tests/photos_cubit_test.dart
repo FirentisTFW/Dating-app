@@ -19,32 +19,27 @@ void main() {
     });
 
     group('getMultiplePhotosUrls -', () {
-      final photosNames = [
-        'photo_1',
-        'photo_2',
-        'photo_3',
-      ];
       blocTest(
         'When successful, emits [PhotosWaiting, PhotosMultipleFetched]',
         build: () {
-          when(photosRepository.getPhotoUrl(any, any))
-              .thenAnswer((_) async => 'photoUrl');
+          when(photosRepository.getPhotosUrlsForUser(any)).thenAnswer(
+              (_) async => ['photoUrl_1', 'photoUrl_2', 'photoUrl_3']);
           return PhotosCubit(photosRepository);
         },
-        act: (cubit) => cubit.getMultiplePhotosUrls(userId, photosNames),
+        act: (cubit) => cubit.getMultiplePhotosUrls(userId),
         expect: [
           PhotosWaiting(),
-          PhotosMultipleFetched(['photoUrl', 'photoUrl', 'photoUrl']),
+          PhotosMultipleFetched(['photoUrl_1', 'photoUrl_2', 'photoUrl_3']),
         ],
       );
       blocTest(
         'When failure, emits [PhotosWaiting, PhotosError]',
         build: () {
-          when(photosRepository.getPhotoUrl(any, any))
+          when(photosRepository.getPhotosUrlsForUser(any))
               .thenThrow(ErrorDescription('An error occured'));
           return PhotosCubit(photosRepository);
         },
-        act: (cubit) => cubit.getMultiplePhotosUrls(userId, photosNames),
+        act: (cubit) => cubit.getMultiplePhotosUrls(userId),
         expect: [
           PhotosWaiting(),
           PhotosError(),

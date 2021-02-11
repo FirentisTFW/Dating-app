@@ -1,5 +1,4 @@
 import 'package:Dating_app/data/models/user.dart';
-import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/components/user_profile_item_components.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +14,7 @@ class UserProfileItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        BlocProvider.of<PhotosCubit>(context)
-            .getMultiplePhotosUrls(user.id, user.photosRef);
+        BlocProvider.of<PhotosCubit>(context).getMultiplePhotosUrls(user.id);
 
         return Column(
           children: [

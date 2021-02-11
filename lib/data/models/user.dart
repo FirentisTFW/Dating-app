@@ -15,7 +15,6 @@ class User {
   final String caption;
   final CustomLocation location;
   final DiscoverySettings discoverySettings;
-  final List<String> photosRef;
 
   User({
     @required this.id,
@@ -25,7 +24,6 @@ class User {
     this.caption,
     this.location,
     this.discoverySettings,
-    this.photosRef,
   });
 
   int getAge() {
@@ -50,7 +48,6 @@ class User {
       'caption': caption,
       'location': location.data,
       'discoverySettings': discoverySettings?.toMap(),
-      'photosRef': photosRef,
     };
   }
 
@@ -65,7 +62,6 @@ class User {
       caption: map['caption'],
       location: CustomLocation.fromMap(map['location']),
       discoverySettings: DiscoverySettings.fromMap(map['discoverySettings']),
-      photosRef: map['photosRef'],
     );
   }
 
@@ -75,7 +71,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, birthDate: $birthDate, gender: $gender, caption: $caption, location: $location, discoverySettings: $discoverySettings, photosRef: $photosRef)';
+    return 'User(id: $id, name: $name, birthDate: $birthDate, gender: $gender, caption: $caption, location: $location, discoverySettings: $discoverySettings)';
   }
 
   User copyWith({
@@ -86,7 +82,6 @@ class User {
     String caption,
     CustomLocation location,
     DiscoverySettings discoverySettings,
-    List<String> photosRef,
   }) {
     return User(
       id: id ?? this.id,
@@ -96,7 +91,6 @@ class User {
       caption: caption ?? this.caption,
       location: location ?? this.location,
       discoverySettings: discoverySettings ?? this.discoverySettings,
-      photosRef: photosRef ?? this.photosRef,
     );
   }
 }
