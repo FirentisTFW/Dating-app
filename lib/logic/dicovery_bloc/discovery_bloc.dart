@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
@@ -22,9 +23,10 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
 
     if (event is FetchUsers) {
       try {
-        // final users = _usersRepository
-        //     .getUsersByDiscoverySettings(event.discoverySettings);
-        // yield DiscoveryUsersFetched(users);
+        final users = await _usersRepository.getUsersByDiscoverySettings(
+            event.discoverySettings,
+            location: event.currentLocation);
+        yield DiscoveryUsersFetched(users);
       } catch (err) {
         yield DiscoveryError();
       }

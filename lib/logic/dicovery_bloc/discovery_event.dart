@@ -9,8 +9,9 @@ abstract class DiscoveryEvent extends Equatable {
 
 class FetchUsers extends DiscoveryEvent {
   final DiscoverySettings discoverySettings;
+  final CustomLocation currentLocation;
 
-  const FetchUsers(this.discoverySettings);
+  const FetchUsers(this.discoverySettings, this.currentLocation);
 
   @override
   List<Object> get props => [discoverySettings];
