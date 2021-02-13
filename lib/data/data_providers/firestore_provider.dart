@@ -1,6 +1,7 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/custom_helpers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/foundation.dart';
 
 class FirestoreProvider {
   final _db = FirebaseFirestore.instance;
-  CollectionReference _usersCollection;
+  CollectionReference _menCollection;
+  CollectionReference _womenCollection;
 
   FirestoreProvider() {
     // local firebase emulator
@@ -21,17 +23,25 @@ class FirestoreProvider {
 
     // end - local firebase emulator
 
-    _usersCollection = _db.collection('users');
+    _menCollection = _db.collection('users').doc('men').collection('men');
+    _womenCollection = _db.collection('users').doc('women').collection('women');
   }
 
-  Future getUser(String uid) async => await _usersCollection.doc(uid).get();
+  Future getUser(String uid) async {
+    final user = await _menCollection.doc(uid).get();
+    if (user.data() != null) {
+      return user;
+    }
+    return await _womenCollection.doc(uid).get();
+  }
 
   Future getUsersByDiscoverySettings(
       DiscoverySettings discoverySettings, CustomLocation userLocation) async {
     final geo = locator<Geoflutterfire>();
+    final genderCollection = _getGenderCollection(discoverySettings.gender);
 
     final queryResult = await geo
-        .collection(collectionRef: _usersCollection)
+        .collection(collectionRef: genderCollection)
         .within(
           center: userLocation,
           radius: discoverySettings.distance.toDouble(),
@@ -50,12 +60,20 @@ class FirestoreProvider {
     return filteredResult;
   }
 
-  Future updateUser(String uid, dynamic user) async =>
-      await _usersCollection.doc(uid).set(user);
+  Future updateUser(String uid, Gender gender, dynamic user) async =>
+      await _getGenderCollection(gender).doc(uid).set(user);
 
-  Future createUser(String uid, dynamic user) async =>
-      await _usersCollection.doc(uid).set(user);
+  Future createUser(String uid, Gender gender, dynamic user) async =>
+      await _getGenderCollection(gender).doc(uid).set(user);
 
-  Future updateDiscoverySettings(String uid, dynamic discoverySettings) async =>
-      await _usersCollection.doc(uid).update(discoverySettings);
+  Future updateDiscoverySettings(
+          String uid, Gender gender, dynamic discoverySettings) async =>
+      await _getGenderCollection(gender).doc(uid).update(discoverySettings);
+
+  CollectionReference _getGenderCollection(Gender gender) {
+    if (gender == Gender.Man) {
+      return _menCollection;
+    }
+    return _womenCollection;
+  }
 }

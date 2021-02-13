@@ -2,6 +2,7 @@ import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart' as customUser;
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
+import 'package:Dating_app/logic/fake_users_creator.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
@@ -51,7 +52,7 @@ class MainView extends StatelessWidget {
             }
           } else if (state is CurrentUserError) {
             CurrentUserCubitHelpers.showErrorSnackbar(state);
-            Future.delayed(Duration(seconds: 4), () {
+            Future.delayed(Duration(seconds: 5), () {
               BlocProvider.of<CurrentUserCubit>(context)
                   .checkIfProfileIsComplete();
             });
@@ -75,6 +76,12 @@ class MainView extends StatelessWidget {
                   },
                 ),
                 FlatButton(
+                  child: Text('Create fake users'),
+                  onPressed: () {
+                    createFakeUsers();
+                  },
+                ),
+                FlatButton(
                   child: Text('Fetch users'),
                   onPressed: () {
                     BlocProvider.of<DiscoveryBloc>(context).add(FetchUsers(
@@ -86,7 +93,7 @@ class MainView extends StatelessWidget {
                     listener: (context, state) {},
                     builder: (context, state) {
                       if (state is DiscoveryUsersFetched) {
-                        print(state.users);
+                        print(state.users.length);
                         return Container(
                           child:
                               Text('Tutaj będą się userki wyświetlaly pięknie'),

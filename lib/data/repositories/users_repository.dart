@@ -2,6 +2,7 @@ import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:flutter/foundation.dart';
 
@@ -31,16 +32,16 @@ class UsersRepository {
   }
 
   Future updateUser(User user) async =>
-      await _firestoreProvider.updateUser(user.id, user.toMap());
+      await _firestoreProvider.updateUser(user.id, user.gender, user.toMap());
 
   Future createUser(User user) async =>
-      await _firestoreProvider.createUser(user.id, user.toMap());
+      await _firestoreProvider.createUser(user.id, user.gender, user.toMap());
 
   Future updateDiscoverySettings(
-      String uid, DiscoverySettings discoverySettings) async {
+      String uid, Gender gender, DiscoverySettings discoverySettings) async {
     final discoverySettingsMap = {
       'discoverySettings': discoverySettings.toMap()
     };
-    await _firestoreProvider.updateDiscoverySettings(uid, discoverySettingsMap);
+    await _firestoreProvider.updateDiscoverySettings(uid, gender, discoverySettingsMap);
   }
 }

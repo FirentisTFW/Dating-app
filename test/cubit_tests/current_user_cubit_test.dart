@@ -129,8 +129,7 @@ void main() {
         'When profile is incomplete (missing personal data), emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUser(any))
-              .thenAnswer((_) async => userMissingName);
+          when(usersRepository.getUser(any)).thenAnswer((_) async => null);
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
@@ -180,7 +179,7 @@ void main() {
         'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.updateDiscoverySettings(any, any))
+          when(usersRepository.updateDiscoverySettings(any, any, any))
               .thenAnswer((_) async => null);
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
@@ -195,7 +194,7 @@ void main() {
         'When failure, emits [CurrentUserWaiting, CurrentUserError]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.updateDiscoverySettings(any, any))
+          when(usersRepository.updateDiscoverySettings(any, any, any))
               .thenThrow(ErrorDescription('An error occured'));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);

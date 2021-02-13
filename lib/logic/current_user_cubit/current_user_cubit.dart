@@ -48,8 +48,8 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     emit(CurrentUserWaiting());
 
     try {
-      final userId = _authRepository.userId;
-      await _usersRepository.updateDiscoverySettings(userId, discoverySettings);
+      await _usersRepository.updateDiscoverySettings(
+          user.id, user.gender, discoverySettings);
       emit(CurrentUserReady(user));
     } catch (err) {
       emit(CurrentUserError(user: user));
