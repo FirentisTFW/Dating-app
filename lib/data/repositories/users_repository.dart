@@ -11,7 +11,10 @@ class UsersRepository {
   Future<User> getUser(String uid) async {
     final userData = await _firestoreProvider.getUser(uid);
     final userMap = userData.data();
-    return User.fromMap(userMap);
+    if (userMap != null) {
+      return User.fromMap(userMap);
+    }
+    return null;
   }
 
   Future<List<User>> getUsersByDiscoverySettings(

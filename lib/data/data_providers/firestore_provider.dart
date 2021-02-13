@@ -4,9 +4,25 @@ import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/logic/custom_helpers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:flutter/foundation.dart';
 
 class FirestoreProvider {
-  final _usersCollection = FirebaseFirestore.instance.collection('users');
+  final _db = FirebaseFirestore.instance;
+  CollectionReference _usersCollection;
+
+  FirestoreProvider() {
+    // local firebase emulator
+
+    String host = defaultTargetPlatform == TargetPlatform.android
+        ? '10.0.2.2:8080'
+        : 'localhost:8080';
+
+    _db.settings = Settings(host: host, sslEnabled: false);
+
+    // end - local firebase emulator
+
+    _usersCollection = _db.collection('users');
+  }
 
   Future getUser(String uid) async => await _usersCollection.doc(uid).get();
 
