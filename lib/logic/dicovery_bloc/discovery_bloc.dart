@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:Dating_app/data/models/custom_location.dart';
-import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 part 'discovery_event.dart';
 part 'discovery_state.dart';
@@ -21,12 +20,18 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
   ) async* {
     yield DiscoveryWaiting();
 
-    if (event is FetchUsers) {
+    if (event is FetchAndFilterUsers) {
       try {
-        final users = await _usersRepository.getUsersByDiscoverySettings(
-            event.discoverySettings,
-            location: event.currentLocation);
-        yield DiscoveryUsersFetched(users);
+        final fetchedUsers = await _usersRepository.getUsersByDiscoverySettings(
+            event.user.discoverySettings,
+            location: event.user.location);
+        final rejectedUsersIds = await _usersRepository.getUserRejections(
+            event.user.id, event.user.gender);
+        final unrejectedUsers = fetchedUsers
+            .where((user) =>
+                !rejectedUsersIds.any((rejectedId) => rejectedId == user.id))
+            .toList();
+        yield DiscoveryUsersFetched(unrejectedUsers);
       } catch (err) {
         yield DiscoveryError();
       }

@@ -41,7 +41,7 @@ class FirestoreProvider {
     final genderCollection = _getGenderCollection(discoverySettings.gender);
 
     final queryResult = await geo
-        .collection(collectionRef: genderCollection)
+        .collection(collectionRef: genderCollection.limit(50))
         .within(
           center: userLocation,
           radius: discoverySettings.distance.toDouble(),
@@ -76,4 +76,10 @@ class FirestoreProvider {
     }
     return _womenCollection;
   }
+
+  Future getUserRejections(String userId, Gender gender) async =>
+      await _getGenderCollection(gender)
+          .doc(userId)
+          .collection('rejections')
+          .get();
 }

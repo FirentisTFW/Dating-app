@@ -18,7 +18,7 @@ import 'data/repositories/photos_repository.dart';
 import 'logic/auth_bloc/auth_bloc.dart';
 import 'presentation/setup/themes.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   setupLocator();

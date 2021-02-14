@@ -4,6 +4,7 @@ import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class UsersRepository {
@@ -21,14 +22,10 @@ class UsersRepository {
   Future<List<User>> getUsersByDiscoverySettings(
       DiscoverySettings discoverySettings,
       {@required CustomLocation location}) async {
-    final usersSnapshots = await _firestoreProvider.getUsersByDiscoverySettings(
-        discoverySettings, location);
-    List<User> users = [];
+    final List<DocumentSnapshot> usersSnapshots = await _firestoreProvider
+        .getUsersByDiscoverySettings(discoverySettings, location);
 
-    for (int i = 0; i < usersSnapshots.length; i++) {
-      users.add(User.fromMap(usersSnapshots[i].data()));
-    }
-    return users;
+    return usersSnapshots.map((item) => User.fromMap(item.data())).toList();
   }
 
   Future updateUser(User user) async =>
@@ -42,6 +39,14 @@ class UsersRepository {
     final discoverySettingsMap = {
       'discoverySettings': discoverySettings.toMap()
     };
-    await _firestoreProvider.updateDiscoverySettings(uid, gender, discoverySettingsMap);
+    await _firestoreProvider.updateDiscoverySettings(
+        uid, gender, discoverySettingsMap);
+  }
+
+  Future<List<String>> getUserRejections(String userId, Gender gender) async {
+    final rejectionsSnapshots = await _firestoreProvider.getUserRejections(
+        userId, gender) as QuerySnapshot;
+
+    return rejectionsSnapshots.docs.map((item) => item.id).toList();
   }
 }

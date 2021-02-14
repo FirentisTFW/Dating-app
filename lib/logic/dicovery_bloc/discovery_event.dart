@@ -7,12 +7,11 @@ abstract class DiscoveryEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchUsers extends DiscoveryEvent {
-  final DiscoverySettings discoverySettings;
-  final CustomLocation currentLocation;
+class FetchAndFilterUsers extends DiscoveryEvent {
+  final User user;
 
-  const FetchUsers(this.discoverySettings, this.currentLocation);
+  const FetchAndFilterUsers({@required this.user});
 
   @override
-  List<Object> get props => [discoverySettings];
+  List<Object> get props => [user];
 }

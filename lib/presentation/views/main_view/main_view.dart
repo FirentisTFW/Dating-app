@@ -83,9 +83,10 @@ class MainView extends StatelessWidget {
                 ),
                 FlatButton(
                   child: Text('Fetch users'),
-                  onPressed: () {
-                    BlocProvider.of<DiscoveryBloc>(context).add(FetchUsers(
-                        state.user.discoverySettings, state.user.location));
+                  onPressed: () async {
+                    // TODO: get real rejected  users
+                    BlocProvider.of<DiscoveryBloc>(context)
+                        .add(FetchAndFilterUsers(user: state.user));
                   },
                 ),
                 Container(
