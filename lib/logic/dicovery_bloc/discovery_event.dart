@@ -15,3 +15,15 @@ class FetchAndFilterUsers extends DiscoveryEvent {
   @override
   List<Object> get props => [user];
 }
+
+class AcceptUser extends DiscoveryEvent {
+  final List<User> users;
+  final String acceptingUid;
+  final String acceptedUid;
+
+  AcceptUser(this.users,
+      {@required this.acceptingUid, @required this.acceptedUid});
+
+  @override
+  List<Object> get props => [acceptingUid, acceptedUid];
+}

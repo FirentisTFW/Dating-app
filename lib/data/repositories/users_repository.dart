@@ -1,5 +1,6 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
+import 'package:Dating_app/data/models/acceptance.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
@@ -28,11 +29,18 @@ class UsersRepository {
     return usersSnapshots.map((item) => User.fromMap(item.data())).toList();
   }
 
-  Future updateUser(User user) async =>
-      await _firestoreProvider.updateUser(user.id, user.toMap());
+  Future<List<String>> getUserRejections(String userId) async {
+    final rejectionsSnapshots =
+        await _firestoreProvider.getUserRejections(userId) as QuerySnapshot;
+
+    return rejectionsSnapshots.docs.map((item) => item.id).toList();
+  }
 
   Future createUser(User user) async =>
       await _firestoreProvider.createUser(user.id, user.toMap());
+
+  Future updateUser(User user) async =>
+      await _firestoreProvider.updateUser(user.id, user.toMap());
 
   Future updateDiscoverySettings(
       String uid, Gender gender, DiscoverySettings discoverySettings) async {
@@ -43,10 +51,7 @@ class UsersRepository {
         uid, gender, discoverySettingsMap);
   }
 
-  Future<List<String>> getUserRejections(String userId) async {
-    final rejectionsSnapshots =
-        await _firestoreProvider.getUserRejections(userId) as QuerySnapshot;
-
-    return rejectionsSnapshots.docs.map((item) => item.id).toList();
-  }
+  Future acceptUser({String acceptingUid, Acceptance acceptance}) async =>
+      await _firestoreProvider.acceptUser(
+          acceptingUid: acceptingUid, acceptance: acceptance.toMap());
 }

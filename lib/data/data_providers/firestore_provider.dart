@@ -90,4 +90,10 @@ class FirestoreProvider {
     }
     return _womenCollection;
   }
+
+  Future acceptUser({String acceptingUid, dynamic acceptance}) async =>
+      await _getGenderCollectionForUser(acceptingUid)
+          .doc(acceptingUid)
+          .collection('acceptances')
+          .add(acceptance);
 }

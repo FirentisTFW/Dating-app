@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Dating_app/data/models/acceptance.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -32,6 +33,18 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
                 !rejectedUsersIds.any((rejectedId) => rejectedId == user.id))
             .toList();
         yield DiscoveryUsersFetched(unrejectedUsers);
+      } catch (err) {
+        yield DiscoveryError();
+      }
+    } else if (event is AcceptUser) {
+      try {
+        await _usersRepository.acceptUser(
+            acceptingUid: event.acceptingUid,
+            acceptance:
+                Acceptance(userId: event.acceptedUid, date: DateTime.now()));
+        final remainingUsers =
+            event.users.where((u) => u.id != event.acceptedUid).toList();
+        yield DiscoveryUsersFetched(remainingUsers);
       } catch (err) {
         yield DiscoveryError();
       }

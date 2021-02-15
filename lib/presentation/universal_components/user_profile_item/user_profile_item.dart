@@ -7,8 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UserProfileItem extends StatelessWidget {
   final User user;
   final bool isMine;
+  final Function rejectUser;
+  final Function acceptUser;
 
-  UserProfileItem({Key key, this.user, this.isMine = false}) : super(key: key);
+  UserProfileItem({
+    Key key,
+    @required this.user,
+    this.isMine = false,
+    this.rejectUser,
+    this.acceptUser,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +62,21 @@ class UserProfileItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Icon(
-              Icons.close,
-              size: 38,
-              color: Colors.red,
+            GestureDetector(
+              onTap: rejectUser,
+              child: Icon(
+                Icons.close,
+                size: 38,
+                color: Colors.red,
+              ),
             ),
-            Icon(
-              Icons.check,
-              size: 38,
-              color: Colors.green,
+            GestureDetector(
+              onTap: acceptUser,
+              child: Icon(
+                Icons.check,
+                size: 38,
+                color: Colors.green,
+              ),
             ),
           ],
         ),
