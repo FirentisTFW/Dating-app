@@ -94,7 +94,7 @@ class MainView extends StatelessWidget {
                     listener: (context, state) {},
                     builder: (context, state) {
                       if (state is DiscoveryUsersFetched) {
-                        print(state.users.length);
+                        print(state.users);
                         return Container(
                           child:
                               Text('Tutaj będą się userki wyświetlaly pięknie'),
@@ -111,6 +111,7 @@ class MainView extends StatelessWidget {
               onPressed: () => Get.off(UserPhotosView()),
             );
           }
+          return Text('Lipton');
         },
       ),
     );

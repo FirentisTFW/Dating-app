@@ -25,8 +25,8 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
         final fetchedUsers = await _usersRepository.getUsersByDiscoverySettings(
             event.user.discoverySettings,
             location: event.user.location);
-        final rejectedUsersIds = await _usersRepository.getUserRejections(
-            event.user.id, event.user.gender);
+        final rejectedUsersIds =
+            await _usersRepository.getUserRejections(event.user.id);
         final unrejectedUsers = fetchedUsers
             .where((user) =>
                 !rejectedUsersIds.any((rejectedId) => rejectedId == user.id))

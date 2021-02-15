@@ -29,10 +29,10 @@ class UsersRepository {
   }
 
   Future updateUser(User user) async =>
-      await _firestoreProvider.updateUser(user.id, user.gender, user.toMap());
+      await _firestoreProvider.updateUser(user.id, user.toMap());
 
   Future createUser(User user) async =>
-      await _firestoreProvider.createUser(user.id, user.gender, user.toMap());
+      await _firestoreProvider.createUser(user.id, user.toMap());
 
   Future updateDiscoverySettings(
       String uid, Gender gender, DiscoverySettings discoverySettings) async {
@@ -43,9 +43,9 @@ class UsersRepository {
         uid, gender, discoverySettingsMap);
   }
 
-  Future<List<String>> getUserRejections(String userId, Gender gender) async {
-    final rejectionsSnapshots = await _firestoreProvider.getUserRejections(
-        userId, gender) as QuerySnapshot;
+  Future<List<String>> getUserRejections(String userId) async {
+    final rejectionsSnapshots =
+        await _firestoreProvider.getUserRejections(userId) as QuerySnapshot;
 
     return rejectionsSnapshots.docs.map((item) => item.id).toList();
   }

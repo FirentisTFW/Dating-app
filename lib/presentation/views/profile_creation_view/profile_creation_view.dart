@@ -143,7 +143,9 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
     if (isValid) {
       _formKey.currentState.save();
 
-      final uid = firebase.FirebaseAuth.instance.currentUser.uid;
+      final genderIndicator = _gender == Gender.Man ? 'm' : 'w';
+      final uid =
+          genderIndicator + firebase.FirebaseAuth.instance.currentUser.uid;
       final newUser = User(
         id: uid,
         name: _name,

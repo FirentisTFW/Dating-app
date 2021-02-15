@@ -28,17 +28,18 @@ class FirestoreProvider {
   }
 
   Future getUser(String uid) async {
-    final user = await _menCollection.doc(uid).get();
+    final user = await _menCollection.doc('m' + uid).get();
     if (user.data() != null) {
       return user;
     }
-    return await _womenCollection.doc(uid).get();
+    return await _womenCollection.doc('w' + uid).get();
   }
 
   Future getUsersByDiscoverySettings(
       DiscoverySettings discoverySettings, CustomLocation userLocation) async {
     final geo = locator<Geoflutterfire>();
-    final genderCollection = _getGenderCollection(discoverySettings.gender);
+    final genderCollection =
+        _getGenderCollectionForGender(discoverySettings.gender);
 
     final queryResult = await geo
         .collection(collectionRef: genderCollection.limit(50))
@@ -60,26 +61,33 @@ class FirestoreProvider {
     return filteredResult;
   }
 
-  Future updateUser(String uid, Gender gender, dynamic user) async =>
-      await _getGenderCollection(gender).doc(uid).set(user);
+  Future updateUser(String uid, dynamic user) async =>
+      await _getGenderCollectionForUser(uid).doc(uid).set(user);
 
-  Future createUser(String uid, Gender gender, dynamic user) async =>
-      await _getGenderCollection(gender).doc(uid).set(user);
+  Future createUser(String uid, dynamic user) async =>
+      await _getGenderCollectionForUser(uid).doc(uid).set(user);
 
   Future updateDiscoverySettings(
           String uid, Gender gender, dynamic discoverySettings) async =>
-      await _getGenderCollection(gender).doc(uid).update(discoverySettings);
+      await _getGenderCollectionForUser(uid).doc(uid).update(discoverySettings);
 
-  CollectionReference _getGenderCollection(Gender gender) {
+  Future getUserRejections(String uid) async =>
+      await _getGenderCollectionForUser(uid)
+          .doc(uid)
+          .collection('rejections')
+          .get();
+
+  CollectionReference _getGenderCollectionForGender(Gender gender) {
     if (gender == Gender.Man) {
       return _menCollection;
     }
     return _womenCollection;
   }
 
-  Future getUserRejections(String userId, Gender gender) async =>
-      await _getGenderCollection(gender)
-          .doc(userId)
-          .collection('rejections')
-          .get();
+  CollectionReference _getGenderCollectionForUser(String uid) {
+    if (uid[0] == 'm') {
+      return _menCollection;
+    }
+    return _womenCollection;
+  }
 }

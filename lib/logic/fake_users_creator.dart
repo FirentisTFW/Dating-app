@@ -19,8 +19,9 @@ void createFakeUsers() async {
         : _womenNames[i % _womenNames.length];
     final daysDiff = Random().nextInt(secondDate.difference(firstDate).inDays);
     final birthDate = secondDate.subtract(Duration(days: daysDiff));
+    final genderIndicator = i % 2 == 0 ? 'm' : 'w';
     final fakeUser = User(
-      id: 'asdsa$i',
+      id: '${genderIndicator}asdsa$i',
       name: name,
       birthDate: birthDate,
       gender: i % 2 == 0 ? Gender.Man : Gender.Woman,
