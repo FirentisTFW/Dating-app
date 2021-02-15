@@ -12,3 +12,9 @@ enum ProfileStatus {
   MissingPersonalData,
   MissingDiscoverySettings,
 }
+
+enum CurrentTab {
+  MyProfile,
+  Discovery,
+  Conversations,
+}
