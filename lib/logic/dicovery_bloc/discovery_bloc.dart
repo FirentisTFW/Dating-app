@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Dating_app/data/models/acceptance.dart';
+import 'package:Dating_app/data/models/acceptance_rejection.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -25,6 +25,8 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
       yield* _mapFetchAndFilterUsersToState(event);
     } else if (event is AcceptUser) {
       yield* _mapAcceptUserToState(event);
+    } else if (event is RejectUser) {
+      yield* _mapRejectUserToState(event);
     }
   }
 
@@ -58,6 +60,21 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
               Acceptance(userId: event.acceptedUid, date: DateTime.now()));
       final remainingUsers =
           event.users.where((u) => u.id != event.acceptedUid).toList();
+      yield DiscoveryUsersFetched(remainingUsers);
+    } catch (err) {
+      yield DiscoveryActionError();
+      yield DiscoveryUsersFetched(event.users);
+    }
+  }
+
+  Stream<DiscoveryState> _mapRejectUserToState(RejectUser event) async* {
+    try {
+      await _usersRepository.rejectUser(
+          rejectingUid: event.rejectingUid,
+          rejection:
+              Rejection(userId: event.rejectedUid, date: DateTime.now()));
+      final remainingUsers =
+          event.users.where((u) => u.id != event.rejectedUid).toList();
       yield DiscoveryUsersFetched(remainingUsers);
     } catch (err) {
       yield DiscoveryActionError();

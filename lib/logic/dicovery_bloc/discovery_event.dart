@@ -27,3 +27,15 @@ class AcceptUser extends DiscoveryEvent {
   @override
   List<Object> get props => [acceptingUid, acceptedUid];
 }
+
+class RejectUser extends DiscoveryEvent {
+  final List<User> users;
+  final String rejectingUid;
+  final String rejectedUid;
+
+  RejectUser(this.users,
+      {@required this.rejectingUid, @required this.rejectedUid});
+
+  @override
+  List<Object> get props => [rejectingUid, rejectedUid];
+}

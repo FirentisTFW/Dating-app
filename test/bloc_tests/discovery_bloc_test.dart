@@ -1,4 +1,4 @@
-import 'package:Dating_app/data/models/acceptance.dart';
+import 'package:Dating_app/data/models/acceptance_rejection.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';

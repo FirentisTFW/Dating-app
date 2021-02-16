@@ -103,7 +103,13 @@ class DiscoveryView extends StatelessWidget {
 
   void rejectUser(
       BuildContext context, List<User> currentStateUsers, String acceptedUid) {
+    final state = BlocProvider.of<CurrentUserCubit>(context).state
+        as CurrentUserWithUserInstance;
+
     print('I don\'t like you!');
+
+    BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
+        rejectingUid: state.user.id, rejectedUid: acceptedUid));
   }
 }
 

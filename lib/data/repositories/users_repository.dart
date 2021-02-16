@@ -1,6 +1,6 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
-import 'package:Dating_app/data/models/acceptance.dart';
+import 'package:Dating_app/data/models/acceptance_rejection.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
@@ -69,7 +69,10 @@ class UsersRepository {
   }
 
   Future acceptUser({String acceptingUid, Acceptance acceptance}) async =>
-      throw Exception('mesda');
-  // await _firestoreProvider.acceptUser(
-  //     acceptingUid: acceptingUid, acceptance: acceptance.toMap());
+      await _firestoreProvider.acceptUser(
+          acceptingUid: acceptingUid, acceptance: acceptance.toMap());
+
+  Future rejectUser({String rejectingUid, Rejection rejection}) async =>
+      await _firestoreProvider.rejectUser(
+          rejectingUid: rejectingUid, rejection: rejection.toMap());
 }
