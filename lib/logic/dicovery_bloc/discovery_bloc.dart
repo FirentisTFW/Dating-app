@@ -22,32 +22,46 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
     yield DiscoveryWaiting();
 
     if (event is FetchAndFilterUsers) {
-      try {
-        final fetchedUsers = await _usersRepository.getUsersByDiscoverySettings(
-            event.user.discoverySettings,
-            location: event.user.location);
-        final rejectedUsersIds =
-            await _usersRepository.getUserRejections(event.user.id);
-        final unrejectedUsers = fetchedUsers
-            .where((user) =>
-                !rejectedUsersIds.any((rejectedId) => rejectedId == user.id))
-            .toList();
-        yield DiscoveryUsersFetched(unrejectedUsers);
-      } catch (err) {
-        yield DiscoveryError();
-      }
+      yield* _mapFetchAndFilterUsersToState(event);
     } else if (event is AcceptUser) {
-      try {
-        await _usersRepository.acceptUser(
-            acceptingUid: event.acceptingUid,
-            acceptance:
-                Acceptance(userId: event.acceptedUid, date: DateTime.now()));
-        final remainingUsers =
-            event.users.where((u) => u.id != event.acceptedUid).toList();
-        yield DiscoveryUsersFetched(remainingUsers);
-      } catch (err) {
-        yield DiscoveryError();
-      }
+      yield* _mapAcceptUserToState(event);
+    }
+  }
+
+  Stream<DiscoveryState> _mapFetchAndFilterUsersToState(
+      FetchAndFilterUsers event) async* {
+    try {
+      final fetchedUsers = await _usersRepository.getUsersByDiscoverySettings(
+          event.user.discoverySettings,
+          location: event.user.location);
+      final rejectedUsersIds =
+          await _usersRepository.getUserRejections(event.user.id);
+      final acceptedUsersIds =
+          await _usersRepository.getUserAcceptances(event.user.id);
+      final excludedUsersIds = rejectedUsersIds + acceptedUsersIds;
+
+      final finalUsers = fetchedUsers
+          .where((user) =>
+              !excludedUsersIds.any((excludedId) => excludedId == user.id))
+          .toList();
+      yield DiscoveryUsersFetched(finalUsers);
+    } catch (err) {
+      yield DiscoveryFetchingError();
+    }
+  }
+
+  Stream<DiscoveryState> _mapAcceptUserToState(AcceptUser event) async* {
+    try {
+      await _usersRepository.acceptUser(
+          acceptingUid: event.acceptingUid,
+          acceptance:
+              Acceptance(userId: event.acceptedUid, date: DateTime.now()));
+      final remainingUsers =
+          event.users.where((u) => u.id != event.acceptedUid).toList();
+      yield DiscoveryUsersFetched(remainingUsers);
+    } catch (err) {
+      yield DiscoveryActionError();
+      yield DiscoveryUsersFetched(event.users);
     }
   }
 }

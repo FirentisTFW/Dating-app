@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'enums.dart';
 import 'extended_enums.dart';
 
-class User {
+class User extends Equatable {
   final String id;
   final String name;
   final DateTime birthDate;
@@ -93,4 +94,8 @@ class User {
       discoverySettings: discoverySettings ?? this.discoverySettings,
     );
   }
+
+  @override
+  List<Object> get props =>
+      [id, name, birthDate, gender, caption, location, discoverySettings];
 }

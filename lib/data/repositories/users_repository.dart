@@ -33,7 +33,24 @@ class UsersRepository {
     final rejectionsSnapshots =
         await _firestoreProvider.getUserRejections(userId) as QuerySnapshot;
 
-    return rejectionsSnapshots.docs.map((item) => item.id).toList();
+    if (rejectionsSnapshots.docs.length > 0) {
+      return rejectionsSnapshots.docs
+          .map((item) => item.data()['userId'] as String)
+          .toList();
+    }
+    return [];
+  }
+
+  Future<List<String>> getUserAcceptances(String userId) async {
+    final acceptancesSnapshots =
+        await _firestoreProvider.getUserAcceptances(userId) as QuerySnapshot;
+
+    if (acceptancesSnapshots.docs.length > 0) {
+      return acceptancesSnapshots.docs
+          .map((item) => item.data()['userId'] as String)
+          .toList();
+    }
+    return [];
   }
 
   Future createUser(User user) async =>
@@ -52,6 +69,7 @@ class UsersRepository {
   }
 
   Future acceptUser({String acceptingUid, Acceptance acceptance}) async =>
-      await _firestoreProvider.acceptUser(
-          acceptingUid: acceptingUid, acceptance: acceptance.toMap());
+      throw Exception('mesda');
+  // await _firestoreProvider.acceptUser(
+  //     acceptingUid: acceptingUid, acceptance: acceptance.toMap());
 }

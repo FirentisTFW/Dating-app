@@ -51,18 +51,25 @@ class DiscoveryView extends StatelessWidget {
           } else if (state is CurrentUserReady) {
             return Container(
               child: BlocConsumer<DiscoveryBloc, DiscoveryState>(
-                listener: (context, state) {},
+                listener: (context, state) {
+                  if (state is DiscoveryActionError) {
+                    print('Error!');
+                  }
+                },
                 builder: (context, state) {
                   if (state is DiscoveryUsersFetched) {
-                    // print(state.users);
+                    print(state.users.length);
                     // TODO: check if there are users left
-                    return UserProfileItem(
-                      user: state.users.first,
-                      acceptUser: () => acceptUser(
-                          context, state.users, state.users.first.id),
-                      rejectUser: () => rejectUser(
-                          context, state.users, state.users.first.id),
-                    );
+                    if (state.users.length > 0) {
+                      return UserProfileItem(
+                        user: state.users.first,
+                        acceptUser: () => acceptUser(
+                            context, state.users, state.users.first.id),
+                        rejectUser: () => rejectUser(
+                            context, state.users, state.users.first.id),
+                      );
+                    }
+                    return Text('No users');
                   }
                   return LoadingSpinner();
                 },
