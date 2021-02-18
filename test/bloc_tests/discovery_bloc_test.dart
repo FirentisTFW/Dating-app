@@ -1,4 +1,3 @@
-import 'package:Dating_app/data/models/acceptance_rejection.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
@@ -43,7 +42,7 @@ void main() {
   ];
   final rejectedUsersIds = ['1'];
   final acceptedUsersIds = ['3'];
-  final unrejectedUsers = [
+  final remainingUsers = [
     User(
         id: '2',
         name: 'Lucy',
@@ -76,7 +75,7 @@ void main() {
           act: (bloc) => bloc.add(FetchAndFilterUsers(user: user)),
           expect: [
             DiscoveryWaiting(),
-            DiscoveryUsersFetched(unrejectedUsers),
+            DiscoveryUsersFetched(remainingUsers),
           ]);
       blocTest('When failure, emits [DiscoveryWaiting, DiscoveryError]',
           build: () {
@@ -94,7 +93,6 @@ void main() {
           ]);
     });
     group('AcceptUser -', () {
-      final acceptance = Acceptance(userId: '2', date: DateTime.now());
       final usersAfterAcceptance = [
         User(
             id: '4',
@@ -111,8 +109,8 @@ void main() {
                 .thenAnswer((_) async => null);
             return DiscoveryBloc(usersRepository);
           },
-          act: (bloc) => bloc.add(AcceptUser(unrejectedUsers,
-              acceptingUid: 'aa', acceptedUid: '2')),
+          act: (bloc) => bloc.add(
+              AcceptUser(remainingUsers, acceptingUid: 'aa', acceptedUid: '2')),
           expect: [
             DiscoveryWaiting(),
             DiscoveryUsersFetched(usersAfterAcceptance),
@@ -125,12 +123,52 @@ void main() {
                 .thenThrow(Exception('An error occured'));
             return DiscoveryBloc(usersRepository);
           },
-          act: (bloc) => bloc.add(AcceptUser(unrejectedUsers,
-              acceptingUid: 'aa', acceptedUid: '2')),
+          act: (bloc) => bloc.add(
+              AcceptUser(remainingUsers, acceptingUid: 'aa', acceptedUid: '2')),
           expect: [
             DiscoveryWaiting(),
             DiscoveryActionError(),
-            DiscoveryUsersFetched(unrejectedUsers),
+            DiscoveryUsersFetched(remainingUsers),
+          ]);
+    });
+    group('RejectUser -', () {
+      final usersAfterRejection = [
+        User(
+            id: '4',
+            name: 'Stacy',
+            birthDate: DateTime(1998, 01, 01),
+            gender: Gender.Woman),
+      ];
+      blocTest(
+          'When successful, emits [DiscoveryWaiting, DiscoveryUsersFetched(updated)]',
+          build: () {
+            when(usersRepository.rejectUser(
+                    rejectingUid: anyNamed('rejectingUid'),
+                    rejection: anyNamed('rejection')))
+                .thenAnswer((_) async => null);
+            return DiscoveryBloc(usersRepository);
+          },
+          act: (bloc) => bloc.add(
+              RejectUser(remainingUsers, rejectingUid: 'aa', rejectedUid: '2')),
+          expect: [
+            DiscoveryWaiting(),
+            DiscoveryUsersFetched(usersAfterRejection),
+          ]);
+      blocTest(
+          'When failure, emits [DiscoveryWaiting, DiscoveryActionError, DiscoveryUsersFetched(updated)]',
+          build: () {
+            when(usersRepository.rejectUser(
+                    rejectingUid: anyNamed('rejectingUid'),
+                    rejection: anyNamed('rejection')))
+                .thenThrow(Exception('An error occured'));
+            return DiscoveryBloc(usersRepository);
+          },
+          act: (bloc) => bloc.add(
+              RejectUser(remainingUsers, rejectingUid: 'aa', rejectedUid: '2')),
+          expect: [
+            DiscoveryWaiting(),
+            DiscoveryActionError(),
+            DiscoveryUsersFetched(remainingUsers),
           ]);
     });
   });

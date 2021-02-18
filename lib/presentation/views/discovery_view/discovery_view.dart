@@ -19,6 +19,7 @@ class DiscoveryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // createFakeUsers();
     return Container(
       child: BlocConsumer<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
@@ -95,8 +96,6 @@ class DiscoveryView extends StatelessWidget {
     final state = BlocProvider.of<CurrentUserCubit>(context).state
         as CurrentUserWithUserInstance;
 
-    print('I like you!');
-
     BlocProvider.of<DiscoveryBloc>(context).add(AcceptUser(currentStateUsers,
         acceptingUid: state.user.id, acceptedUid: acceptedUid));
   }
@@ -105,8 +104,6 @@ class DiscoveryView extends StatelessWidget {
       BuildContext context, List<User> currentStateUsers, String acceptedUid) {
     final state = BlocProvider.of<CurrentUserCubit>(context).state
         as CurrentUserWithUserInstance;
-
-    print('I don\'t like you!');
 
     BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
         rejectingUid: state.user.id, rejectedUid: acceptedUid));

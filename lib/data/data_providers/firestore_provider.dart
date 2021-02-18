@@ -101,11 +101,13 @@ class FirestoreProvider {
       await _getGenderCollectionForUser(acceptingUid)
           .doc(acceptingUid)
           .collection('acceptances')
-          .add(acceptance);
+          .doc(acceptance['userId'])
+          .set(acceptance);
 
   Future rejectUser({String rejectingUid, dynamic rejection}) async =>
       await _getGenderCollectionForUser(rejectingUid)
           .doc(rejectingUid)
           .collection('rejections')
-          .add(rejection);
+          .doc(rejection['userId'])
+          .set(rejection);
 }
