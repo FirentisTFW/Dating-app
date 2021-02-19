@@ -3,6 +3,7 @@ import 'package:Dating_app/data/repositories/location_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
+import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/views/auth_view/auth_view.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<DiscoveryBloc>(
           create: (context) => DiscoveryBloc(_usersRepository),
+        ),
+        BlocProvider<MatchesCubit>(
+          create: (context) => MatchesCubit(_usersRepository),
         ),
       ],
       child: GetMaterialApp(

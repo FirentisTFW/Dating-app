@@ -1,6 +1,7 @@
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/discovery_view/discovery_view.dart';
+import 'package:Dating_app/presentation/views/matches_view/matches_view.dart';
 import 'package:Dating_app/presentation/views/my_profile_view/my_profile_view.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +17,15 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   var _currentTab = CurrentTab.Discovery;
 
+  // TODO: find better way to check user profile completness
+  var _startup = true;
+
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<CurrentUserCubit>(context).checkIfProfileIsComplete();
+    if (_startup) {
+      BlocProvider.of<CurrentUserCubit>(context).checkIfProfileIsComplete();
+      _startup = false;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -50,7 +57,7 @@ class _MainViewState extends State<MainView> {
       case CurrentTab.Discovery:
         return DiscoveryView();
       case CurrentTab.Conversations:
-        return Container();
+        return MatchesView();
       default:
         return LoadingSpinner();
     }

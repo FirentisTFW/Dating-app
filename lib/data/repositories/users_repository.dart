@@ -5,6 +5,8 @@ import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
+import 'package:Dating_app/data/models/user_match.dart';
+import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -48,6 +50,18 @@ class UsersRepository {
     if (acceptancesSnapshots.docs.length > 0) {
       return acceptancesSnapshots.docs
           .map((item) => item.data()['userId'] as String)
+          .toList();
+    }
+    return [];
+  }
+
+  Future<List<UserMatch>> getUserMatches(String userId) async {
+    final matchesSnapshots =
+        await _firestoreProvider.getUserMatches(userId) as QuerySnapshot;
+
+    if (matchesSnapshots.docs.length > 0) {
+      return matchesSnapshots.docs
+          .map((item) => UserMatch.fromMap(item.data()))
           .toList();
     }
     return [];

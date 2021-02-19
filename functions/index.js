@@ -33,9 +33,10 @@ exports.acceptanceCreated = functions.firestore.document('/users/men/men/{userId
 
     const doc = await genderCollection.doc(`${acceptedUserId}/acceptances/${acceptingUserId}`).get();
     
+    // test only
+    await createMatch(acceptingUserId, acceptedUserId);
     if(doc.exists) {
         console.log('It\'s a match!');
-        await createMatch(acceptingUserId, acceptedUserId);
     } else {
         console.log('No match');
     }    
@@ -64,7 +65,7 @@ async function createMatch(firstUid, secondUid) {
 
 async function createMatchRecord(userRef, macthedUserData, matchDate) {
     await userRef.collection('matches').doc(macthedUserData.data().id).set({
-        id: macthedUserData.data().id,
+        userId: macthedUserData.data().id,
         name: macthedUserData.data().name,
         birthDate: macthedUserData.data().birthDate,
         date: matchDate,
