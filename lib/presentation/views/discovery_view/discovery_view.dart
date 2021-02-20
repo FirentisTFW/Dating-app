@@ -60,7 +60,6 @@ class DiscoveryView extends StatelessWidget {
                 builder: (context, state) {
                   if (state is DiscoveryUsersFetched) {
                     print(state.users.length);
-                    // TODO: check if there are users left
                     if (state.users.length > 0) {
                       return UserProfileItem(
                         user: state.users.first,
@@ -107,44 +106,5 @@ class DiscoveryView extends StatelessWidget {
 
     BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
         rejectingUid: state.user.id, rejectedUid: acceptedUid));
-  }
-}
-
-class _MyButtons extends StatelessWidget {
-  const _MyButtons({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FlatButton(
-          child: Text('Log out'),
-          onPressed: () {
-            // FirebaseAuth.instance.signOut();
-          },
-        ),
-        FlatButton(
-          child: Text('Create fake users'),
-          onPressed: () {
-            createFakeUsers();
-          },
-        ),
-        BlocBuilder<CurrentUserCubit, CurrentUserState>(
-          builder: (context, state) {
-            if (state is CurrentUserWithUserInstance) {
-              return FlatButton(
-                child: Text('Fetch users'),
-                onPressed: () async {
-                  // TODO: get real rejected  users
-                  BlocProvider.of<DiscoveryBloc>(context)
-                      .add(FetchAndFilterUsers(user: state.user));
-                },
-              );
-            }
-            return LoadingSpinner();
-          },
-        )
-      ],
-    );
   }
 }

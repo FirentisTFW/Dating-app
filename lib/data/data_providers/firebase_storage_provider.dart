@@ -30,4 +30,14 @@ class FirebaseStorageProvider {
 
     return photosUrls;
   }
+
+  Future<String> getFirstPhotoUrlForUser(String userId) async {
+    final photoRef = await _storage
+        .ref()
+        .child('users_images')
+        .child(userId)
+        .list(ListOptions(maxResults: 1));
+
+    return await photoRef.items.first.getDownloadURL();
+  }
 }

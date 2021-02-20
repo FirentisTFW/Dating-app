@@ -18,4 +18,7 @@ class PhotosRepository {
 
   Future<List<String>> getPhotosUrlsForUser(String userId) async =>
       await _storageProvider.getPhotosUrlsForUser(userId);
+
+  Future<String> getFirstPhotoUrlForUser(String userId) async =>
+      await _storageProvider.getFirstPhotoUrlForUser(userId);
 }

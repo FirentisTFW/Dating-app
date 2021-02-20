@@ -33,10 +33,9 @@ exports.acceptanceCreated = functions.firestore.document('/users/men/men/{userId
 
     const doc = await genderCollection.doc(`${acceptedUserId}/acceptances/${acceptingUserId}`).get();
     
-    // test only
-    await createMatch(acceptingUserId, acceptedUserId);
     if(doc.exists) {
         console.log('It\'s a match!');
+        await createMatch(acceptingUserId, acceptedUserId);
     } else {
         console.log('No match');
     }    
