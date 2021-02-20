@@ -26,8 +26,10 @@ class FirestoreProvider {
     _menCollection = _db.collection('users').doc('men').collection('men');
     _womenCollection = _db.collection('users').doc('women').collection('women');
   }
+  Future getUserById(String uid) async =>
+      await _getGenderCollectionForUser(uid).doc(uid).get();
 
-  Future getUser(String uid) async {
+  Future getUserByAuthId(String uid) async {
     final user = await _menCollection.doc('m' + uid).get();
     if (user.data() != null) {
       return user;

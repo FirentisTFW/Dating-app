@@ -90,7 +90,7 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
   Future<User> _fetchUserData() async {
     try {
       final uid = _authRepository.userId;
-      final user = await _usersRepository.getUser(uid);
+      final user = await _usersRepository.getUserByAuthId(uid);
       return user;
     } catch (err) {
       rethrow;

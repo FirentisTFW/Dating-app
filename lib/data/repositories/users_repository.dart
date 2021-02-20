@@ -6,16 +6,26 @@ import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/models/user_match.dart';
-import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class UsersRepository {
   final _firestoreProvider = locator<FirestoreProvider>();
 
-  Future<User> getUser(String uid) async {
-    final userData = await _firestoreProvider.getUser(uid);
+  Future<User> getUserById(String uid) async {
+    final userData = await _firestoreProvider.getUserById(uid);
     final userMap = userData.data();
+
+    if (userMap != null) {
+      return User.fromMap(userMap);
+    }
+    return null;
+  }
+
+  Future<User> getUserByAuthId(String uid) async {
+    final userData = await _firestoreProvider.getUserByAuthId(uid);
+    final userMap = userData.data();
+
     if (userMap != null) {
       return User.fromMap(userMap);
     }

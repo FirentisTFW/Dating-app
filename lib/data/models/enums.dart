@@ -18,3 +18,9 @@ enum CurrentTab {
   Discovery,
   Conversations,
 }
+
+enum ProfileRelation {
+  Discovered,
+  Matched,
+  Mine,
+}

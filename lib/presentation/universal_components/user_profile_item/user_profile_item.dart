@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/components/user_profile_item_components.dart';
@@ -6,14 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserProfileItem extends StatelessWidget {
   final User user;
-  final bool isMine;
+  final ProfileRelation profileRelation;
   final Function rejectUser;
   final Function acceptUser;
 
   UserProfileItem({
     Key key,
     @required this.user,
-    this.isMine = false,
+    this.profileRelation,
     this.rejectUser,
     this.acceptUser,
   }) : super(key: key);
@@ -27,10 +28,14 @@ class UserProfileItem extends StatelessWidget {
         return Column(
           children: [
             PhotosSlider(),
-            NameAgeLocationBar(user: user, isMine: isMine),
+            NameAgeLocationBar(
+                user: user, isMine: profileRelation == ProfileRelation.Mine),
             Divider(color: Colors.grey[500]),
             buildCaption(),
-            if (!isMine) buildMatchRejectBar(),
+            if (profileRelation == ProfileRelation.Discovered)
+              buildMatchRejectBar(),
+            if (profileRelation == ProfileRelation.Matched)
+              buildMessageUnmatchBar(),
           ],
         );
       },
@@ -39,7 +44,7 @@ class UserProfileItem extends StatelessWidget {
 
   Widget buildCaption() {
     return Expanded(
-      flex: isMine ? 3 : 2,
+      flex: profileRelation == ProfileRelation.Discovered ? 3 : 2,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: SingleChildScrollView(
@@ -76,6 +81,40 @@ class UserProfileItem extends StatelessWidget {
                 Icons.check,
                 size: 38,
                 color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMessageUnmatchBar() {
+    return Flexible(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.message,
+                  size: 38,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.close,
+                  size: 38,
+                  color: Colors.red,
+                ),
               ),
             ),
           ],

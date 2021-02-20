@@ -115,7 +115,8 @@ void main() {
         'When profile is complete, emits [CurrentUserWaiting, CurrentUserReady]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUser(any)).thenAnswer((_) async => user);
+          when(usersRepository.getUserByAuthId(any))
+              .thenAnswer((_) async => user);
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
@@ -129,7 +130,8 @@ void main() {
         'When profile is incomplete (missing personal data), emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUser(any)).thenAnswer((_) async => null);
+          when(usersRepository.getUserByAuthId(any))
+              .thenAnswer((_) async => null);
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
@@ -145,7 +147,7 @@ void main() {
         'When profile is incomplete (missing discovery settings), emits [CurrentUserWaiting, CurrentUserProfileIncomplete]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUser(any))
+          when(usersRepository.getUserByAuthId(any))
               .thenAnswer((_) async => userMissingDiscoverySettings);
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
@@ -162,7 +164,7 @@ void main() {
         'When failure, emits [CurrentUserWaiting, CurrentUserError]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUser(any))
+          when(usersRepository.getUserByAuthId(any))
               .thenThrow(ErrorDescription('An error occured'));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);

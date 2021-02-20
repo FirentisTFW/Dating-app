@@ -63,6 +63,7 @@ class DiscoveryView extends StatelessWidget {
                     if (state.users.length > 0) {
                       return UserProfileItem(
                         user: state.users.first,
+                        profileRelation: ProfileRelation.Discovered,
                         acceptUser: () => acceptUser(
                             context, state.users, state.users.first.id),
                         rejectUser: () => rejectUser(

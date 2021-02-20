@@ -20,6 +20,7 @@ class MatchesView extends StatelessWidget {
         child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
           builder: (context, state) {
             if (state is CurrentUserWithUserInstance) {
+              print(state.user);
               BlocProvider.of<MatchesCubit>(context)
                   .fetchMatches(state.user.id);
 
