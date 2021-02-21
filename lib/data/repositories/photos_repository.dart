@@ -21,4 +21,7 @@ class PhotosRepository {
 
   Future<String> getFirstPhotoUrlForUser(String userId) async =>
       await _storageProvider.getFirstPhotoUrlForUser(userId);
+
+  Future<void> deletePhotoByUrl(String photoUrl) async =>
+      await _storageProvider.deletePhotoByUrl(photoUrl);
 }

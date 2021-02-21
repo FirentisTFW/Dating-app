@@ -44,4 +44,17 @@ class PhotosCubit extends Cubit<PhotosState> {
       return false;
     }
   }
+
+  Future<void> deletePhotoByUrl(
+      String photoUrl, List<String> photosUrls) async {
+    emit(PhotosWaiting());
+
+    try {
+      await _photosRepository.deletePhotoByUrl(photoUrl);
+      photosUrls.remove(photoUrl);
+      emit(PhotosMultipleFetched(photosUrls));
+    } catch (err) {
+      emit(PhotosError());
+    }
+  }
 }

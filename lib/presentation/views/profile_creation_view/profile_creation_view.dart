@@ -70,7 +70,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                         if (state is CurrentUserWaiting) {
                           return LoadingSpinner();
                         }
-                        return NextButton(createUser);
+                        return DoneButton(createUser);
                       },
                     ),
                   ],

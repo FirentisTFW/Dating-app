@@ -8,16 +8,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'components/photo_item.dart';
+import 'components/photos_row.dart';
 
 // ignore: must_be_immutable
 class MyPhotosView extends StatelessWidget {
   List<PickedFile> _pickedImages = [];
+  List<String> _currentImages = [];
 
   MyPhotosView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    _fetchUserCurrentPhotos(context);
+
     return Scaffold(
       appBar: AppBar(
         title: _appBarTitle,
@@ -26,8 +29,9 @@ class MyPhotosView extends StatelessWidget {
             listener: (context, state) {
               if (state is PhotosSingleUploaded && _pickedImages.length == 0) {
                 goToMainView();
-              }
-              if (state is PhotosError) {
+              } else if (state is PhotosMultipleFetched) {
+                _currentImages = state.photosUrls;
+              } else if (state is PhotosError) {
                 PhotosCubitHelpers.showErrorSnackbar(state);
               }
             },
@@ -45,7 +49,7 @@ class MyPhotosView extends StatelessWidget {
                     }
                   },
                   child: const Text(
-                    'Next',
+                    'Done',
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 );
@@ -56,15 +60,16 @@ class MyPhotosView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PhotosRow(addImage),
-            const Expanded(child: SizedBox()),
-            PhotosRow(addImage),
-            const Expanded(child: SizedBox()),
-            PhotosRow(addImage),
-          ],
+        child: BlocBuilder<PhotosCubit, PhotosState>(
+          builder: (context, state) {
+            if (state is PhotosWaiting) {
+              return LoadingSpinner();
+            }
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _buildPhotosRows(),
+            );
+          },
         ),
       ),
     );
@@ -86,9 +91,45 @@ class MyPhotosView extends StatelessWidget {
     ),
   );
 
+  List<Widget> _buildPhotosRows() {
+    List<Widget> rows = [];
+
+    for (int i = 0; i < 3; i++) {
+      List<String> initialPhotosUrls = [];
+      for (int j = i * 3; j < _currentImages.length; j++) {
+        initialPhotosUrls.add(_currentImages[j]);
+      }
+
+      rows.add(
+        PhotosRow(
+          addImage,
+          removeOldImage: removeOldImage,
+          initialPhotosUrls: initialPhotosUrls,
+        ),
+      );
+
+      if (i != 2) {
+        rows.add(const Expanded(child: SizedBox()));
+      }
+    }
+
+    return rows;
+  }
+
+  void _fetchUserCurrentPhotos(BuildContext context) {
+    final userState = BlocProvider.of<CurrentUserCubit>(context).state
+        as CurrentUserWithUserInstance;
+    BlocProvider.of<PhotosCubit>(context)
+        .getMultiplePhotosUrls(userState.user.id);
+  }
+
   void goToMainView() => Get.off(MainView());
 
   void addImage(PickedFile image) => _pickedImages.add(image);
+
+  void removeOldImage(BuildContext context, String photoUrl) =>
+      BlocProvider.of<PhotosCubit>(context)
+          .deletePhotoByUrl(photoUrl, _currentImages);
 
   Future<void> uploadPhotos(BuildContext context) async {
     final currentState = BlocProvider.of<CurrentUserCubit>(context).state
@@ -105,29 +146,5 @@ class MyPhotosView extends StatelessWidget {
         break;
       }
     }
-  }
-}
-
-class PhotosRow extends StatelessWidget {
-  final Function addImage;
-
-  const PhotosRow(this.addImage, {Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      flex: 3,
-      child: Row(
-        children: [
-          const Expanded(child: SizedBox()),
-          PhotoItem(addImage),
-          const Expanded(child: SizedBox()),
-          PhotoItem(addImage),
-          const Expanded(child: SizedBox()),
-          PhotoItem(addImage),
-          const Expanded(child: SizedBox()),
-        ],
-      ),
-    );
   }
 }

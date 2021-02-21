@@ -40,4 +40,9 @@ class FirebaseStorageProvider {
 
     return await photoRef.items.first.getDownloadURL();
   }
+
+  Future<void> deletePhotoByUrl(String photoUrl) async {
+    final ref = _storage.refFromURL(photoUrl);
+    await ref.delete();
+  }
 }

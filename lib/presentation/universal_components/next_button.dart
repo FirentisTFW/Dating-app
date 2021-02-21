@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class NextButton extends StatelessWidget {
+class DoneButton extends StatelessWidget {
   final Function confirm;
 
-  const NextButton(this.confirm, {Key key}) : super(key: key);
+  const DoneButton(this.confirm, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class NextButton extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(30)),
           ),
           child: const Text(
-            'Next',
+            'Done',
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),

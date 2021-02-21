@@ -5,8 +5,15 @@ import 'package:image_picker/image_picker.dart';
 
 class PhotoItem extends StatefulWidget {
   final Function addImage;
+  final Function removeImage;
+  final String initialPhotoUrl;
 
-  const PhotoItem(this.addImage, {Key key}) : super(key: key);
+  const PhotoItem(
+    this.addImage, {
+    Key key,
+    this.removeImage,
+    this.initialPhotoUrl,
+  }) : super(key: key);
 
   @override
   _PhotoItemState createState() => _PhotoItemState();
@@ -26,32 +33,62 @@ class _PhotoItemState extends State<PhotoItem> {
             color: Colors.grey[400],
             borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
-          child: _image != null
-              ? _showImage()
-              : Center(
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.grey[700],
-                    size: 34,
-                  ),
-                ),
+          child: widget.initialPhotoUrl != null && widget.removeImage != null
+              ? _showImage(initialUrl: widget.initialPhotoUrl)
+              : _image != null
+                  ? _showImage()
+                  : Center(
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.grey[700],
+                        size: 34,
+                      ),
+                    ),
         ),
       ),
     );
   }
 
-  Widget _showImage() => Container(
+  Widget _showImage({String initialUrl}) => Container(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         height: double.infinity,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: Image.file(
-              File(_image.path),
-              fit: BoxFit.fitWidth,
-            ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              FittedBox(
+                fit: BoxFit.cover,
+                child: initialUrl != null
+                    ? Image.network(
+                        initialUrl,
+                        fit: BoxFit.fitWidth,
+                      )
+                    : Image.file(
+                        File(_image.path),
+                        fit: BoxFit.fitWidth,
+                      ),
+              ),
+              if (initialUrl != null)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: InkWell(
+                    onTap: () => widget.removeImage(context, initialUrl),
+                    child: ClipOval(
+                      child: Container(
+                        color: Colors.red,
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+            ],
           ),
         ),
       );

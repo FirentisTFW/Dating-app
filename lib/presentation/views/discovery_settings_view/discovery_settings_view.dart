@@ -67,7 +67,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
                       if (state is CurrentUserWaiting) {
                         return LoadingSpinner();
                       }
-                      return NextButton(saveDiscoverySettings);
+                      return DoneButton(saveDiscoverySettings);
                     },
                   )
                 ],
