@@ -4,7 +4,7 @@ import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
-import 'package:Dating_app/presentation/views/user_photos_view/user_photos_view.dart';
+import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +41,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
       body: BlocListener<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
           if (state is CurrentUserProfileIncomplete) {
-            goToUserPhotosView();
+            goToMyPhotosView();
           } else if (state is CurrentUserLocationReceived) {
             _location = state.location;
           } else if (state is CurrentUserError) {
@@ -159,7 +159,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
     }
   }
 
-  void goToUserPhotosView() => Get.off(UserPhotosView());
+  void goToMyPhotosView() => Get.off(MyPhotosView());
 
   void _setName(String value) => _name = value;
 

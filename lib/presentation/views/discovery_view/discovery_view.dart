@@ -7,8 +7,8 @@ import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart'
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
+import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
-import 'package:Dating_app/presentation/views/user_photos_view/user_photos_view.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,7 +78,7 @@ class DiscoveryView extends StatelessWidget {
             );
             return FlatButton(
               child: Text('Test fest'),
-              onPressed: () => Get.off(UserPhotosView()),
+              onPressed: () => Get.off(MyPhotosView()),
             );
           }
           return Text('Lipton');
@@ -89,7 +89,8 @@ class DiscoveryView extends StatelessWidget {
 
   void goToProfileCreationView() => Get.off(ProfileCreationView());
 
-  void goToDiscoverySettingsView() => Get.off(DiscoverySettingsView());
+  void goToDiscoverySettingsView() =>
+      Get.off(DiscoverySettingsView(firstTime: true));
 
   void acceptUser(
       BuildContext context, List<User> currentStateUsers, String acceptedUid) {

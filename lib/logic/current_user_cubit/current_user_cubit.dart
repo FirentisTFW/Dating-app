@@ -50,7 +50,8 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
     try {
       await _usersRepository.updateDiscoverySettings(
           user.id, user.gender, discoverySettings);
-      emit(CurrentUserReady(user));
+      emit(CurrentUserReady(
+          user.copyWith(discoverySettings: discoverySettings)));
     } catch (err) {
       emit(CurrentUserError(user: user));
     }

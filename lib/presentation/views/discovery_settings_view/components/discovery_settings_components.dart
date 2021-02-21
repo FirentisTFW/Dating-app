@@ -3,15 +3,23 @@ import 'package:flutter/material.dart';
 
 class GenderSelector extends StatefulWidget {
   final Function setGender;
+  final Gender initialValue;
 
-  GenderSelector(this.setGender, {Key key}) : super(key: key);
+  GenderSelector(this.setGender, {Key key, this.initialValue = Gender.Woman})
+      : super(key: key);
 
   @override
   _GenderSelectorState createState() => _GenderSelectorState();
 }
 
 class _GenderSelectorState extends State<GenderSelector> {
-  var gender = Gender.Woman;
+  Gender gender;
+
+  @override
+  void initState() {
+    super.initState();
+    gender = widget.initialValue;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +65,15 @@ class _GenderSelectorState extends State<GenderSelector> {
 
 class AgeRangeSelector extends StatefulWidget {
   final Function setAgeRange;
+  final int initialMin;
+  final int initialMax;
 
-  const AgeRangeSelector(this.setAgeRange, {Key key}) : super(key: key);
+  const AgeRangeSelector(
+    this.setAgeRange, {
+    Key key,
+    this.initialMin = 20,
+    this.initialMax = 25,
+  }) : super(key: key);
 
   @override
   _AgeRangeSelectorState createState() => _AgeRangeSelectorState();
@@ -66,6 +81,13 @@ class AgeRangeSelector extends StatefulWidget {
 
 class _AgeRangeSelectorState extends State<AgeRangeSelector> {
   var ageRange = RangeValues(20, 25);
+
+  @override
+  void initState() {
+    super.initState();
+    ageRange =
+        RangeValues(widget.initialMin.toDouble(), widget.initialMax.toDouble());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,15 +126,23 @@ class _AgeRangeSelectorState extends State<AgeRangeSelector> {
 
 class DistanceSelector extends StatefulWidget {
   final Function setDistance;
+  final int initialValue;
 
-  DistanceSelector(this.setDistance, {Key key}) : super(key: key);
+  DistanceSelector(this.setDistance, {Key key, this.initialValue = 20})
+      : super(key: key);
 
   @override
   _DistanceSelectorState createState() => _DistanceSelectorState();
 }
 
 class _DistanceSelectorState extends State<DistanceSelector> {
-  var distance = 20.0;
+  double distance;
+
+  @override
+  void initState() {
+    super.initState();
+    distance = widget.initialValue.toDouble();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -11,10 +11,10 @@ import 'package:image_picker/image_picker.dart';
 import 'components/photo_item.dart';
 
 // ignore: must_be_immutable
-class UserPhotosView extends StatelessWidget {
+class MyPhotosView extends StatelessWidget {
   List<PickedFile> _pickedImages = [];
 
-  UserPhotosView({Key key}) : super(key: key);
+  MyPhotosView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
