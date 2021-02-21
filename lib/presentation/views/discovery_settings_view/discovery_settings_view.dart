@@ -12,7 +12,7 @@ import 'package:get/route_manager.dart';
 import 'components/discovery_settings_components.dart';
 
 class DiscoverySettingsView extends StatefulWidget {
-  final firstTime;
+  final bool firstTime;
 
   const DiscoverySettingsView({Key key, this.firstTime = false})
       : super(key: key);
@@ -42,7 +42,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
       body: BlocConsumer<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
           if (state is CurrentUserReady) {
-            goToMainView();
+            widget.firstTime ? goToMainView() : Get.back();
           } else if (state is CurrentUserError) {
             CurrentUserCubitHelpers.showErrorSnackbar(state);
           }
@@ -113,7 +113,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
         .updateDiscoverySettings(user, discoverySettings);
   }
 
-  void goToMainView() => widget.firstTime ? Get.off(MainView()) : Get.back();
+  void goToMainView() => Get.off(MainView());
 
   void setGender(Gender value) => gender = value;
 

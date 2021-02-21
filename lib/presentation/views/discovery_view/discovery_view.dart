@@ -42,11 +42,7 @@ class DiscoveryView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state is CurrentUserWaiting) {
-            return LoadingSpinner();
-          } else if (state is CurrentUserError) {
-            return LoadingSpinner();
-          } else if (state is CurrentUserProfileIncomplete) {
+          if (state is CurrentUserProfileIncomplete) {
             // show empty container before the new screen loads up
             return Container();
           } else if (state is CurrentUserReady) {
@@ -76,12 +72,8 @@ class DiscoveryView extends StatelessWidget {
                 },
               ),
             );
-            return FlatButton(
-              child: Text('Test fest'),
-              onPressed: () => Get.off(MyPhotosView()),
-            );
           }
-          return Text('Lipton');
+          return LoadingSpinner();
         },
       ),
     );

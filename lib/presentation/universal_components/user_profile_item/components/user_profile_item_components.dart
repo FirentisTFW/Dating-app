@@ -4,12 +4,10 @@ import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
-import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
-import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
+import 'package:Dating_app/presentation/views/my_profile_view/components/profile_edition_icons.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/route_manager.dart';
 
 class PhotosSlider extends StatelessWidget {
   const PhotosSlider({Key key}) : super(key: key);
@@ -74,7 +72,7 @@ class NameAgeLocationBar extends StatelessWidget {
               ),
             ),
             if (!isMine) _buildDistanceBox(),
-            if (isMine) ..._buildEditIcons(context),
+            if (isMine) ProfileEditionIcons(),
           ],
         ),
       ),
@@ -102,38 +100,9 @@ class NameAgeLocationBar extends StatelessWidget {
         ),
       );
 
-  List<Widget> _buildEditIcons(BuildContext context) => [
-        const Expanded(flex: 3, child: SizedBox()),
-        Flexible(
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.edit),
-          ),
-        ),
-        const Expanded(flex: 1, child: SizedBox()),
-        Flexible(
-          child: IconButton(
-            onPressed: goToMyPhotosView,
-            icon: const Icon(Icons.photo_library_rounded),
-          ),
-        ),
-        const Expanded(flex: 1, child: SizedBox()),
-        Flexible(
-          child: IconButton(
-            onPressed: goToDiscoverySettingsView,
-            icon: const Icon(Icons.person_search),
-          ),
-        ),
-        const Expanded(flex: 1, child: SizedBox()),
-      ];
-
   double getDistance(BuildContext context, CustomLocation firstLocation,
       CustomLocation secondLocation) {
     return firstLocation.distance(
         lat: secondLocation.latitude, lng: secondLocation.longitude);
   }
-
-  void goToDiscoverySettingsView() => Get.to(DiscoverySettingsView());
-
-  void goToMyPhotosView() => Get.to(MyPhotosView());
 }
