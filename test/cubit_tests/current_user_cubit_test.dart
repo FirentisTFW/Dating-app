@@ -110,6 +110,69 @@ void main() {
         ],
       );
     });
+    group('updateDiscoverySettings -', () {
+      blocTest(
+        'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
+        build: () {
+          when(authenticationRepository.userId).thenReturn('1');
+          when(usersRepository.updateDiscoverySettings(any, any, any))
+              .thenAnswer((_) async => null);
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
+        },
+        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserReady(user),
+        ],
+      );
+      blocTest(
+        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        build: () {
+          when(authenticationRepository.userId).thenReturn('1');
+          when(usersRepository.updateDiscoverySettings(any, any, any))
+              .thenThrow(ErrorDescription('An error occured'));
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
+        },
+        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserError(user: user),
+        ],
+      );
+    });
+    group('getCurrentLocation -', () {
+      final location = CustomLocation(latitude: 12.34, longitude: 12.34);
+      blocTest(
+        'When successful, emits [CurrentUserWaiting, CurrentUserLocationReceived]',
+        build: () {
+          when(locationRepository.getCurrentLocation()).thenAnswer(
+              (_) async => CustomLocation(latitude: 12.34, longitude: 12.34));
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
+        },
+        act: (cubit) => cubit.getCurrentLocation(),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserLocationReceived(location),
+        ],
+      );
+      blocTest(
+        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        build: () {
+          when(locationRepository.getCurrentLocation())
+              .thenThrow(ErrorDescription('An error occured'));
+          return CurrentUserCubit(
+              usersRepository, authenticationRepository, locationRepository);
+        },
+        act: (cubit) => cubit.getCurrentLocation(),
+        expect: [
+          CurrentUserWaiting(),
+          CurrentUserError(message: 'Check device location permissions'),
+        ],
+      );
+    });
     group('checkIfProfileIsComplete -', () {
       blocTest(
         'When profile is complete, emits [CurrentUserWaiting, CurrentUserReady]',
@@ -173,69 +236,6 @@ void main() {
         expect: [
           CurrentUserWaiting(),
           CurrentUserError(),
-        ],
-      );
-    });
-    group('updateDiscoverySettings -', () {
-      blocTest(
-        'When successful, emits [CurrentUserWaiting, CurrentUserReady]',
-        build: () {
-          when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.updateDiscoverySettings(any, any, any))
-              .thenAnswer((_) async => null);
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, locationRepository);
-        },
-        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserReady(user),
-        ],
-      );
-      blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
-        build: () {
-          when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.updateDiscoverySettings(any, any, any))
-              .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, locationRepository);
-        },
-        act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserError(user: user),
-        ],
-      );
-    });
-    group('getCurrentLocation -', () {
-      final location = CustomLocation(latitude: 12.34, longitude: 12.34);
-      blocTest(
-        'When successful, emits [CurrentUserWaiting, CurrentUserLocationReceived]',
-        build: () {
-          when(locationRepository.getCurrentLocation()).thenAnswer(
-              (_) async => CustomLocation(latitude: 12.34, longitude: 12.34));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, locationRepository);
-        },
-        act: (cubit) => cubit.getCurrentLocation(),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserLocationReceived(location),
-        ],
-      );
-      blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
-        build: () {
-          when(locationRepository.getCurrentLocation())
-              .thenThrow(ErrorDescription('An error occured'));
-          return CurrentUserCubit(
-              usersRepository, authenticationRepository, locationRepository);
-        },
-        act: (cubit) => cubit.getCurrentLocation(),
-        expect: [
-          CurrentUserWaiting(),
-          CurrentUserError(message: 'Check device location permissions'),
         ],
       );
     });

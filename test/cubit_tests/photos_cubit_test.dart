@@ -75,5 +75,44 @@ void main() {
         ],
       );
     });
+    group('deletePhotoByUrl -', () {
+      final initialPhotosUrls = [
+        'photoUrl_1',
+        'photoUrl_2',
+        'photoUrl_3',
+      ];
+      final remainingPhotosUrls = [
+        'photoUrl_2',
+        'photoUrl_3',
+      ];
+
+      blocTest(
+          'When successful, emits [PhotosWaiting, PhotosMultipleFetched(updatedPhotosList)]',
+          build: () {
+            when(photosRepository.deletePhotoByUrl(any))
+                .thenAnswer((_) async => null);
+            return PhotosCubit(photosRepository);
+          },
+          act: (cubit) =>
+              cubit.deletePhotoByUrl('photoUrl_1', initialPhotosUrls),
+          expect: [
+            PhotosWaiting(),
+            PhotosMultipleFetched(remainingPhotosUrls),
+          ]);
+      blocTest(
+          'When failure, emits [PhotosWaiting, PhotosError, PhotosMultipleFetched(oldPhotosList)]',
+          build: () {
+            when(photosRepository.deletePhotoByUrl(any))
+                .thenThrow(Exception('An error occured'));
+            return PhotosCubit(photosRepository);
+          },
+          act: (cubit) =>
+              cubit.deletePhotoByUrl('photoUrl_1', initialPhotosUrls),
+          expect: [
+            PhotosWaiting(),
+            PhotosError(message: 'Could not delete photo.'),
+            PhotosMultipleFetched(initialPhotosUrls),
+          ]);
+    });
   });
 }
