@@ -12,10 +12,12 @@ import 'components/photos_row.dart';
 
 // ignore: must_be_immutable
 class MyPhotosView extends StatelessWidget {
+  final bool firstTime;
+
   List<PickedFile> _pickedImages = [];
   List<String> _currentImages = [];
 
-  MyPhotosView({Key key}) : super(key: key);
+  MyPhotosView({Key key, this.firstTime = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class MyPhotosView extends StatelessWidget {
           BlocConsumer<PhotosCubit, PhotosState>(
             listener: (context, state) {
               if (state is PhotosSingleUploaded && _pickedImages.length == 0) {
-                goToMainView();
+                firstTime ? goToMainView() : Get.back();
               } else if (state is PhotosMultipleFetched) {
                 _currentImages = state.photosUrls;
               } else if (state is PhotosError) {
@@ -45,7 +47,7 @@ class MyPhotosView extends StatelessWidget {
                     if (_pickedImages.length > 0) {
                       await uploadPhotos(context);
                     } else {
-                      goToMainView();
+                      firstTime ? goToMainView() : Get.back();
                     }
                   },
                   child: const Text(

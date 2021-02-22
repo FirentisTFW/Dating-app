@@ -50,7 +50,7 @@ class DiscoveryView extends StatelessWidget {
               child: BlocConsumer<DiscoveryBloc, DiscoveryState>(
                 listener: (context, state) {
                   if (state is DiscoveryActionError) {
-                    print('Error!');
+                    // TODO: react to error
                   }
                 },
                 builder: (context, state) {

@@ -20,14 +20,13 @@ class MatchesView extends StatelessWidget {
         child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
           builder: (context, state) {
             if (state is CurrentUserWithUserInstance) {
-              print(state.user);
               BlocProvider.of<MatchesCubit>(context)
                   .fetchMatches(state.user.id);
 
               return BlocConsumer<MatchesCubit, MatchesState>(
                 listener: (context, state) {
                   if (state is MatchesError) {
-                    print('Errorek taki potworek');
+                    // TODO: react to error
                   }
                 },
                 builder: (context, state) {

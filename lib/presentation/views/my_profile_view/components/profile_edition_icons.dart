@@ -1,3 +1,4 @@
+import 'package:Dating_app/presentation/views/caption_edition_view/caption_edition_view.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
 import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class ProfileEditionIcons extends StatelessWidget {
           const Expanded(flex: 3, child: SizedBox()),
           Flexible(
             child: IconButton(
-              onPressed: () {},
+              onPressed: goToCaptionEditionView,
               icon: const Icon(Icons.edit),
             ),
           ),
@@ -39,4 +40,6 @@ class ProfileEditionIcons extends StatelessWidget {
   void goToDiscoverySettingsView() => Get.to(DiscoverySettingsView());
 
   void goToMyPhotosView() => Get.to(MyPhotosView());
+
+  void goToCaptionEditionView() => Get.to(CaptionEditionView());
 }

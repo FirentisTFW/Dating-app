@@ -10,17 +10,6 @@ class PhotosCubit extends Cubit<PhotosState> {
 
   PhotosCubit(this._photosRepository) : super(PhotosInitial());
 
-  Future<void> getSinglePhotoUrl(String userId, String photoName) async {
-    emit(PhotosWaiting());
-
-    try {
-      final photoUrl = await _photosRepository.getPhotoUrl(userId, photoName);
-      emit(PhotosSingleFetched(photoUrl));
-    } catch (err) {
-      emit(PhotosError());
-    }
-  }
-
   Future<void> getMultiplePhotosUrls(String userId) async {
     emit(PhotosWaiting());
 
@@ -46,15 +35,16 @@ class PhotosCubit extends Cubit<PhotosState> {
   }
 
   Future<void> deletePhotoByUrl(
-      String photoUrl, List<String> photosUrls) async {
+      String deletingPhotoUrl, List<String> photosUrls) async {
     emit(PhotosWaiting());
 
     try {
-      await _photosRepository.deletePhotoByUrl(photoUrl);
-      photosUrls.remove(photoUrl);
+      await _photosRepository.deletePhotoByUrl(deletingPhotoUrl);
+      photosUrls.remove(deletingPhotoUrl);
       emit(PhotosMultipleFetched(photosUrls));
     } catch (err) {
-      emit(PhotosError());
+      emit(PhotosError(message: 'Could not delete photo.'));
+      emit(PhotosMultipleFetched(photosUrls));
     }
   }
 }

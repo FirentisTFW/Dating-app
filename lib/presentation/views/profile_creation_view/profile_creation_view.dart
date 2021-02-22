@@ -159,7 +159,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
     }
   }
 
-  void goToMyPhotosView() => Get.off(MyPhotosView());
+  void goToMyPhotosView() => Get.off(MyPhotosView(firstTime: true));
 
   void _setName(String value) => _name = value;
 
