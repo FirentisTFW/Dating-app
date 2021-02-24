@@ -41,6 +41,18 @@ exports.acceptanceCreated = functions.firestore.document('/users/men/men/{userId
     }    
 });
 
+exports.matchRemoved = functions.firestore.document('/users/men/men/{userId}/matches/{documentId}')
+.onDelete(async (snap, context) => {
+    const unmatchingUId = context.params.userId;
+    const unmatchedUId = snap.data()['userId'];
+    
+    console.log('User', unmatchingUId, 'unmatched user', unmatchedUId);
+
+    const genderCollection = getGenderCollection(unmatchedUId);
+
+    await genderCollection.doc(`${unmatchedUId}/matches/${unmatchingUId}`).delete();  
+});
+
 function getGenderCollection(userId) {
     if(userId[0] == 'm')
         return db.collection(`/users/men/men`);
@@ -60,6 +72,9 @@ async function createMatch(firstUid, secondUid) {
 
     await createMatchRecord(firstUserRef, secondUser, matchDate);
     await createMatchRecord(secondUserRef, firstUser, matchDate);
+
+    await removeAcceptanceRecord(firstUserRef, secondUser.id);
+    await removeAcceptanceRecord(secondUserRef, firstUser.id);
 }
 
 async function createMatchRecord(userRef, macthedUserData, matchDate) {
@@ -69,4 +84,8 @@ async function createMatchRecord(userRef, macthedUserData, matchDate) {
         birthDate: macthedUserData.data().birthDate,
         date: matchDate,
     });
+}
+
+async function removeAcceptanceRecord(userRef, acceptanceId) {
+    await userRef.collection('acceptances').doc(acceptanceId).delete();
 }

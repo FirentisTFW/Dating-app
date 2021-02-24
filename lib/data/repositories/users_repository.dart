@@ -99,4 +99,7 @@ class UsersRepository {
   Future rejectUser({String rejectingUid, Rejection rejection}) async =>
       await _firestoreProvider.rejectUser(
           rejectingUid: rejectingUid, rejection: rejection.toMap());
+
+  Future unmatchUser(String unmatchingUid, String unmatchedUid) async =>
+      await _firestoreProvider.unmatchUser(unmatchingUid, unmatchedUid);
 }

@@ -1,7 +1,7 @@
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/views/conversations_matches_view/conversations_matches_view.dart';
 import 'package:Dating_app/presentation/views/discovery_view/discovery_view.dart';
-import 'package:Dating_app/presentation/views/matches_view/matches_view.dart';
 import 'package:Dating_app/presentation/views/my_profile_view/my_profile_view.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  var _currentTab = CurrentTab.Discovery;
+  var _currentTab = CurrentMainTab.Discovery;
 
   // TODO: find better way to check user profile completness
   var _startup = true;
@@ -46,29 +46,29 @@ class _MainViewState extends State<MainView> {
           ],
         ),
       ),
-      body: getViewForCurrentTab(),
+      body: getViewForCurrentMainTab(),
     );
   }
 
-  Widget getViewForCurrentTab() {
+  Widget getViewForCurrentMainTab() {
     switch (_currentTab) {
-      case CurrentTab.MyProfile:
+      case CurrentMainTab.MyProfile:
         return MyProfileView();
-      case CurrentTab.Discovery:
+      case CurrentMainTab.Discovery:
         return DiscoveryView();
-      case CurrentTab.Conversations:
-        return MatchesView();
+      case CurrentMainTab.ConversationsMatches:
+        return ConversationsMatchesView();
       default:
         return LoadingSpinner();
     }
   }
 
   void switchToProfileView() =>
-      setState(() => _currentTab = CurrentTab.MyProfile);
+      setState(() => _currentTab = CurrentMainTab.MyProfile);
 
   void switchToDiscoveryView() =>
-      setState(() => _currentTab = CurrentTab.Discovery);
+      setState(() => _currentTab = CurrentMainTab.Discovery);
 
   void switchToConversationsView() =>
-      setState(() => _currentTab = CurrentTab.Conversations);
+      setState(() => _currentTab = CurrentMainTab.ConversationsMatches);
 }

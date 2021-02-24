@@ -105,17 +105,24 @@ class FirestoreProvider {
     return _womenCollection;
   }
 
-  Future acceptUser({String acceptingUid, dynamic acceptance}) async =>
+  Future<void> acceptUser({String acceptingUid, dynamic acceptance}) async =>
       await _getGenderCollectionForUser(acceptingUid)
           .doc(acceptingUid)
           .collection('acceptances')
           .doc(acceptance['userId'])
           .set(acceptance);
 
-  Future rejectUser({String rejectingUid, dynamic rejection}) async =>
+  Future<void> rejectUser({String rejectingUid, dynamic rejection}) async =>
       await _getGenderCollectionForUser(rejectingUid)
           .doc(rejectingUid)
           .collection('rejections')
           .doc(rejection['userId'])
           .set(rejection);
+
+  Future<void> unmatchUser(String unmatchingUid, String unmatchedUid) async =>
+      await _getGenderCollectionForUser(unmatchingUid)
+          .doc(unmatchingUid)
+          .collection('matches')
+          .doc(unmatchedUid)
+          .delete();
 }

@@ -1,9 +1,12 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
+import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/components/user_profile_item_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/route_manager.dart';
 
 class UserProfileItem extends StatelessWidget {
   final User user;
@@ -35,7 +38,7 @@ class UserProfileItem extends StatelessWidget {
             if (profileRelation == ProfileRelation.Discovered)
               buildMatchRejectBar(),
             if (profileRelation == ProfileRelation.Matched)
-              buildMessageUnmatchBar(),
+              buildMessageUnmatchBar(context),
           ],
         );
       },
@@ -89,7 +92,7 @@ class UserProfileItem extends StatelessWidget {
     );
   }
 
-  Widget buildMessageUnmatchBar() {
+  Widget buildMessageUnmatchBar(BuildContext context) {
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
@@ -109,7 +112,10 @@ class UserProfileItem extends StatelessWidget {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  await unmatchUser(context);
+                  Get.back();
+                },
                 child: const Icon(
                   Icons.close,
                   size: 38,
@@ -121,5 +127,17 @@ class UserProfileItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> unmatchUser(BuildContext context) async {
+    // TODO: find better, more secure way
+
+    final userState = BlocProvider.of<CurrentUserCubit>(context).state
+        as CurrentUserWithUserInstance;
+
+    await BlocProvider.of<MatchesCubit>(context)
+        .unmatchUser(userState.user.id, user.id);
+
+    Get.back();
   }
 }

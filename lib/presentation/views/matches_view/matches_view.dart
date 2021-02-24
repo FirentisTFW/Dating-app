@@ -15,33 +15,34 @@ class MatchesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
-          builder: (context, state) {
-            if (state is CurrentUserWithUserInstance) {
+      padding: const EdgeInsets.only(bottom: 20, top: 6),
+      child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
+        builder: (context, state) {
+          if (state is CurrentUserWithUserInstance) {
+            if (BlocProvider.of<MatchesCubit>(context).state
+                is! MatchesFetched) {
               BlocProvider.of<MatchesCubit>(context)
                   .fetchMatches(state.user.id);
-
-              return BlocConsumer<MatchesCubit, MatchesState>(
-                listener: (context, state) {
-                  if (state is MatchesError) {
-                    // TODO: react to error
-                  }
-                },
-                builder: (context, state) {
-                  if (state is MatchesFetched) {
-                    return ListView(
-                      children: _buildRows(state.matches),
-                    );
-                  }
-                  return LoadingSpinner();
-                },
-              );
             }
-            return LoadingSpinner();
-          },
-        ),
+
+            return BlocConsumer<MatchesCubit, MatchesState>(
+              listener: (context, state) {
+                if (state is MatchesError) {
+                  // TODO: react to error
+                }
+              },
+              builder: (context, state) {
+                if (state is MatchesFetched) {
+                  return ListView(
+                    children: _buildRows(state.matches),
+                  );
+                }
+                return LoadingSpinner();
+              },
+            );
+          }
+          return LoadingSpinner();
+        },
       ),
     );
   }

@@ -13,9 +13,14 @@ enum ProfileStatus {
   MissingDiscoverySettings,
 }
 
-enum CurrentTab {
+enum CurrentMainTab {
   MyProfile,
   Discovery,
+  ConversationsMatches,
+}
+
+enum CurrentSubTab {
+  Matches,
   Conversations,
 }
 

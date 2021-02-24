@@ -20,4 +20,22 @@ class MatchesCubit extends Cubit<MatchesState> {
       emit(MatchesError());
     }
   }
+
+  Future<void> unmatchUser(String unmatchingUid, String unmatchedUid) async {
+    final currentState = state as MatchesFetched;
+    final currentMatches = currentState.matches;
+
+    emit(MatchesWaiting());
+
+    try {
+      await _usersRepository.unmatchUser(unmatchingUid, unmatchedUid);
+      final remainingMatches = currentMatches
+          .where((match) => match.userId != unmatchedUid)
+          .toList();
+      emit(MatchesFetched(remainingMatches));
+    } catch (err) {
+      emit(MatchesError());
+      emit(MatchesFetched(currentMatches));
+    }
+  }
 }
