@@ -17,6 +17,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'data/repositories/authentication_repository.dart';
 import 'data/repositories/photos_repository.dart';
 import 'logic/auth_bloc/auth_bloc.dart';
+import 'logic/conversations_cubit/conversations_cubit.dart';
 import 'presentation/setup/themes.dart';
 
 Future main() async {
@@ -51,6 +52,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<MatchesCubit>(
           create: (context) => MatchesCubit(_usersRepository),
+        ),
+        BlocProvider<ConversationsCubit>(
+          create: (context) => ConversationsCubit(_usersRepository),
         ),
       ],
       child: GetMaterialApp(

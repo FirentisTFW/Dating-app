@@ -1,6 +1,7 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
 import 'package:Dating_app/data/models/acceptance_rejection.dart';
+import 'package:Dating_app/data/models/conversation.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
@@ -72,6 +73,18 @@ class UsersRepository {
     if (matchesSnapshots.docs.length > 0) {
       return matchesSnapshots.docs
           .map((item) => UserMatch.fromMap(item.data()))
+          .toList();
+    }
+    return [];
+  }
+
+  Future<List<Conversation>> getUserConversations(String userId) async {
+    final conversationsSnapshots =
+        await _firestoreProvider.getUserConversations(userId) as QuerySnapshot;
+
+    if (conversationsSnapshots.docs.length > 0) {
+      return conversationsSnapshots.docs
+          .map((item) => Conversation.fromMap(item.data()))
           .toList();
     }
     return [];

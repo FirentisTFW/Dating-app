@@ -4,6 +4,7 @@ import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/components/user_profile_item_components.dart';
+import 'package:Dating_app/presentation/views/chat_view/chat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
@@ -101,7 +102,7 @@ class UserProfileItem extends StatelessWidget {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: () {},
+                onTap: messageUser,
                 child: const Icon(
                   Icons.message,
                   size: 38,
@@ -140,4 +141,6 @@ class UserProfileItem extends StatelessWidget {
 
     Get.back();
   }
+
+  void messageUser() => Get.to(ChatView(userId: user.id));
 }
