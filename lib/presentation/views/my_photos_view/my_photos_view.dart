@@ -1,5 +1,7 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
@@ -119,10 +121,12 @@ class MyPhotosView extends StatelessWidget {
   }
 
   void _fetchUserCurrentPhotos(BuildContext context) {
-    final userState = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
-    BlocProvider.of<PhotosCubit>(context)
-        .getMultiplePhotosUrls(userState.user.id);
+    final userData = locator<CurrentUserData>();
+
+    if (userData.isUserSet) {
+      BlocProvider.of<PhotosCubit>(context)
+          .getMultiplePhotosUrls(userData.userId);
+    }
   }
 
   void goToMainView() => Get.off(MainView());
@@ -134,18 +138,18 @@ class MyPhotosView extends StatelessWidget {
           .deletePhotoByUrl(photoUrl, _currentImages);
 
   Future<void> uploadPhotos(BuildContext context) async {
-    final currentState = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
-    final userId = currentState.user.id;
+    final userData = locator<CurrentUserData>();
 
-    while (_pickedImages.length > 0) {
-      final wasPhotoUploaded = await BlocProvider.of<PhotosCubit>(context)
-          .uploadPhoto(userId, _pickedImages.first);
+    if (userData.isUserSet) {
+      while (_pickedImages.length > 0) {
+        final wasPhotoUploaded = await BlocProvider.of<PhotosCubit>(context)
+            .uploadPhoto(userData.userId, _pickedImages.first);
 
-      if (wasPhotoUploaded) {
-        _pickedImages.removeAt(0);
-      } else {
-        break;
+        if (wasPhotoUploaded) {
+          _pickedImages.removeAt(0);
+        } else {
+          break;
+        }
       }
     }
   }

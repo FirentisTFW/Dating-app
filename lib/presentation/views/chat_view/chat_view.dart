@@ -1,9 +1,11 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'components/message_bubble.dart';
 import 'components/message_input.dart';
+import 'components/photo_icon.dart';
 
 class ChatView extends StatelessWidget {
   final String userId;
@@ -87,31 +89,6 @@ class ChatView extends StatelessWidget {
         ),
         const Expanded(child: SizedBox()),
       ],
-    );
-  }
-}
-
-class PhotoIcon extends StatelessWidget {
-  final String photoUrl;
-  final double size;
-
-  const PhotoIcon({Key key, @required this.photoUrl, @required this.size})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          fit: BoxFit.fitWidth,
-          image: photoUrl != null
-              ? NetworkImage(photoUrl)
-              : AssetImage('assets/images/unknown_avatar.png'),
-        ),
-      ),
     );
   }
 }

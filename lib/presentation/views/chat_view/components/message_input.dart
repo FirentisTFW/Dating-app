@@ -1,3 +1,4 @@
+import 'package:Dating_app/data/models/message.dart';
 import 'package:flutter/material.dart';
 
 class MessageInput extends StatefulWidget {
@@ -36,7 +37,7 @@ class _MessageInputState extends State<MessageInput> {
           ),
           FlatButton(
             shape: CircleBorder(),
-            onPressed: () {},
+            onPressed: sendMessage,
             color: Theme.of(context).primaryColor,
             child: const Padding(
               padding: EdgeInsets.all(16),
@@ -48,6 +49,15 @@ class _MessageInputState extends State<MessageInput> {
           )
         ],
       ),
+    );
+  }
+
+  void sendMessage() {
+    final message = Message(
+      userId: null,
+      content: _messageController.text,
+      date: DateTime.now(),
+      read: false,
     );
   }
 }

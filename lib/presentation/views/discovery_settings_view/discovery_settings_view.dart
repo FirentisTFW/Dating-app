@@ -1,6 +1,8 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/next_button.dart';
@@ -87,13 +89,12 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
       ageMax = 25;
       distance = 20;
     } else {
-      final state = BlocProvider.of<CurrentUserCubit>(context).state
-          as CurrentUserWithUserInstance;
+      final userData = locator<CurrentUserData>();
 
-      gender = state.user.discoverySettings.gender;
-      ageMin = state.user.discoverySettings.ageMin;
-      ageMax = state.user.discoverySettings.ageMax;
-      distance = state.user.discoverySettings.distance;
+      gender = userData.user.discoverySettings.gender;
+      ageMin = userData.user.discoverySettings.ageMin;
+      ageMax = userData.user.discoverySettings.ageMax;
+      distance = userData.user.discoverySettings.distance;
     }
   }
 
@@ -105,12 +106,10 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
       distance: distance,
     );
 
-    final currentState = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
-    final user = currentState.user;
+    final userData = locator<CurrentUserData>();
 
     BlocProvider.of<CurrentUserCubit>(context)
-        .updateDiscoverySettings(user, discoverySettings);
+        .updateDiscoverySettings(userData.user, discoverySettings);
   }
 
   void goToMainView() => Get.off(MainView());

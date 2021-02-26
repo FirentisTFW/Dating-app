@@ -2,6 +2,7 @@ import 'package:Dating_app/data/data_providers/authentication_provider.dart';
 import 'package:Dating_app/data/data_providers/firestore_provider.dart';
 import 'package:Dating_app/data/data_providers/firebase_storage_provider.dart';
 import 'package:Dating_app/data/data_providers/location_provider.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get_it/get_it.dart';
 
@@ -14,5 +15,8 @@ void setupLocator() {
   locator.registerLazySingleton<FirebaseStorageProvider>(
       () => FirebaseStorageProvider());
   locator.registerLazySingleton<LocationProvider>(() => LocationProvider());
+
   locator.registerLazySingleton<Geoflutterfire>(() => Geoflutterfire());
+
+  locator.registerLazySingleton<CurrentUserData>(() => CurrentUserData());
 }

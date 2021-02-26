@@ -1,8 +1,10 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
 import 'package:Dating_app/logic/fake_users_creator.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
@@ -86,19 +88,21 @@ class DiscoveryView extends StatelessWidget {
 
   void acceptUser(
       BuildContext context, List<User> currentStateUsers, String acceptedUid) {
-    final state = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
+    final userData = locator<CurrentUserData>();
 
-    BlocProvider.of<DiscoveryBloc>(context).add(AcceptUser(currentStateUsers,
-        acceptingUid: state.user.id, acceptedUid: acceptedUid));
+    if (userData.isUserSet) {
+      BlocProvider.of<DiscoveryBloc>(context).add(AcceptUser(currentStateUsers,
+          acceptingUid: userData.userId, acceptedUid: acceptedUid));
+    }
   }
 
   void rejectUser(
       BuildContext context, List<User> currentStateUsers, String acceptedUid) {
-    final state = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
+    final userData = locator<CurrentUserData>();
 
-    BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
-        rejectingUid: state.user.id, rejectedUid: acceptedUid));
+    if (userData.isUserSet) {
+      BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
+          rejectingUid: userData.userId, rejectedUid: acceptedUid));
+    }
   }
 }

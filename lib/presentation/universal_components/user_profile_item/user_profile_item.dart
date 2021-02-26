@@ -1,8 +1,10 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/components/user_profile_item_components.dart';
 import 'package:Dating_app/presentation/views/chat_view/chat_view.dart';
 import 'package:flutter/material.dart';
@@ -131,13 +133,14 @@ class UserProfileItem extends StatelessWidget {
   }
 
   Future<void> unmatchUser(BuildContext context) async {
-    // TODO: find better, more secure way
+    final userData = locator<CurrentUserData>();
 
-    final userState = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
-
-    await BlocProvider.of<MatchesCubit>(context)
-        .unmatchUser(userState.user.id, user.id);
+    if (userData.isUserSet) {
+      await BlocProvider.of<MatchesCubit>(context)
+          .unmatchUser(userData.userId, user.id);
+    } else {
+      return;
+    }
 
     Get.back();
   }

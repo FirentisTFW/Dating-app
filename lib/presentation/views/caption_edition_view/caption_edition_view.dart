@@ -1,5 +1,7 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,9 +22,8 @@ class _CaptionEditionViewState extends State<CaptionEditionView> {
   void initState() {
     super.initState();
 
-    final currentTtate = BlocProvider.of<CurrentUserCubit>(context).state
-        as CurrentUserWithUserInstance;
-    user = currentTtate.user;
+    final userData = locator<CurrentUserData>();
+    user = userData.user;
     captionController = TextEditingController(text: user.caption);
   }
 
