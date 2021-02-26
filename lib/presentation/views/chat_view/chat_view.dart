@@ -1,4 +1,5 @@
-import 'package:Dating_app/data/models/conversation.dart';
+import 'package:Dating_app/data/models/conversation_overview.dart';
+import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'components/message_bubble.dart';
@@ -6,35 +7,18 @@ import 'components/message_input.dart';
 
 class ChatView extends StatelessWidget {
   final String userId;
-  Conversation conversation;
+  final String userName;
+  final ConversationOverview conversationOverview;
 
-  ChatView({@required this.userId, this.conversation});
+  ChatView({this.userId, this.userName, this.conversationOverview});
 
   @override
   Widget build(BuildContext context) {
-    // test only
-    conversation = Conversation(
-      userId: 'wasdsa15',
-      userName: 'Olivia',
-      lastMessage: null,
-    );
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const Expanded(child: SizedBox()),
-            PhotoIcon(size: AppBar().preferredSize.height * 0.8),
-            const SizedBox(width: 20),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                conversation.userName,
-                style: const TextStyle(fontSize: 24),
-              ),
-            ),
-            const Expanded(child: SizedBox()),
-          ],
-        ),
+        title: conversationOverview != null
+            ? _buildAppBarFromConversationData()
+            : _buildAppBarFromUserData(),
       ),
       body: Column(
         children: [
@@ -44,16 +28,75 @@ class ChatView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildAppBarFromConversationData() {
+    final _photosRepository = PhotosRepository();
+
+    return FutureBuilder(
+      future: _photosRepository
+          .getFirstPhotoUrlForUser(conversationOverview.userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return _buildAppBarUserInfo(
+              photoUrl: snapshot.data, userName: conversationOverview.userName);
+        } else if (snapshot.hasError) {
+          return Container();
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildAppBarFromUserData() {
+    final _photosRepository = PhotosRepository();
+
+    return FutureBuilder(
+      future: _photosRepository.getFirstPhotoUrlForUser(userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return _buildAppBarUserInfo(
+              userName: userName, photoUrl: snapshot.data);
+        } else if (snapshot.hasError) {
+          if (snapshot.data == null) {
+            return _buildAppBarUserInfo(
+              userName: userName,
+              photoUrl: null,
+            );
+          }
+          return Container();
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildAppBarUserInfo(
+      {@required String userName, @required String photoUrl}) {
+    return Row(
+      children: [
+        const Expanded(child: SizedBox()),
+        PhotoIcon(
+            photoUrl: photoUrl, size: AppBar().preferredSize.height * 0.8),
+        const SizedBox(width: 20),
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            userName,
+            style: const TextStyle(fontSize: 24),
+          ),
+        ),
+        const Expanded(child: SizedBox()),
+      ],
+    );
+  }
 }
 
 class PhotoIcon extends StatelessWidget {
+  final String photoUrl;
   final double size;
 
-  // test only
-  final networkImage =
-      'https://firebasestorage.googleapis.com/v0/b/dating-app-76b0f.appspot.com/o/users_images%2FmgIzISF1o6Gfau0SqV1arDCZNtKO2%2F1614161715112?alt=media&token=05111a20-0883-4b81-95ec-eccf961850c7';
-
-  const PhotoIcon({Key key, @required this.size}) : super(key: key);
+  const PhotoIcon({Key key, @required this.photoUrl, @required this.size})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +107,9 @@ class PhotoIcon extends StatelessWidget {
         shape: BoxShape.circle,
         image: DecorationImage(
           fit: BoxFit.fitWidth,
-          image: NetworkImage(
-            networkImage,
-          ),
+          image: photoUrl != null
+              ? NetworkImage(photoUrl)
+              : AssetImage('assets/images/unknown_avatar.png'),
         ),
       ),
     );

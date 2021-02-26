@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:Dating_app/data/models/message.dart';
 import 'package:flutter/foundation.dart';
 
-class Conversation {
+class ConversationOverview {
+  final String conversationId;
   final String userId;
   final String userName;
   final Message lastMessage;
 
-  Conversation({
+  ConversationOverview({
+    @required this.conversationId,
     @required this.userId,
     @required this.userName,
     @required this.lastMessage,
@@ -16,17 +18,19 @@ class Conversation {
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': userId,
+      'conversationId': conversationId,
+      'usersId': userId,
       'userName': userName,
       'lastMessage': lastMessage?.toMap(),
     };
   }
 
-  factory Conversation.fromMap(Map<String, dynamic> map) {
+  factory ConversationOverview.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
 
-    return Conversation(
-      userId: map['userId'],
+    return ConversationOverview(
+      conversationId: map['conversationId'],
+      userId: map['usersId'],
       userName: map['userName'],
       lastMessage: Message.fromMap(map['lastMessage']),
     );
@@ -34,6 +38,6 @@ class Conversation {
 
   String toJson() => json.encode(toMap());
 
-  factory Conversation.fromJson(String source) =>
-      Conversation.fromMap(json.decode(source));
+  factory ConversationOverview.fromJson(String source) =>
+      ConversationOverview.fromMap(json.decode(source));
 }

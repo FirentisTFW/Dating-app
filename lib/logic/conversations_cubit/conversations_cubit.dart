@@ -1,4 +1,4 @@
-import 'package:Dating_app/data/models/conversation.dart';
+import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';

@@ -14,7 +14,7 @@ class ConversationsWaiting extends ConversationsState {}
 class ConversationsConversationCreated extends ConversationsState {}
 
 class ConversationsFetched extends ConversationsState {
-  final List<Conversation> conversations;
+  final List<ConversationOverview> conversations;
 
   const ConversationsFetched(this.conversations);
 
