@@ -83,6 +83,7 @@ async function createMatchRecord(userRef, macthedUserData, matchDate) {
         name: macthedUserData.data().name,
         birthDate: macthedUserData.data().birthDate,
         date: matchDate,
+        conversationId: '',
     });
 }
 

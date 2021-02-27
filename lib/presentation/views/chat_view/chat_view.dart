@@ -1,6 +1,9 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/data/repositories/photos_repository.dart';
+import 'package:Dating_app/data/repositories/users_repository.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
+import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:flutter/material.dart';
 
 import 'components/message_bubble.dart';
@@ -17,18 +20,14 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: conversationOverview != null
-            ? _buildAppBarFromConversationData()
-            : _buildAppBarFromUserData(),
-      ),
-      body: Column(
-        children: [
-          Expanded(child: MessagesList()),
-          MessageInput(),
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: conversationOverview != null
+              ? _buildAppBarFromConversationData()
+              : _buildAppBarFromUserData(),
+        ),
+        body: conversationOverview != null
+            ? _buildBodyFromConversationData()
+            : _buildBodyFromUserData());
   }
 
   Widget _buildAppBarFromConversationData() {
@@ -88,6 +87,37 @@ class ChatView extends StatelessWidget {
           ),
         ),
         const Expanded(child: SizedBox()),
+      ],
+    );
+  }
+
+  Widget _buildBodyFromConversationData() =>
+      _buildBody(conversationId: conversationOverview.conversationId);
+
+  Widget _buildBodyFromUserData() {
+    final usersRepository = UsersRepository();
+    final userData = locator<CurrentUserData>();
+
+    return FutureBuilder(
+      future: usersRepository.getConversationIdForMatch(
+          userId: userData.userId, matchId: userId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildBody(conversationId: snapshot.data);
+        } else if (snapshot.hasError) {
+          // TODO: show error message
+          return LoadingSpinner();
+        }
+        return LoadingSpinner();
+      },
+    );
+  }
+
+  Widget _buildBody({@required String conversationId}) {
+    return Column(
+      children: [
+        Expanded(child: MessagesList()),
+        MessageInput(conversationId: conversationId),
       ],
     );
   }

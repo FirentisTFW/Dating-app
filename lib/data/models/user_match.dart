@@ -8,12 +8,14 @@ class UserMatch extends Equatable {
   final String name;
   final DateTime birthDate;
   final DateTime date;
+  final String conversationId;
 
   UserMatch({
     @required this.userId,
     @required this.name,
     @required this.birthDate,
     @required this.date,
+    this.conversationId,
   });
 
   @override
@@ -25,6 +27,7 @@ class UserMatch extends Equatable {
       'name': name,
       'birthDate': birthDate?.millisecondsSinceEpoch,
       'date': date?.millisecondsSinceEpoch,
+      'conversationId': conversationId,
     };
   }
 
@@ -36,6 +39,7 @@ class UserMatch extends Equatable {
       name: map['name'],
       birthDate: DateTime.fromMillisecondsSinceEpoch(map['birthDate']),
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      conversationId: map['conversationId'],
     );
   }
 
@@ -43,4 +47,7 @@ class UserMatch extends Equatable {
 
   factory UserMatch.fromJson(String source) =>
       UserMatch.fromMap(json.decode(source));
+
+  @override
+  bool get stringify => true;
 }

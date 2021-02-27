@@ -115,4 +115,11 @@ class UsersRepository {
 
   Future unmatchUser(String unmatchingUid, String unmatchedUid) async =>
       await _firestoreProvider.unmatchUser(unmatchingUid, unmatchedUid);
+
+  Future getConversationIdForMatch({String userId, String matchId}) async {
+    final matchData =
+        await _firestoreProvider.getMatch(userId, matchId) as DocumentSnapshot;
+
+    return matchData.data()['conversationId'];
+  }
 }

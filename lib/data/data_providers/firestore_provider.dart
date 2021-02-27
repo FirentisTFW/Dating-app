@@ -97,6 +97,13 @@ class FirestoreProvider {
           .collection('conversations')
           .get();
 
+  Future getMatch(String uid, String matchId) async =>
+      await _getGenderCollectionForUser(uid)
+          .doc(uid)
+          .collection('matches')
+          .doc(matchId)
+          .get();
+
   CollectionReference _getGenderCollectionForGender(Gender gender) {
     if (gender == Gender.Man) {
       return _menCollection;
