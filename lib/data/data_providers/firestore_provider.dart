@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 
 class FirestoreProvider {
   final _db = FirebaseFirestore.instance;
+  CollectionReference _conversationsCollection;
   CollectionReference _menCollection;
   CollectionReference _womenCollection;
 
@@ -25,6 +26,7 @@ class FirestoreProvider {
 
     _menCollection = _db.collection('users').doc('men').collection('men');
     _womenCollection = _db.collection('users').doc('women').collection('women');
+    _conversationsCollection = _db.collection('conversations');
   }
   Future getUserById(String uid) async =>
       await _getGenderCollectionForUser(uid).doc(uid).get();
@@ -138,4 +140,18 @@ class FirestoreProvider {
           .collection('matches')
           .doc(unmatchedUid)
           .delete();
+
+  Future<void> createConversation(dynamic conversation) async =>
+      await _conversationsCollection
+          .doc(conversation['conversationId'])
+          .set(conversation);
+
+  Future<void> sendMessage(String conversationId, dynamic message) async =>
+      await _conversationsCollection
+          .doc(conversationId)
+          .collection('messages')
+          .add(message);
+
+  Future<void> getMessagesRef(String conversationId) async =>
+      _conversationsCollection.doc(conversationId).collection('messages');
 }

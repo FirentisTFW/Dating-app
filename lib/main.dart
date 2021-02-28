@@ -4,6 +4,7 @@ import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
+import 'package:Dating_app/logic/messages_cubit/messages_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/presentation/views/auth_view/auth_view.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 import 'data/repositories/authentication_repository.dart';
+import 'data/repositories/conversations_repository.dart';
 import 'data/repositories/photos_repository.dart';
 import 'logic/auth_bloc/auth_bloc.dart';
 import 'logic/conversations_cubit/conversations_cubit.dart';
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
   final _usersRepository = UsersRepository();
   final _photosRepository = PhotosRepository();
   final _locationRepository = LocationRepository();
+  final _conversationsRepository = ConversationsRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +57,11 @@ class MyApp extends StatelessWidget {
           create: (context) => MatchesCubit(_usersRepository),
         ),
         BlocProvider<ConversationsCubit>(
-          create: (context) => ConversationsCubit(_usersRepository),
+          create: (context) =>
+              ConversationsCubit(_usersRepository, _conversationsRepository),
+        ),
+        BlocProvider<MessagesCubit>(
+          create: (context) => MessagesCubit(_conversationsRepository),
         ),
       ],
       child: GetMaterialApp(

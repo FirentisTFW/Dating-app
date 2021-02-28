@@ -1,19 +1,30 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/message.dart';
+import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
+import 'package:Dating_app/logic/messages_cubit/messages_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageInput extends StatefulWidget {
   final String conversationId;
+  final String matchedUserId;
 
-  const MessageInput({@required this.conversationId});
+  const MessageInput({@required this.conversationId, this.matchedUserId});
 
   @override
   _MessageInputState createState() => _MessageInputState();
 }
 
 class _MessageInputState extends State<MessageInput> {
+  String _conversationId;
   final _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _conversationId = widget.conversationId;
+  }
 
   @override
   void dispose() {
@@ -23,8 +34,6 @@ class _MessageInputState extends State<MessageInput> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.conversationId);
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
@@ -60,7 +69,7 @@ class _MessageInputState extends State<MessageInput> {
     );
   }
 
-  void sendMessage() {
+  void sendMessage() async {
     final userData = locator<CurrentUserData>();
 
     if (userData.isUserSet) {
@@ -71,9 +80,22 @@ class _MessageInputState extends State<MessageInput> {
         read: false,
       );
 
-      // create comversation if doesn't exists (widget.conversationId == null)
+      await _createConversationIfDoesntExist(userData.userId);
 
-      // send message to conversation
+      if (_conversationId != null) {
+        BlocProvider.of<MessagesCubit>(context)
+            .sendMessage(_conversationId, message);
+      }
+    }
+  }
+
+  Future<void> _createConversationIfDoesntExist(String userId) async {
+    if (_conversationId == null && widget.matchedUserId != null) {
+      _conversationId =
+          await BlocProvider.of<ConversationsCubit>(context).createConversation(
+        userId: userId,
+        matchedUserId: widget.matchedUserId,
+      );
     }
   }
 }

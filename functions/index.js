@@ -83,10 +83,46 @@ async function createMatchRecord(userRef, macthedUserData, matchDate) {
         name: macthedUserData.data().name,
         birthDate: macthedUserData.data().birthDate,
         date: matchDate,
-        conversationId: '',
+        conversationId: null,
     });
 }
 
 async function removeAcceptanceRecord(userRef, acceptanceId) {
     await userRef.collection('acceptances').doc(acceptanceId).delete();
+}
+
+exports.conversationCreated = functions.firestore.document('/conversations/{conversationId}')
+    .onCreate(async (snap, context) => {
+        const firstUid = snap.data().userIds[0];
+        const secondUid = snap.data().userIds[1];
+        const conversationId = snap.data().conversationId;
+
+        console.log('User', firstUid, 'created conversation with user', secondUid);
+
+        const firstUserRef = getGenderCollection(firstUid).doc(firstUid);
+        const secondUserRef = getGenderCollection(secondUid).doc(secondUid);
+
+        const firstUser = await firstUserRef.get();
+        const secondUser = await secondUserRef.get();
+
+        await putConversationIdInMatchRecord(firstUserRef, secondUid, conversationId);
+        await putConversationIdInMatchRecord(secondUserRef, firstUid, conversationId);
+
+        await createConversationOverviewRecord(firstUserRef, secondUser, conversationId);
+        await createConversationOverviewRecord(secondUserRef, firstUser, conversationId);
+});
+
+async function createConversationOverviewRecord(userRef, otherUserData, conversationId) {
+    await userRef.collection('conversations').doc(conversationId).set({
+        conversationId: conversationId,
+        userId: otherUserData.data().id,
+        userName: otherUserData.data().name,
+        lastMessage: null,
+    });
+}
+
+async function putConversationIdInMatchRecord(userRef, matchId, conversationId) {
+    await userRef.collection('matches').doc(matchId).update({
+        conversationId: conversationId
+    });
 }

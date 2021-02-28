@@ -16,7 +16,6 @@ class MatchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(match.conversationId);
     return Expanded(
       flex: 6,
       child: InkWell(

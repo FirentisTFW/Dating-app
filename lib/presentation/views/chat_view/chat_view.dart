@@ -117,7 +117,7 @@ class ChatView extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: MessagesList()),
-        MessageInput(conversationId: conversationId),
+        MessageInput(conversationId: conversationId, matchedUserId: userId),
       ],
     );
   }

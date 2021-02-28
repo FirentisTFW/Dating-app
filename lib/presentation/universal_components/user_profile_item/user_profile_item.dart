@@ -1,7 +1,6 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
-import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
@@ -115,10 +114,7 @@ class UserProfileItem extends StatelessWidget {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: () async {
-                  await unmatchUser(context);
-                  Get.back();
-                },
+                onTap: () async => await unmatchUser(context),
                 child: const Icon(
                   Icons.close,
                   size: 38,
