@@ -27,17 +27,20 @@ class MessagesCubit extends Cubit<MessagesState> {
     CollectionReference messagesReference;
     if (state is MessagesReferenceFetched) {
       final currentState = state as MessagesReferenceFetched;
-      messagesReference = currentState.messagesRefrerence;
+      messagesReference = currentState.messagesReference;
     }
 
     try {
       await _conversationsRepository.sendMessage(conversationId, message);
-      emit(MessagesMessageSent());
     } catch (err) {
       emit(MessagesErrorSending());
     }
     if (messagesReference != null) {
       emit(MessagesReferenceFetched(messagesReference));
     }
+  }
+
+  Future<void> waitForConversationStart() async {
+    emit(MessagesNewConversation());
   }
 }

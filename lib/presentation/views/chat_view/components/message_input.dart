@@ -70,6 +70,10 @@ class _MessageInputState extends State<MessageInput> {
   }
 
   void sendMessage() async {
+    if (_isMessageEmpty()) {
+      return;
+    }
+
     final userData = locator<CurrentUserData>();
 
     if (userData.isUserSet) {
@@ -86,8 +90,13 @@ class _MessageInputState extends State<MessageInput> {
         BlocProvider.of<MessagesCubit>(context)
             .sendMessage(_conversationId, message);
       }
+      _clearMessageInput();
     }
   }
+
+  bool _isMessageEmpty() => _messageController.text.trim() == '';
+
+  _clearMessageInput() => _messageController.text = '';
 
   Future<void> _createConversationIfDoesntExist(String userId) async {
     if (_conversationId == null && widget.matchedUserId != null) {
@@ -96,6 +105,11 @@ class _MessageInputState extends State<MessageInput> {
         userId: userId,
         matchedUserId: widget.matchedUserId,
       );
+      await _informAboutCreatedConversation();
     }
   }
+
+  Future<void> _informAboutCreatedConversation() async =>
+      await BlocProvider.of<MessagesCubit>(context)
+          .getMessagesRef(_conversationId);
 }

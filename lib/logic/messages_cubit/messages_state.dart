@@ -11,15 +11,17 @@ class MessagesInitial extends MessagesState {}
 
 class MessagesWaiting extends MessagesState {}
 
+class MessagesNewConversation extends MessagesState {}
+
 class MessagesMessageSent extends MessagesState {}
 
 class MessagesReferenceFetched extends MessagesState {
-  final CollectionReference messagesRefrerence;
+  final CollectionReference messagesReference;
 
-  MessagesReferenceFetched(this.messagesRefrerence);
+  MessagesReferenceFetched(this.messagesReference);
 
   @override
-  List<Object> get props => [messagesRefrerence];
+  List<Object> get props => [messagesReference];
 }
 
 abstract class MessagesError extends MessagesState {
