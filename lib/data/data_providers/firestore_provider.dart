@@ -152,6 +152,6 @@ class FirestoreProvider {
           .collection('messages')
           .add(message);
 
-  Future<void> getMessagesRef(String conversationId) async =>
+  Future<CollectionReference> getMessagesRef(String conversationId) async =>
       _conversationsCollection.doc(conversationId).collection('messages');
 }

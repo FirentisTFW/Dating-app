@@ -6,13 +6,11 @@ class Message {
   final String userId;
   final String content;
   final DateTime date;
-  final bool read;
 
   Message({
     @required this.userId,
     @required this.content,
     @required this.date,
-    @required this.read,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,7 +18,6 @@ class Message {
       'userId': userId,
       'content': content,
       'date': date?.millisecondsSinceEpoch,
-      'read': read,
     };
   }
 
@@ -31,7 +28,6 @@ class Message {
       userId: map['userId'],
       content: map['content'],
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      read: map['read'],
     );
   }
 

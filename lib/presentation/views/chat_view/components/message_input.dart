@@ -1,4 +1,5 @@
 import 'package:Dating_app/app/locator.dart';
+import 'package:Dating_app/data/models/conversation_base.dart';
 import 'package:Dating_app/data/models/message.dart';
 import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
@@ -81,7 +82,6 @@ class _MessageInputState extends State<MessageInput> {
         userId: userData.userId,
         content: _messageController.text,
         date: DateTime.now(),
-        read: false,
       );
 
       await _createConversationIfDoesntExist(userData.userId);
@@ -100,11 +100,14 @@ class _MessageInputState extends State<MessageInput> {
 
   Future<void> _createConversationIfDoesntExist(String userId) async {
     if (_conversationId == null && widget.matchedUserId != null) {
-      _conversationId =
-          await BlocProvider.of<ConversationsCubit>(context).createConversation(
-        userId: userId,
-        matchedUserId: widget.matchedUserId,
+      final conversation = ConversationBase(
+        conversationId: userId + widget.matchedUserId,
+        userIds: [userId, widget.matchedUserId],
+        date: DateTime.now(),
       );
+
+      _conversationId = await BlocProvider.of<ConversationsCubit>(context)
+          .createConversation(conversation);
       await _informAboutCreatedConversation();
     }
   }

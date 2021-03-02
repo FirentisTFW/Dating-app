@@ -24,6 +24,7 @@ void main() {
       date: DateTime(2021, 02, 20),
     ),
   ];
+  final exceptionMessage = 'An error occured';
 
   group('MatchesCubitTest -', () {
     setUp(() {
@@ -44,7 +45,7 @@ void main() {
       blocTest('When failure, emits [MatchesWaiting, MatchesError]',
           build: () {
             when(usersRepository.getUserMatches(any))
-                .thenThrow(Exception('An error occured'));
+                .thenThrow(Exception(exceptionMessage));
             return MatchesCubit(usersRepository);
           },
           act: (cubit) => cubit.fetchMatches('userId'),
@@ -52,6 +53,49 @@ void main() {
             MatchesWaiting(),
             MatchesError(),
           ]);
+    });
+    group('unmatchUser -', () {
+      final remainingMatches = [
+        UserMatch(
+          userId: 'abc1',
+          name: 'Jessica',
+          birthDate: DateTime(1995, 01, 22),
+          date: DateTime(2021, 02, 20),
+        ),
+      ];
+      blocTest(
+          'When successful and matches were fetched before, emits [MatchesWaiting, MatchesFetched(remainingUsers)]',
+          build: () {
+        when(usersRepository.getUserMatches(any))
+            .thenAnswer((_) async => matches);
+        when(usersRepository.unmatchUser(any, any))
+            .thenAnswer((_) async => null);
+
+        return MatchesCubit(usersRepository);
+      }, act: (cubit) async {
+        await cubit.fetchMatches('userId');
+        cubit.unmatchUser('unmatchingUid', 'cde2');
+      }, skip: 2, expect: [
+        MatchesWaiting(),
+        MatchesFetched(remainingMatches),
+      ]);
+      blocTest(
+          'When failure and matches were fetched before, emits [MatchesWaiting, MatchesFetched(oldMatched)]',
+          build: () {
+        when(usersRepository.getUserMatches(any))
+            .thenAnswer((_) async => matches);
+        when(usersRepository.unmatchUser(any, any))
+            .thenThrow(Exception(exceptionMessage));
+
+        return MatchesCubit(usersRepository);
+      }, act: (cubit) async {
+        await cubit.fetchMatches('userId');
+        cubit.unmatchUser('unmatchingUid', 'cde2');
+      }, skip: 2, expect: [
+        MatchesWaiting(),
+        MatchesError(),
+        MatchesFetched(matches),
+      ]);
     });
   });
 }

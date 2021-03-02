@@ -1,3 +1,4 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
@@ -6,6 +7,7 @@ import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/data/repositories/location_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +19,8 @@ class AuthenticationRepositoryMock extends Mock
     implements AuthenticationRepository {}
 
 class LocationRepositoryMock extends Mock implements LocationRepository {}
+
+class CurrentUserDataMock extends Mock implements CurrentUserData {}
 
 void main() {
   group('CurrentUserCubitTest -', () {
@@ -45,6 +49,11 @@ void main() {
       usersRepository = UsersRepositoryMock();
       authenticationRepository = AuthenticationRepositoryMock();
       locationRepository = LocationRepositoryMock();
+      var currentUserDataService = CurrentUserDataMock();
+      locator.registerSingleton<CurrentUserData>(currentUserDataService);
+    });
+    tearDown(() {
+      locator.unregister<CurrentUserData>();
     });
     group('updateUser -', () {
       final oldUser = user;
