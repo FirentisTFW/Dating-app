@@ -20,7 +20,8 @@ class FirestoreProvider {
         ? '10.0.2.2:8080'
         : 'localhost:8080';
 
-    _db.settings = Settings(host: host, sslEnabled: false);
+    _db.settings =
+        Settings(host: host, sslEnabled: false, persistenceEnabled: false);
 
     // end - local firebase emulator
 

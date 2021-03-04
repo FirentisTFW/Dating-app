@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:Dating_app/data/models/message.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:Dating_app/data/models/message.dart';
 
 class ConversationOverview {
   final String conversationId;
@@ -19,7 +20,7 @@ class ConversationOverview {
   Map<String, dynamic> toMap() {
     return {
       'conversationId': conversationId,
-      'usersId': userId,
+      'userId': userId,
       'userName': userName,
       'lastMessage': lastMessage?.toMap(),
     };
@@ -30,7 +31,7 @@ class ConversationOverview {
 
     return ConversationOverview(
       conversationId: map['conversationId'],
-      userId: map['usersId'],
+      userId: map['userId'],
       userName: map['userName'],
       lastMessage: Message.fromMap(map['lastMessage']),
     );
@@ -40,4 +41,9 @@ class ConversationOverview {
 
   factory ConversationOverview.fromJson(String source) =>
       ConversationOverview.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'ConversationOverview(conversationId: $conversationId, userId: $userId, userName: $userName, lastMessage: $lastMessage)';
+  }
 }

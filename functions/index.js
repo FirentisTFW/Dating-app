@@ -126,3 +126,24 @@ async function putConversationIdInMatchRecord(userRef, matchId, conversationId) 
         conversationId: conversationId
     });
 }
+
+exports.messageSent = functions.firestore.document('/conversations/{conversationId}/messages/{messageId}')
+    .onCreate(async (snap, context) => {
+        const conversationId = context.params.conversationId;
+        const conversation = await db.collection('conversations').doc(conversationId).get();
+
+        const firstUid = conversation.data().userIds[0];
+        const secondUid = conversation.data().userIds[1];
+
+        const firstUserRef = getGenderCollection(firstUid).doc(firstUid);
+        const secondUserRef = getGenderCollection(secondUid).doc(secondUid);
+
+        await updateLastMessageInConversation(firstUserRef, conversationId, snap.data());
+        await updateLastMessageInConversation(secondUserRef, conversationId, snap.data());
+    });
+
+async function updateLastMessageInConversation(userRef, conversationId, message) {
+    await userRef.collection('conversations').doc(conversationId).update({
+        lastMessage: message
+    });
+}

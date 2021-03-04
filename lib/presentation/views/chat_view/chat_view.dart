@@ -14,7 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'components/message_bubble.dart';
 import 'components/message_input.dart';
-import 'components/photo_icon.dart';
+import '../../universal_components/photo_icon.dart';
 
 class ChatView extends StatelessWidget {
   final String userId;

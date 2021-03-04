@@ -1,8 +1,12 @@
+import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/universal_components/photo_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'components/conversation_item.dart';
 
 class ConversationsView extends StatelessWidget {
   const ConversationsView({Key key}) : super(key: key);
@@ -21,12 +25,8 @@ class ConversationsView extends StatelessWidget {
               }
             },
             builder: (context, state) {
-              print(state);
               if (state is ConversationsFetched) {
-                print(state.conversations);
-                return Container(
-                  child: Text('fetched'),
-                );
+                return ConversationsList(state.conversations);
               }
               return LoadingSpinner();
             },
@@ -34,6 +34,20 @@ class ConversationsView extends StatelessWidget {
         }
         return LoadingSpinner();
       },
+    );
+  }
+}
+
+class ConversationsList extends StatelessWidget {
+  final List<ConversationOverview> conversations;
+
+  const ConversationsList(this.conversations);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: conversations.length,
+      itemBuilder: (context, index) => ConversationItem(conversations[index]),
     );
   }
 }
