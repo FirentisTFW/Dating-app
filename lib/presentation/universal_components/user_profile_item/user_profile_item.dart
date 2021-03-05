@@ -26,6 +26,7 @@ class UserProfileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.id);
     return Builder(
       builder: (context) {
         BlocProvider.of<PhotosCubit>(context).getMultiplePhotosUrls(user.id);
@@ -114,7 +115,7 @@ class UserProfileItem extends StatelessWidget {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: () async => await unmatchUser(context),
+                onTap: () async => await showUnmatchingDialog(context),
                 child: const Icon(
                   Icons.close,
                   size: 38,
@@ -128,7 +129,24 @@ class UserProfileItem extends StatelessWidget {
     );
   }
 
-  Future<void> unmatchUser(BuildContext context) async {
+  Future<void> showUnmatchingDialog(BuildContext context) async {
+    await Get.defaultDialog(
+        title: 'Are you sure?',
+        content: Text(
+            'Do you want to unmatch this person? You won\'t be able to send messages to each other anymore.'),
+        buttonColor: Theme.of(context).primaryColor,
+        cancelTextColor: Theme.of(context).primaryColor,
+        confirmTextColor: Colors.white,
+        textConfirm: 'Yes, unmatch',
+        textCancel: 'No',
+        onConfirm: () async {
+          await _unmatchUser(context);
+
+          Get.back();
+        });
+  }
+
+  Future<void> _unmatchUser(BuildContext context) async {
     final userData = locator<CurrentUserData>();
 
     if (userData.isUserSet) {

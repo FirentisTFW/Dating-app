@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:Dating_app/data/models/conversation_overview.dart';
+import 'package:Dating_app/data/repositories/photos_repository.dart';
+import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/photo_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +14,8 @@ class ConversationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final photosRepository = PhotosRepository();
+
     return Column(
       children: [
         Padding(
@@ -20,10 +24,23 @@ class ConversationItem extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: PhotoIcon(
-                  photoUrl: null,
-                  size: 50,
-                  fit: BoxFit.contain,
+                child: FutureBuilder(
+                  future: photosRepository
+                      .getFirstPhotoUrlForUser(conversation.userId),
+                  builder: (context, snapshot) {
+                    String photoUrl;
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return LoadingSpinner();
+                    }
+                    if (snapshot.hasData) {
+                      photoUrl = snapshot.data;
+                    }
+                    return PhotoIcon(
+                      photoUrl: photoUrl,
+                      size: 50,
+                      fit: BoxFit.contain,
+                    );
+                  },
                 ),
               ),
               Expanded(

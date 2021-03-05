@@ -22,36 +22,46 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 });
 // Required for side-effects
 
-exports.acceptanceCreated = functions.firestore.document('/users/men/men/{userId}/acceptances/{documentId}')
-.onCreate(async (snap, context) => {
+exports.acceptanceCreatedMen = functions.firestore.document('/users/men/men/{userId}/acceptances/{documentId}')
+.onCreate(async (snap, context) => await executeAcceptanceCreated(snap, context));
+
+exports.acceptanceCreatedWomen = functions.firestore.document('/users/women/women/{userId}/acceptances/{documentId}')
+.onCreate(async (snap, context) => await executeAcceptanceCreated(snap, context));
+
+async function executeAcceptanceCreated(snap, context) {
     const acceptingUserId = context.params.userId;
     const acceptedUserId = snap.data()['userId'];
-    
+
     console.log('User', acceptingUserId, 'accepted user', acceptedUserId);
 
     const genderCollection = getGenderCollection(acceptedUserId);
 
     const doc = await genderCollection.doc(`${acceptedUserId}/acceptances/${acceptingUserId}`).get();
     
-    if(doc.exists) {
+    if (doc.exists) {
         console.log('It\'s a match!');
         await createMatch(acceptingUserId, acceptedUserId);
     } else {
         console.log('No match');
     }    
-});
+}
 
-exports.matchRemoved = functions.firestore.document('/users/men/men/{userId}/matches/{documentId}')
-.onDelete(async (snap, context) => {
+exports.matchRemovedMen = functions.firestore.document('/users/men/men/{userId}/matches/{documentId}')
+.onDelete(async (snap, context) => await executeMatchRemoved(snap, context));
+
+exports.matchRemovedWomen = functions.firestore.document('/users/women/women/{userId}/matches/{documentId}')
+.onDelete(async (snap, context) => await executeMatchRemoved(snap, context));
+
+async function executeMatchRemoved(snap, context) {
     const unmatchingUId = context.params.userId;
     const unmatchedUId = snap.data()['userId'];
-    
+
     console.log('User', unmatchingUId, 'unmatched user', unmatchedUId);
 
     const genderCollection = getGenderCollection(unmatchedUId);
 
     await genderCollection.doc(`${unmatchedUId}/matches/${unmatchingUId}`).delete();  
-});
+}
 
 function getGenderCollection(userId) {
     if(userId[0] == 'm')

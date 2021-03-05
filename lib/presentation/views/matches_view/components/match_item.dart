@@ -16,31 +16,28 @@ class MatchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 6,
-      child: InkWell(
-        onTap: goToUserProfile,
-        child: FutureBuilder(
-          future: photosRepository.getFirstPhotoUrlForUser(match.userId),
-          builder: (context, snapshot) {
-            return Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  color: Colors.grey[300]),
-              height: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    const LoadingSpinner(),
-                  if (snapshot.hasData) _buildPhoto(snapshot.data),
-                  if (snapshot.hasError) _errorInfo,
-                  _buildNameAndAgeInfo(snapshot.hasData),
-                ],
-              ),
-            );
-          },
-        ),
+    return InkWell(
+      onTap: goToUserProfile,
+      child: FutureBuilder(
+        future: photosRepository.getFirstPhotoUrlForUser(match.userId),
+        builder: (context, snapshot) {
+          return Container(
+            decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                color: Colors.grey[300]),
+            height: double.infinity,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  const LoadingSpinner(),
+                if (snapshot.hasData) _buildPhoto(snapshot.data),
+                if (snapshot.hasError) _buildPhoto(null),
+                _buildNameAndAgeInfo(snapshot.hasData),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -58,14 +55,19 @@ class MatchItem extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: FittedBox(
           fit: BoxFit.cover,
-          child: Image.network(
-            photoUrl,
-            fit: BoxFit.contain,
-          ),
+          child: photoUrl != null
+              ? Image.network(
+                  photoUrl,
+                  fit: BoxFit.contain,
+                )
+              : Image.asset(
+                  'assets/images/unknown_avatar.png',
+                  fit: BoxFit.contain,
+                ),
         ),
       );
 
-  Widget _buildNameAndAgeInfo(bool hasData) {
+  Widget _buildNameAndAgeInfo(bool isPhotoFetched) {
     final age =
         CustomHelpers.getDifferenceInYears(match.birthDate, DateTime.now());
     return Align(
@@ -74,9 +76,9 @@ class MatchItem extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(6, 0, 0, 8),
         child: Text(
           '${match.name},  ${age.toString()}',
-          style: hasData
-              ? const TextStyle(color: Colors.white, fontSize: 18)
-              : const TextStyle(color: Colors.black, fontSize: 18),
+          style: isPhotoFetched
+              ? const TextStyle(color: Colors.black, fontSize: 18)
+              : const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
     );

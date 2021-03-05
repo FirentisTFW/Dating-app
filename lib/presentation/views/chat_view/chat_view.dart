@@ -47,6 +47,12 @@ class ChatView extends StatelessWidget {
           return _buildAppBarUserInfo(
               photoUrl: snapshot.data, userName: conversationOverview.userName);
         } else if (snapshot.hasError) {
+          if (snapshot.data == null) {
+            return _buildAppBarUserInfo(
+              userName: conversationOverview.userName,
+              photoUrl: null,
+            );
+          }
           return Container();
         }
         return Container();

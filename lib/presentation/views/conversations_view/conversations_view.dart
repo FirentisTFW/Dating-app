@@ -3,8 +3,10 @@ import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/photo_icon.dart';
+import 'package:Dating_app/presentation/views/chat_view/chat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/route_manager.dart';
 
 import 'components/conversation_item.dart';
 
@@ -47,7 +49,14 @@ class ConversationsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: conversations.length,
-      itemBuilder: (context, index) => ConversationItem(conversations[index]),
+      itemBuilder: (context, index) => InkWell(
+        onTap: () => goToConversation(conversations[index]),
+        child: ConversationItem(conversations[index]),
+      ),
     );
   }
+
+  void goToConversation(ConversationOverview conversationOverview) => Get.to(
+        ChatView(conversationOverview: conversationOverview),
+      );
 }

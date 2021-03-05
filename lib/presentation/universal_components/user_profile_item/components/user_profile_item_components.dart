@@ -26,22 +26,42 @@ class PhotosSlider extends StatelessWidget {
           if (state is PhotosMultipleFetched) {
             return CarouselSlider(
               options: CarouselOptions(height: double.infinity),
-              items: state.photosUrls.map((item) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  child: Image.network(
-                    item,
-                    fit: BoxFit.contain,
-                  ),
-                );
-              }).toList(),
+              items: state.photosUrls.length > 0
+                  ? buildUserPhotosForCarousel(context, state.photosUrls)
+                  : buildSamplePhoto(context),
             );
           }
           return LoadingSpinner();
         },
       ),
     );
+  }
+
+  List<Widget> buildUserPhotosForCarousel(
+      BuildContext context, List<String> photosUrls) {
+    return photosUrls.map((item) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(horizontal: 5),
+        child: Image.network(
+          item,
+          fit: BoxFit.contain,
+        ),
+      );
+    }).toList();
+  }
+
+  List<Widget> buildSamplePhoto(BuildContext context) {
+    return [
+      Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(horizontal: 5),
+        child: Image.asset(
+          'assets/images/unknown_avatar.png',
+          fit: BoxFit.contain,
+        ),
+      )
+    ];
   }
 }
 

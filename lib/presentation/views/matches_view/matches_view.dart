@@ -1,7 +1,8 @@
 import 'dart:math';
 
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/user_match.dart';
-import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:flutter/material.dart';
@@ -14,31 +15,19 @@ class MatchesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _fetchMatches(context);
     return Container(
       padding: const EdgeInsets.only(bottom: 20, top: 6),
-      child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
+      child: BlocConsumer<MatchesCubit, MatchesState>(
+        listener: (context, state) {
+          if (state is MatchesError) {
+            // TODO: react to error
+          }
+        },
         builder: (context, state) {
-          if (state is CurrentUserWithUserInstance) {
-            if (BlocProvider.of<MatchesCubit>(context).state
-                is! MatchesFetched) {
-              BlocProvider.of<MatchesCubit>(context)
-                  .fetchMatches(state.user.id);
-            }
-
-            return BlocConsumer<MatchesCubit, MatchesState>(
-              listener: (context, state) {
-                if (state is MatchesError) {
-                  // TODO: react to error
-                }
-              },
-              builder: (context, state) {
-                if (state is MatchesFetched) {
-                  return ListView(
-                    children: _buildRows(state.matches),
-                  );
-                }
-                return LoadingSpinner();
-              },
+          if (state is MatchesFetched) {
+            return ListView(
+              children: _buildRows(state.matches),
             );
           }
           return LoadingSpinner();
@@ -61,6 +50,12 @@ class MatchesView extends StatelessWidget {
 
     return rows;
   }
+
+  void _fetchMatches(BuildContext context) {
+    final userId = locator<CurrentUserData>().userId;
+
+    BlocProvider.of<MatchesCubit>(context).fetchMatches(userId);
+  }
 }
 
 class MatchRow extends StatelessWidget {
@@ -81,10 +76,15 @@ class MatchRow extends StatelessWidget {
   List<Widget> _buildColumns() {
     List<Widget> columns = [const Expanded(child: SizedBox())];
     for (int i = 0; i < matches.length; i++) {
-      columns.add(MatchItem(matches[i]));
+      columns.add(
+          Flexible(flex: 2 * matches.length, child: MatchItem(matches[i])));
       columns.add(const Expanded(child: SizedBox()));
     }
 
     return columns;
   }
+
+  // int _getColumnFlexSize(int columnsInRow) {
+  //   return
+  // }
 }
