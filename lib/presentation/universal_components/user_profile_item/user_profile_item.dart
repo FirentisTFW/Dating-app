@@ -26,7 +26,6 @@ class UserProfileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user.id);
     return Builder(
       builder: (context) {
         BlocProvider.of<PhotosCubit>(context).getMultiplePhotosUrls(user.id);

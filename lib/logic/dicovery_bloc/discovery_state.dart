@@ -27,20 +27,20 @@ class DiscoveryUsersFetched extends DiscoveryState {
   List<Object> get props => [users];
 }
 
-abstract class DiscoveryError extends DiscoveryState {
+abstract class DiscoveryException extends DiscoveryState {
   final List<User> users;
   final String message;
 
-  const DiscoveryError({this.users, this.message});
+  const DiscoveryException({this.users, this.message});
 
   @override
   List<Object> get props => [users, message];
 }
 
-class DiscoveryFetchingError extends DiscoveryError {
-  const DiscoveryFetchingError({String message}) : super(message: message);
+class DiscoveryFetchingException extends DiscoveryException {
+  const DiscoveryFetchingException({String message}) : super(message: message);
 }
 
-class DiscoveryActionError extends DiscoveryError {
-  const DiscoveryActionError({String message}) : super(message: message);
+class DiscoveryActionException extends DiscoveryException {
+  const DiscoveryActionException({String message}) : super(message: message);
 }

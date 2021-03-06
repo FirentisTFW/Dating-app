@@ -3,15 +3,13 @@ import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
-import 'package:Dating_app/logic/fake_users_creator.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
+import 'package:Dating_app/presentation/helpers/discovery_bloc_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
-import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
@@ -21,7 +19,6 @@ class DiscoveryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // createFakeUsers();
     return Container(
       child: BlocConsumer<CurrentUserCubit, CurrentUserState>(
         listener: (context, state) {
@@ -51,8 +48,8 @@ class DiscoveryView extends StatelessWidget {
             return Container(
               child: BlocConsumer<DiscoveryBloc, DiscoveryState>(
                 listener: (context, state) {
-                  if (state is DiscoveryActionError) {
-                    // TODO: react to error
+                  if (state is DiscoveryActionException) {
+                    DiscoveryBlocHelpers.showErrorSnackbar(state);
                   }
                 },
                 builder: (context, state) {

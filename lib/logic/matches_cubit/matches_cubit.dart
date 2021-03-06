@@ -1,6 +1,7 @@
 import 'package:Dating_app/data/models/user_match.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 part 'matches_state.dart';
@@ -16,8 +17,8 @@ class MatchesCubit extends Cubit<MatchesState> {
     try {
       final matches = await _usersRepository.getUserMatches(userId);
       emit(MatchesFetched(matches));
-    } catch (err) {
-      emit(MatchesError());
+    } on FirebaseException catch (err) {
+      emit(MatchesException(message: err.message));
     }
   }
 
@@ -33,8 +34,8 @@ class MatchesCubit extends Cubit<MatchesState> {
           .where((match) => match.userId != unmatchedUid)
           .toList();
       emit(MatchesFetched(remainingMatches));
-    } catch (err) {
-      emit(MatchesError());
+    } on FirebaseException catch (err) {
+      emit(MatchesException(message: err.message));
       emit(MatchesFetched(currentMatches));
     }
   }

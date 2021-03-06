@@ -22,11 +22,21 @@ class ConversationsFetched extends ConversationsState {
   List<Object> get props => [conversations];
 }
 
-class ConversationsError extends ConversationsState {
+abstract class ConversationsFailure extends ConversationsState {
   final String message;
 
-  const ConversationsError({this.message});
+  const ConversationsFailure({this.message});
 
   @override
   List<Object> get props => [message];
+}
+
+class ConversationsFetchingFailure extends ConversationsFailure {
+  const ConversationsFetchingFailure({String message})
+      : super(message: message);
+}
+
+class ConversationsCreatingFailure extends ConversationsFailure {
+  const ConversationsCreatingFailure({String message})
+      : super(message: message);
 }

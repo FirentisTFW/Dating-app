@@ -2,7 +2,6 @@ import 'package:Dating_app/data/repositories/authentication_repository.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -45,16 +44,16 @@ void main() {
         ],
       );
       blocTest(
-        'When there is another exception thrown, emits [AuthWaiting, AuthError]',
+        'When there is another exception thrown, emits [AuthWaiting, AuthException]',
         build: () {
           when(authenticationRepository.signInUser(any, any))
-              .thenThrow(ErrorDescription('An error occured'));
+              .thenThrow(Exception('An error occured'));
           return AuthBloc(authenticationRepository);
         },
         act: (bloc) => bloc.add(AuthLogin('test@test.com', 'test')),
         expect: [
           AuthWaiting(),
-          AuthError(),
+          AuthException(),
         ],
       );
     });
@@ -85,16 +84,16 @@ void main() {
         ],
       );
       blocTest(
-        'When there is an exception thrown, emits [AuthWaiting, AuthError]',
+        'When there is an exception thrown, emits [AuthWaiting, AuthException]',
         build: () {
           when(authenticationRepository.isUserLoggedIn)
-              .thenThrow(ErrorDescription('An error occured'));
+              .thenThrow(Exception('An error occured'));
           return AuthBloc(authenticationRepository);
         },
         act: (bloc) => bloc.add(AuthCheckIfLoggedIn()),
         expect: [
           AuthWaiting(),
-          AuthError(),
+          AuthException(),
         ],
       );
     });
@@ -127,16 +126,16 @@ void main() {
         ],
       );
       blocTest(
-        'When there is another exception thrown, emits [AuthWaiting, AuthError]',
+        'When there is another exception thrown, emits [AuthWaiting, AuthException]',
         build: () {
           when(authenticationRepository.registerUser(any, any))
-              .thenThrow(ErrorDescription('An error occured'));
+              .thenThrow(Exception('An error occured'));
           return AuthBloc(authenticationRepository);
         },
         act: (bloc) => bloc.add(AuthRegister('test@test.com', 'test')),
         expect: [
           AuthWaiting(),
-          AuthError(),
+          AuthException(),
         ],
       );
     });

@@ -33,7 +33,7 @@ class _AuthViewState extends State<AuthView> {
               goToProfileCreationView();
             } else if (state is AuthFailure) {
               AuthBlocHelpers.showFailureSnackbar(state);
-            } else if (state is AuthError) {
+            } else if (state is AuthException) {
               AuthBlocHelpers.showErrorSnackbar(state);
             }
           },

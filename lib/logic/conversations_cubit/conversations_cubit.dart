@@ -1,5 +1,6 @@
 import 'package:Dating_app/data/repositories/conversations_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:Dating_app/data/models/conversation_base.dart';
@@ -21,8 +22,8 @@ class ConversationsCubit extends Cubit<ConversationsState> {
     try {
       final conversations = await _usersRepository.getUserConversations(userId);
       emit(ConversationsFetched(conversations));
-    } catch (err) {
-      emit(ConversationsError());
+    } on FirebaseException catch (err) {
+      emit(ConversationsFetchingFailure(message: err.message));
     }
   }
 
@@ -44,8 +45,8 @@ class ConversationsCubit extends Cubit<ConversationsState> {
       }
       emit(ConversationsInitial());
       return conversation.conversationId;
-    } catch (err) {
-      emit(ConversationsError());
+    } on FirebaseException catch (err) {
+      emit(ConversationsCreatingFailure(message: err.message));
       return null;
     }
   }

@@ -4,6 +4,7 @@ import 'package:Dating_app/data/models/acceptance_rejection.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -47,8 +48,8 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
               !excludedUsersIds.any((excludedId) => excludedId == user.id))
           .toList();
       yield DiscoveryUsersFetched(finalUsers);
-    } catch (err) {
-      yield DiscoveryFetchingError();
+    } on FirebaseException catch (err) {
+      yield DiscoveryFetchingException(message: err.message);
     }
   }
 
@@ -61,8 +62,8 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
       final remainingUsers =
           event.users.where((u) => u.id != event.acceptedUid).toList();
       yield DiscoveryUsersFetched(remainingUsers);
-    } catch (err) {
-      yield DiscoveryActionError();
+    } on FirebaseException catch (err) {
+      yield DiscoveryActionException(message: err.message);
       yield DiscoveryUsersFetched(event.users);
     }
   }
@@ -76,8 +77,8 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
       final remainingUsers =
           event.users.where((u) => u.id != event.rejectedUid).toList();
       yield DiscoveryUsersFetched(remainingUsers);
-    } catch (err) {
-      yield DiscoveryActionError();
+    } on FirebaseException catch (err) {
+      yield DiscoveryActionException(message: err.message);
       yield DiscoveryUsersFetched(event.users);
     }
   }

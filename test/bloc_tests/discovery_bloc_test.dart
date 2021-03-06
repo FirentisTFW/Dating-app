@@ -4,6 +4,7 @@ import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -54,6 +55,7 @@ void main() {
         birthDate: DateTime(1998, 01, 01),
         gender: Gender.Woman),
   ];
+  final exceptionMessage = 'An exception occured';
 
   group('DiscoveryBlocTest -', () {
     setUp(() {
@@ -77,11 +79,13 @@ void main() {
             DiscoveryWaiting(),
             DiscoveryUsersFetched(remainingUsers),
           ]);
-      blocTest('When failure, emits [DiscoveryWaiting, DiscoveryError]',
+      blocTest(
+          'When failure, emits [DiscoveryWaiting, DiscoveryFetchingException]',
           build: () {
             when(usersRepository.getUsersByDiscoverySettings(any,
                     location: anyNamed('location')))
-                .thenThrow(Exception('An error occured'));
+                .thenThrow(FirebaseException(
+                    plugin: 'plugin', message: exceptionMessage));
             when(usersRepository.getUserRejections(any))
                 .thenAnswer((_) async => rejectedUsersIds);
             return DiscoveryBloc(usersRepository);
@@ -89,7 +93,7 @@ void main() {
           act: (bloc) => bloc.add(FetchAndFilterUsers(user: user)),
           expect: [
             DiscoveryWaiting(),
-            DiscoveryFetchingError(),
+            DiscoveryFetchingException(message: exceptionMessage),
           ]);
     });
     group('AcceptUser -', () {
@@ -115,19 +119,21 @@ void main() {
             DiscoveryWaiting(),
             DiscoveryUsersFetched(usersAfterAcceptance),
           ]);
-      blocTest('When failure, emits [DiscoveryWaiting, DiscoveryError()]',
+      blocTest(
+          'When failure, emits [DiscoveryWaiting, DiscoveryActionException, DiscoveryUsersFetched(notUpdated)]',
           build: () {
             when(usersRepository.acceptUser(
                     acceptingUid: anyNamed('acceptingUid'),
                     acceptance: anyNamed('acceptance')))
-                .thenThrow(Exception('An error occured'));
+                .thenThrow(FirebaseException(
+                    plugin: 'plugin', message: exceptionMessage));
             return DiscoveryBloc(usersRepository);
           },
           act: (bloc) => bloc.add(
               AcceptUser(remainingUsers, acceptingUid: 'aa', acceptedUid: '2')),
           expect: [
             DiscoveryWaiting(),
-            DiscoveryActionError(),
+            DiscoveryActionException(message: exceptionMessage),
             DiscoveryUsersFetched(remainingUsers),
           ]);
     });
@@ -155,19 +161,20 @@ void main() {
             DiscoveryUsersFetched(usersAfterRejection),
           ]);
       blocTest(
-          'When failure, emits [DiscoveryWaiting, DiscoveryActionError, DiscoveryUsersFetched(updated)]',
+          'When failure, emits [DiscoveryWaiting, DiscoveryActionException, DiscoveryUsersFetched(updated)]',
           build: () {
             when(usersRepository.rejectUser(
                     rejectingUid: anyNamed('rejectingUid'),
                     rejection: anyNamed('rejection')))
-                .thenThrow(Exception('An error occured'));
+                .thenThrow(FirebaseException(
+                    plugin: 'plugin', message: exceptionMessage));
             return DiscoveryBloc(usersRepository);
           },
           act: (bloc) => bloc.add(
               RejectUser(remainingUsers, rejectingUid: 'aa', rejectedUid: '2')),
           expect: [
             DiscoveryWaiting(),
-            DiscoveryActionError(),
+            DiscoveryActionException(message: exceptionMessage),
             DiscoveryUsersFetched(remainingUsers),
           ]);
     });

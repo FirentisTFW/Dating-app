@@ -20,7 +20,7 @@ class MatchesView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20, top: 6),
       child: BlocConsumer<MatchesCubit, MatchesState>(
         listener: (context, state) {
-          if (state is MatchesError) {
+          if (state is MatchesException) {
             // TODO: react to error
           }
         },

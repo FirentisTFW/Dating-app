@@ -7,8 +7,8 @@ class AuthBlocHelpers {
       message: state.message,
       snackPosition: SnackPosition.BOTTOM);
 
-  static void showErrorSnackbar(AuthError state) => Get.rawSnackbar(
-      title: 'Error occured',
+  static void showErrorSnackbar(AuthException state) => Get.rawSnackbar(
+      title: 'An exception occured',
       message: state.message ?? 'Please try again.',
       snackPosition: SnackPosition.BOTTOM);
 }

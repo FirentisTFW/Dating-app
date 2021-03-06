@@ -2,6 +2,7 @@ import 'package:Dating_app/data/models/user_match.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -24,7 +25,7 @@ void main() {
       date: DateTime(2021, 02, 20),
     ),
   ];
-  final exceptionMessage = 'An error occured';
+  final exceptionMessage = 'An exception occured';
 
   group('MatchesCubitTest -', () {
     setUp(() {
@@ -42,16 +43,16 @@ void main() {
             MatchesWaiting(),
             MatchesFetched(matches),
           ]);
-      blocTest('When failure, emits [MatchesWaiting, MatchesError]',
+      blocTest('When failure, emits [MatchesWaiting, MatchesException]',
           build: () {
-            when(usersRepository.getUserMatches(any))
-                .thenThrow(Exception(exceptionMessage));
+            when(usersRepository.getUserMatches(any)).thenThrow(
+                FirebaseException(plugin: 'plugin', message: exceptionMessage));
             return MatchesCubit(usersRepository);
           },
           act: (cubit) => cubit.fetchMatches('userId'),
           expect: [
             MatchesWaiting(),
-            MatchesError(),
+            MatchesException(message: exceptionMessage),
           ]);
     });
     group('unmatchUser -', () {
@@ -80,12 +81,12 @@ void main() {
         MatchesFetched(remainingMatches),
       ]);
       blocTest(
-          'When failure and matches were fetched before, emits [MatchesWaiting, MatchesFetched(oldMatched)]',
+          'When failure and matches were fetched before, emits [MatchesWaiting, MatchesException, MatchesFetched(oldMatched)]',
           build: () {
         when(usersRepository.getUserMatches(any))
             .thenAnswer((_) async => matches);
-        when(usersRepository.unmatchUser(any, any))
-            .thenThrow(Exception(exceptionMessage));
+        when(usersRepository.unmatchUser(any, any)).thenThrow(
+            FirebaseException(plugin: 'plugin', message: exceptionMessage));
 
         return MatchesCubit(usersRepository);
       }, act: (cubit) async {
@@ -93,7 +94,7 @@ void main() {
         cubit.unmatchUser('unmatchingUid', 'cde2');
       }, skip: 2, expect: [
         MatchesWaiting(),
-        MatchesError(),
+        MatchesException(message: exceptionMessage),
         MatchesFetched(matches),
       ]);
     });

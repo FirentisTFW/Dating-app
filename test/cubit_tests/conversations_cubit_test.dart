@@ -5,6 +5,7 @@ import 'package:Dating_app/data/repositories/conversations_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -59,16 +60,17 @@ void main() {
             ConversationsWaiting(),
             ConversationsFetched(conversations),
           ]);
-      blocTest('When failure, emits [ConversationsWaiting, ConversationsError]',
+      blocTest(
+          'When failure, emits [ConversationsWaiting, ConversationsFetchingFailure]',
           build: () {
-            when(usersRepository.getUserConversations(any))
-                .thenThrow(Exception(exceptionMessage));
+            when(usersRepository.getUserConversations(any)).thenThrow(
+                FirebaseException(plugin: 'plugin', message: exceptionMessage));
             return ConversationsCubit(usersRepository, conversationsRepository);
           },
           act: (cubit) => cubit.fetchConversations('abc'),
           expect: [
             ConversationsWaiting(),
-            ConversationsError(),
+            ConversationsFetchingFailure(message: exceptionMessage),
           ]);
     });
     group('createConversation -', () {
@@ -106,16 +108,17 @@ void main() {
             ConversationsConversationCreated(),
             ConversationsInitial(),
           ]);
-      blocTest('When failure, emits [ConversationsWaiting, ConversationsError]',
+      blocTest(
+          'When failure, emits [ConversationsWaiting, ConversationsCreatingFailure]',
           build: () {
-            when(conversationsRepository.createConversation(any))
-                .thenThrow(Exception(exceptionMessage));
+            when(conversationsRepository.createConversation(any)).thenThrow(
+                FirebaseException(plugin: 'plugin', message: exceptionMessage));
             return ConversationsCubit(usersRepository, conversationsRepository);
           },
           act: (cubit) => cubit.createConversation(conversation),
           expect: [
             ConversationsWaiting(),
-            ConversationsError(),
+            ConversationsCreatingFailure(message: exceptionMessage),
           ]);
     });
   });

@@ -20,10 +20,10 @@ class MatchesFetched extends MatchesState {
   List<Object> get props => [matches];
 }
 
-class MatchesError extends MatchesState {
+class MatchesException extends MatchesState {
   final String message;
 
-  const MatchesError({this.message});
+  const MatchesException({this.message});
 
   @override
   List<Object> get props => [message];
