@@ -35,7 +35,7 @@ class MyPhotosView extends StatelessWidget {
                 firstTime ? goToMainView() : Get.back();
               } else if (state is PhotosMultipleFetched) {
                 _currentImages = state.photosUrls;
-              } else if (state is PhotosError) {
+              } else if (state is PhotosFailure) {
                 PhotosCubitHelpers.showErrorSnackbar(state);
               }
             },

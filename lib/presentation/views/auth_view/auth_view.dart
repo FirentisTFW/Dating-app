@@ -61,7 +61,7 @@ class _AuthViewState extends State<AuthView> {
               style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           AuthForm(_formType),
           Padding(
             padding: const EdgeInsets.only(top: 40),

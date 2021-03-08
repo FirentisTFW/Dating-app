@@ -7,9 +7,11 @@ class AuthenticationProvider {
 
   String get userId => _auth.currentUser.uid;
 
-  Future signInUser(String email, String password) async =>
+  Future<void> signInUser(String email, String password) async =>
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-  Future registerUser(String email, String password) async => await _auth
+  Future<void> registerUser(String email, String password) async => await _auth
       .createUserWithEmailAndPassword(email: email, password: password);
+
+  Future<void> signOutUser() async => await _auth.signOut();
 }

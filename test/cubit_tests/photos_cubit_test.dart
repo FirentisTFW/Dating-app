@@ -1,7 +1,7 @@
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mockito/mockito.dart';
@@ -13,6 +13,7 @@ void main() {
     PhotosRepositoryMock photosRepository;
 
     final userId = 'absada1';
+    final exceptionMessage = 'An exception occured';
 
     setUp(() {
       photosRepository = PhotosRepositoryMock();
@@ -33,16 +34,16 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, emits [PhotosWaiting, PhotosError]',
+        'When failure, emits [PhotosWaiting, PhotosFailureFetching]',
         build: () {
-          when(photosRepository.getPhotosUrlsForUser(any))
-              .thenThrow(ErrorDescription('An error occured'));
+          when(photosRepository.getPhotosUrlsForUser(any)).thenThrow(
+              FirebaseException(plugin: 'plugin', message: exceptionMessage));
           return PhotosCubit(photosRepository);
         },
         act: (cubit) => cubit.getMultiplePhotosUrls(userId),
         expect: [
           PhotosWaiting(),
-          PhotosError(),
+          PhotosFailureFetching(message: exceptionMessage),
         ],
       );
     });
@@ -62,16 +63,16 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, emits [PhotosWaiting, PhotosSingleUploaded]',
+        'When failure, emits [PhotosWaiting, PhotosFailureSending]',
         build: () {
-          when(photosRepository.uploadPhoto(any, any))
-              .thenThrow(ErrorDescription('An error occured'));
+          when(photosRepository.uploadPhoto(any, any)).thenThrow(
+              FirebaseException(plugin: 'plugin', message: exceptionMessage));
           return PhotosCubit(photosRepository);
         },
         act: (cubit) => cubit.uploadPhoto(userId, photo),
         expect: [
           PhotosWaiting(),
-          PhotosError(),
+          PhotosFailureSending(message: exceptionMessage),
         ],
       );
     });
@@ -100,17 +101,17 @@ void main() {
             PhotosMultipleFetched(remainingPhotosUrls),
           ]);
       blocTest(
-          'When failure, emits [PhotosWaiting, PhotosError, PhotosMultipleFetched(oldPhotosList)]',
+          'When failure, emits [PhotosWaiting, PhotosFailureDeleting, PhotosMultipleFetched(oldPhotosList)]',
           build: () {
-            when(photosRepository.deletePhotoByUrl(any))
-                .thenThrow(Exception('An error occured'));
+            when(photosRepository.deletePhotoByUrl(any)).thenThrow(
+                FirebaseException(plugin: 'plugin', message: exceptionMessage));
             return PhotosCubit(photosRepository);
           },
           act: (cubit) =>
               cubit.deletePhotoByUrl('photoUrl_1', initialPhotosUrls),
           expect: [
             PhotosWaiting(),
-            PhotosError(message: 'Could not delete photo.'),
+            PhotosFailureDeleting(message: 'Could not delete photo.'),
             PhotosMultipleFetched(initialPhotosUrls),
           ]);
     });

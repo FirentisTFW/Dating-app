@@ -1,5 +1,6 @@
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,8 +17,8 @@ class PhotosCubit extends Cubit<PhotosState> {
     try {
       final photosUrls = await _photosRepository.getPhotosUrlsForUser(userId);
       emit(PhotosMultipleFetched(photosUrls));
-    } catch (err) {
-      emit(PhotosError());
+    } on FirebaseException catch (err) {
+      emit(PhotosFailureFetching(message: err.message));
     }
   }
 
@@ -28,8 +29,8 @@ class PhotosCubit extends Cubit<PhotosState> {
       await _photosRepository.uploadPhoto(photo, userId);
       emit(PhotosSingleUploaded());
       return true;
-    } catch (err) {
-      emit(PhotosError());
+    } on FirebaseException catch (err) {
+      emit(PhotosFailureSending(message: err.message));
       return false;
     }
   }
@@ -42,8 +43,8 @@ class PhotosCubit extends Cubit<PhotosState> {
       await _photosRepository.deletePhotoByUrl(deletingPhotoUrl);
       photosUrls.remove(deletingPhotoUrl);
       emit(PhotosMultipleFetched(photosUrls));
-    } catch (err) {
-      emit(PhotosError(message: 'Could not delete photo.'));
+    } on FirebaseException {
+      emit(PhotosFailureDeleting(message: 'Could not delete photo.'));
       emit(PhotosMultipleFetched(photosUrls));
     }
   }

@@ -18,21 +18,25 @@ class MessagesMessageSent extends MessagesState {}
 class MessagesReferenceFetched extends MessagesState {
   final CollectionReference messagesReference;
 
-  MessagesReferenceFetched(this.messagesReference);
+  const MessagesReferenceFetched(this.messagesReference);
 
   @override
   List<Object> get props => [messagesReference];
 }
 
-abstract class MessagesError extends MessagesState {
-  final String errorMessage;
+abstract class MessagesFailure extends MessagesState {
+  final String message;
 
-  MessagesError({this.errorMessage});
+  const MessagesFailure({this.message});
 
   @override
-  List<Object> get props => [errorMessage];
+  List<Object> get props => [message];
 }
 
-class MessagesErrorFetching extends MessagesError {}
+class MessagesFailureFetching extends MessagesFailure {
+  const MessagesFailureFetching({message}) : super(message: message);
+}
 
-class MessagesErrorSending extends MessagesError {}
+class MessagesFailureSending extends MessagesFailure {
+  const MessagesFailureSending({message}) : super(message: message);
+}

@@ -16,7 +16,7 @@ class PhotosSingleUploaded extends PhotosState {}
 class PhotosSingleFetched extends PhotosState {
   final String photoUrl;
 
-  PhotosSingleFetched(this.photoUrl);
+  const PhotosSingleFetched(this.photoUrl);
 
   @override
   List<Object> get props => [photoUrl];
@@ -25,17 +25,29 @@ class PhotosSingleFetched extends PhotosState {
 class PhotosMultipleFetched extends PhotosState {
   final List<String> photosUrls;
 
-  PhotosMultipleFetched(this.photosUrls);
+  const PhotosMultipleFetched(this.photosUrls);
 
   @override
   List<Object> get props => [photosUrls];
 }
 
-class PhotosError extends PhotosState {
+abstract class PhotosFailure extends PhotosState {
   final String message;
 
-  PhotosError({this.message});
+  const PhotosFailure({this.message});
 
   @override
   List<Object> get props => [message];
+}
+
+class PhotosFailureFetching extends PhotosFailure {
+  const PhotosFailureFetching({message}) : super(message: message);
+}
+
+class PhotosFailureSending extends PhotosFailure {
+  const PhotosFailureSending({message}) : super(message: message);
+}
+
+class PhotosFailureDeleting extends PhotosFailure {
+  const PhotosFailureDeleting({message}) : super(message: message);
 }

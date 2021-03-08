@@ -18,8 +18,8 @@ class MessagesCubit extends Cubit<MessagesState> {
       final messagesRefrerence =
           await _conversationsRepository.getMessagesRef(conversationId);
       emit(MessagesReferenceFetched(messagesRefrerence));
-    } catch (err) {
-      emit(MessagesErrorFetching());
+    } on FirebaseException catch (err) {
+      emit(MessagesFailureFetching(message: err.message));
     }
   }
 
@@ -32,8 +32,8 @@ class MessagesCubit extends Cubit<MessagesState> {
 
     try {
       await _conversationsRepository.sendMessage(conversationId, message);
-    } catch (err) {
-      emit(MessagesErrorSending());
+    } on FirebaseException catch (err) {
+      emit(MessagesFailureSending(message: err.message));
     }
     if (messagesReference != null) {
       emit(MessagesReferenceFetched(messagesReference));

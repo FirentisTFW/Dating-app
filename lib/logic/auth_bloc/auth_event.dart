@@ -22,3 +22,5 @@ class AuthRegister extends AuthEvent {
 }
 
 class AuthCheckIfLoggedIn extends AuthEvent {}
+
+class AuthSignOut extends AuthEvent {}

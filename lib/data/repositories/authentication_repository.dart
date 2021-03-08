@@ -8,9 +8,11 @@ class AuthenticationRepository {
 
   String get userId => _provider.userId;
 
-  Future signInUser(String email, String password) async =>
+  Future<void> signInUser(String email, String password) async =>
       await _provider.signInUser(email, password);
 
-  Future registerUser(String email, String password) async =>
+  Future<void> registerUser(String email, String password) async =>
       await _provider.registerUser(email, password);
+
+  Future<void> signOutUser() async => await _provider.signOutUser();
 }

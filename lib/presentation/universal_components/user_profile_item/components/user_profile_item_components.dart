@@ -18,7 +18,7 @@ class PhotosSlider extends StatelessWidget {
       flex: 6,
       child: BlocConsumer<PhotosCubit, PhotosState>(
         listener: (ctx, state) {
-          if (state is PhotosError) {
+          if (state is PhotosFailure) {
             PhotosCubitHelpers.showErrorSnackbar(state);
           }
         },
@@ -78,6 +78,7 @@ class NameAgeLocationBar extends StatelessWidget {
     return Flexible(
       child: Theme(
         data: ThemeData(
+            primaryColor: Theme.of(context).primaryColor,
             iconTheme: IconThemeData(color: Colors.grey[600], size: 26)),
         child: Row(
           children: [
