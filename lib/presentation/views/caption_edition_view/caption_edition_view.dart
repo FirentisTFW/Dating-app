@@ -43,7 +43,7 @@ class _CaptionEditionViewState extends State<CaptionEditionView> {
             listener: (context, state) {
               if (state is CurrentUserReady) {
                 Get.back();
-              } else if (state is CurrentUserError) {
+              } else if (state is CurrentUserFailure) {
                 // TODO: react to error
               }
             },

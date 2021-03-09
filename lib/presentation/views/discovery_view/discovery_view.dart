@@ -29,8 +29,8 @@ class DiscoveryView extends StatelessWidget {
                 ProfileStatus.MissingDiscoverySettings) {
               goToDiscoverySettingsView();
             }
-          } else if (state is CurrentUserError) {
-            CurrentUserCubitHelpers.showErrorSnackbar(state);
+          } else if (state is CurrentUserFailure) {
+            CurrentUserCubitHelpers.showFailureSnackbar(state);
             Future.delayed(Duration(seconds: 5), () {
               BlocProvider.of<CurrentUserCubit>(context)
                   .checkIfProfileIsComplete();
@@ -54,7 +54,6 @@ class DiscoveryView extends StatelessWidget {
                 },
                 builder: (context, state) {
                   if (state is DiscoveryUsersFetched) {
-                    print(state.users.length);
                     if (state.users.length > 0) {
                       return UserProfileItem(
                         user: state.users.first,
@@ -65,7 +64,7 @@ class DiscoveryView extends StatelessWidget {
                             context, state.users, state.users.first.id),
                       );
                     }
-                    return Text('No users');
+                    return noUsersInfo;
                   }
                   return LoadingSpinner();
                 },
@@ -77,6 +76,17 @@ class DiscoveryView extends StatelessWidget {
       ),
     );
   }
+
+  final noUsersInfo = const Padding(
+    padding: EdgeInsets.all(20),
+    child: Center(
+      child: Text(
+        'No users found. You might want to change your discovery settings.',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+  );
 
   void goToProfileCreationView() => Get.off(ProfileCreationView());
 

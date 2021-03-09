@@ -9,7 +9,7 @@ import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -44,6 +44,7 @@ void main() {
         gender: Gender.Man,
         name: 'Tester',
         discoverySettings: null);
+    final exceptionMessage = 'An exception occured';
 
     setUp(() {
       usersRepository = UsersRepositoryMock();
@@ -74,10 +75,10 @@ void main() {
         ],
       );
       blocTest(
-          'When failure, emits [CurrentUserWaiting, CurrentUserError(oldUser)',
+          'When failure, emits [CurrentUserWaiting, CurrentUserLightFailure, CurrentUserReady(oldUser)',
           build: () {
-            when(usersRepository.updateUser(any))
-                .thenThrow(ErrorDescription('An error occured'));
+            when(usersRepository.updateUser(any)).thenThrow(
+                FirebaseException(plugin: 'plugin', message: exceptionMessage));
             return CurrentUserCubit(
                 usersRepository, authenticationRepository, locationRepository);
           },
@@ -85,7 +86,8 @@ void main() {
               cubit.updateUser(oldUser: oldUser, updatedUser: updatedUser),
           expect: [
             CurrentUserWaiting(),
-            CurrentUserError(user: oldUser),
+            CurrentUserLightFailure(message: exceptionMessage),
+            CurrentUserReady(oldUser),
           ]);
     });
     group('createUser -', () {
@@ -105,17 +107,17 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        'When failure, emits [CurrentUserWaiting, CurrentUserHeavyFailure]',
         build: () {
-          when(usersRepository.createUser(any))
-              .thenThrow(ErrorDescription('An error occured'));
+          when(usersRepository.createUser(any)).thenThrow(
+              FirebaseException(plugin: 'plugin', message: exceptionMessage));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.createUser(user),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserError(),
+          CurrentUserHeavyFailure(message: exceptionMessage),
         ],
       );
     });
@@ -136,18 +138,20 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        'When failure, emits [CurrentUserWaiting, CurrentUserLightFailure]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
           when(usersRepository.updateDiscoverySettings(any, any, any))
-              .thenThrow(ErrorDescription('An error occured'));
+              .thenThrow(FirebaseException(
+                  plugin: 'plugin', message: exceptionMessage));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.updateDiscoverySettings(user, discoverySettings),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserError(user: user),
+          CurrentUserLightFailure(message: exceptionMessage),
+          CurrentUserReady(user),
         ],
       );
     });
@@ -168,17 +172,17 @@ void main() {
         ],
       );
       blocTest(
-        'When failure, emits [CurrentUserWaiting, CurrentUserError]',
+        'When failure, emits [CurrentUserWaiting, CurrentUserHeavyFailure]',
         build: () {
-          when(locationRepository.getCurrentLocation())
-              .thenThrow(ErrorDescription('An error occured'));
+          when(locationRepository.getCurrentLocation()).thenThrow(
+              FirebaseException(plugin: 'plugin', message: exceptionMessage));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.getCurrentLocation(),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserError(message: 'Check device location permissions'),
+          CurrentUserHeavyFailure(message: 'Check device location permissions'),
         ],
       );
     });
@@ -236,15 +240,15 @@ void main() {
         'When failure, emits [CurrentUserWaiting, CurrentUserError]',
         build: () {
           when(authenticationRepository.userId).thenReturn('1');
-          when(usersRepository.getUserByAuthId(any))
-              .thenThrow(ErrorDescription('An error occured'));
+          when(usersRepository.getUserByAuthId(any)).thenThrow(
+              FirebaseException(plugin: 'plugin', message: exceptionMessage));
           return CurrentUserCubit(
               usersRepository, authenticationRepository, locationRepository);
         },
         act: (cubit) => cubit.checkIfProfileIsComplete(),
         expect: [
           CurrentUserWaiting(),
-          CurrentUserError(),
+          CurrentUserHeavyFailure(message: exceptionMessage),
         ],
       );
     });

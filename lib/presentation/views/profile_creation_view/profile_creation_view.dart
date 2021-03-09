@@ -44,8 +44,8 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
             goToMyPhotosView();
           } else if (state is CurrentUserLocationReceived) {
             _location = state.location;
-          } else if (state is CurrentUserError) {
-            CurrentUserCubitHelpers.showErrorSnackbar(state);
+          } else if (state is CurrentUserFailure) {
+            CurrentUserCubitHelpers.showFailureSnackbar(state);
           }
         },
         child: Padding(

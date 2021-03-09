@@ -5,7 +5,6 @@ import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/photo_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ConversationItem extends StatelessWidget {
   final ConversationOverview conversation;

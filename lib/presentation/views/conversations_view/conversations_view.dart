@@ -1,6 +1,8 @@
+import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/presentation/helpers/conversations_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/chat_view/chat_view.dart';
@@ -28,7 +30,9 @@ class ConversationsView extends StatelessWidget {
             },
             builder: (context, state) {
               if (state is ConversationsFetched) {
-                return ConversationsList(state.conversations);
+                final sortedConversations =
+                    sortConversationsByDate(state.conversations);
+                return ConversationsList(sortedConversations);
               }
               return LoadingSpinner();
             },
@@ -37,6 +41,13 @@ class ConversationsView extends StatelessWidget {
         return LoadingSpinner();
       },
     );
+  }
+
+  List<ConversationOverview> sortConversationsByDate(
+      List<ConversationOverview> conversations) {
+    conversations.sort(
+        (a, b) => a.lastMessage.date.isBefore(b.lastMessage.date) ? 1 : 0);
+    return conversations;
   }
 }
 
@@ -50,13 +61,21 @@ class ConversationsList extends StatelessWidget {
     return ListView.builder(
       itemCount: conversations.length,
       itemBuilder: (context, index) => InkWell(
-        onTap: () => goToConversation(conversations[index]),
+        onTap: () => goToConversation(context, conversations[index]),
         child: ConversationItem(conversations[index]),
       ),
     );
   }
 
-  void goToConversation(ConversationOverview conversationOverview) => Get.to(
+  void goToConversation(
+          BuildContext context, ConversationOverview conversationOverview) =>
+      Get.to(
         ChatView(conversationOverview: conversationOverview),
-      );
+      ).then((_) => refreshConversations(context));
+
+  void refreshConversations(BuildContext context) {
+    final userId = locator<CurrentUserData>().userId;
+
+    BlocProvider.of<ConversationsCubit>(context).fetchConversations(userId);
+  }
 }

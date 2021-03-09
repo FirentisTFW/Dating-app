@@ -3,6 +3,7 @@ import 'package:Dating_app/data/models/discovery_settings.dart';
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
+import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
 import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/next_button.dart';
@@ -45,8 +46,8 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
         listener: (context, state) {
           if (state is CurrentUserReady) {
             widget.firstTime ? goToMainView() : Get.back();
-          } else if (state is CurrentUserError) {
-            CurrentUserCubitHelpers.showErrorSnackbar(state);
+          } else if (state is CurrentUserFailure) {
+            CurrentUserCubitHelpers.showFailureSnackbar(state);
           }
         },
         builder: (context, state) {
@@ -98,7 +99,7 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
     }
   }
 
-  void saveDiscoverySettings() {
+  Future<void> saveDiscoverySettings() async {
     final discoverySettings = DiscoverySettings(
       gender: gender,
       ageMin: ageMin,
@@ -108,8 +109,11 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
 
     final userData = locator<CurrentUserData>();
 
-    BlocProvider.of<CurrentUserCubit>(context)
+    await BlocProvider.of<CurrentUserCubit>(context)
         .updateDiscoverySettings(userData.user, discoverySettings);
+
+    BlocProvider.of<DiscoveryBloc>(context)
+        .add(FetchAndFilterUsers(user: userData.user));
   }
 
   void goToMainView() => Get.off(MainView());
