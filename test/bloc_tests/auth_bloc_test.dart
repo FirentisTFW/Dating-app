@@ -139,5 +139,43 @@ void main() {
         ],
       );
     });
+    group('AuthSignOut -', () {
+      blocTest('When successful, emits [AuthWaiting, AuthSignOutSuccess]',
+          build: () {
+            when(authenticationRepository.signOutUser())
+                .thenAnswer((_) async => null);
+            return AuthBloc(authenticationRepository);
+          },
+          act: (bloc) => bloc.add(AuthSignOut()),
+          expect: [
+            AuthWaiting(),
+            AuthSignOutSuccess(),
+          ]);
+      blocTest(
+          'When failure (could not sign out), emits [AuthWaiting, AuthFailure]',
+          build: () {
+            when(authenticationRepository.signOutUser()).thenThrow(
+                FirebaseAuthException(
+                    message: 'Couldn not sign out', code: '400'));
+            return AuthBloc(authenticationRepository);
+          },
+          act: (bloc) => bloc.add(AuthSignOut()),
+          expect: [
+            AuthWaiting(),
+            AuthFailure('Couldn not sign out'),
+          ]);
+      blocTest(
+          'When another exception is thrown, emits [AuthWaiting, AuthException]',
+          build: () {
+            when(authenticationRepository.signOutUser())
+                .thenThrow(Exception('Another exception'));
+            return AuthBloc(authenticationRepository);
+          },
+          act: (bloc) => bloc.add(AuthSignOut()),
+          expect: [
+            AuthWaiting(),
+            AuthException(),
+          ]);
+    });
   });
 }
