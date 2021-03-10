@@ -1,7 +1,6 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
-import 'package:Dating_app/presentation/helpers/auth_bloc_helpers.dart';
-import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
 import 'package:Dating_app/presentation/views/profile_creation_view/profile_creation_view.dart';
 import 'package:flutter/material.dart';
@@ -32,9 +31,9 @@ class _AuthViewState extends State<AuthView> {
             } else if (state is AuthRegistrationSuccess) {
               goToProfileCreationView();
             } else if (state is AuthFailure) {
-              AuthBlocHelpers.showFailureSnackbar(state);
+              SnackbarHelpers.showFailureSnackbar(state.message);
             } else if (state is AuthException) {
-              AuthBlocHelpers.showErrorSnackbar(state);
+              SnackbarHelpers.showFailureSnackbar(state.message);
             }
           },
           builder: (context, state) {

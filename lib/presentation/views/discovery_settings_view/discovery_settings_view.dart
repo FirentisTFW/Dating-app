@@ -4,7 +4,6 @@ import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
-import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/next_button.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
@@ -42,42 +41,47 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
       appBar: AppBar(
         title: const Text('Discovery Settings'),
       ),
-      body: BlocConsumer<CurrentUserCubit, CurrentUserState>(
-        listener: (context, state) {
-          if (state is CurrentUserReady) {
-            widget.firstTime ? goToMainView() : Get.back();
-          } else if (state is CurrentUserFailure) {
-            CurrentUserCubitHelpers.showFailureSnackbar(state);
-          }
-        },
-        builder: (context, state) {
-          if (state is CurrentUserReady) {
-            return DefaultTextStyle(
-              style: TextStyle(color: Colors.grey[700], fontSize: 18),
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  GenderSelector(setGender, initialValue: gender),
-                  AgeRangeSelector(
-                    setAgeRange,
-                    initialMin: ageMin,
-                    initialMax: ageMax,
+      body: Builder(
+        builder: (context) {
+          return BlocConsumer<CurrentUserCubit, CurrentUserState>(
+            listener: (context, state) {
+              if (state is CurrentUserReady) {
+                widget.firstTime ? goToMainView() : Get.back();
+              } else if (state is CurrentUserFailure) {
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message ?? 'Try again')));
+              }
+            },
+            builder: (context, state) {
+              if (state is CurrentUserReady) {
+                return DefaultTextStyle(
+                  style: TextStyle(color: Colors.grey[700], fontSize: 18),
+                  child: ListView(
+                    padding: const EdgeInsets.all(20),
+                    children: [
+                      GenderSelector(setGender, initialValue: gender),
+                      AgeRangeSelector(
+                        setAgeRange,
+                        initialMin: ageMin,
+                        initialMax: ageMax,
+                      ),
+                      DistanceSelector(setDistance, initialValue: distance),
+                      const SizedBox(height: 50),
+                      BlocBuilder<CurrentUserCubit, CurrentUserState>(
+                        builder: (context, state) {
+                          if (state is CurrentUserWaiting) {
+                            return LoadingSpinner();
+                          }
+                          return DoneButton(saveDiscoverySettings);
+                        },
+                      )
+                    ],
                   ),
-                  DistanceSelector(setDistance, initialValue: distance),
-                  const SizedBox(height: 50),
-                  BlocBuilder<CurrentUserCubit, CurrentUserState>(
-                    builder: (context, state) {
-                      if (state is CurrentUserWaiting) {
-                        return LoadingSpinner();
-                      }
-                      return DoneButton(saveDiscoverySettings);
-                    },
-                  )
-                ],
-              ),
-            );
-          }
-          return LoadingSpinner();
+                );
+              }
+              return LoadingSpinner();
+            },
+          );
         },
       ),
     );

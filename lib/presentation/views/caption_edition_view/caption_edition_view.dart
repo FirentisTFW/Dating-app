@@ -37,14 +37,15 @@ class _CaptionEditionViewState extends State<CaptionEditionView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Caption'),
+        title: const Text('Your Caption'),
         actions: [
           BlocConsumer<CurrentUserCubit, CurrentUserState>(
             listener: (context, state) {
               if (state is CurrentUserReady) {
                 Get.back();
               } else if (state is CurrentUserFailure) {
-                // TODO: react to error
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message ?? 'Try again')));
               }
             },
             builder: (context, state) {

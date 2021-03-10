@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/data/models/message.dart';
@@ -117,7 +115,6 @@ class ChatView extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildBody(conversationId: snapshot.data);
         } else if (snapshot.hasError) {
-          // TODO: show error message
           return LoadingSpinner();
         }
         return LoadingSpinner();

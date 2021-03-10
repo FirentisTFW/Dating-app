@@ -4,6 +4,7 @@ import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/user_match.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/logic/matches_cubit/matches_cubit.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +22,7 @@ class MatchesView extends StatelessWidget {
       child: BlocConsumer<MatchesCubit, MatchesState>(
         listener: (context, state) {
           if (state is MatchesException) {
-            // TODO: react to error
+            SnackbarHelpers.showFailureSnackbar(state.message);
           }
         },
         builder: (context, state) {

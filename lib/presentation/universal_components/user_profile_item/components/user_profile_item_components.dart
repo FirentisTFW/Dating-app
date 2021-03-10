@@ -2,7 +2,7 @@ import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
-import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/my_profile_view/components/profile_edition_icons.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -19,7 +19,7 @@ class PhotosSlider extends StatelessWidget {
       child: BlocConsumer<PhotosCubit, PhotosState>(
         listener: (ctx, state) {
           if (state is PhotosFailure) {
-            PhotosCubitHelpers.showErrorSnackbar(state);
+            SnackbarHelpers.showFailureSnackbar(state.message);
           }
         },
         builder: (ctx, state) {

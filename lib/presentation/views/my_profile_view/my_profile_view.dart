@@ -1,7 +1,7 @@
 import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/logic/auth_bloc/auth_bloc.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
-import 'package:Dating_app/presentation/helpers/auth_bloc_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
 import 'package:Dating_app/presentation/views/auth_view/auth_view.dart';
@@ -20,7 +20,7 @@ class MyProfileView extends StatelessWidget {
           if (state is AuthSignOutSuccess) {
             goToAuthView();
           } else if (state is AuthFailure) {
-            AuthBlocHelpers.showFailureSnackbar(state);
+            SnackbarHelpers.showFailureSnackbar(state.message);
           }
         },
         builder: (context, state) {

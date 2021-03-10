@@ -42,15 +42,6 @@ class MatchItem extends StatelessWidget {
     );
   }
 
-  final _errorInfo = const Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-    child: Text(
-      'Could not fetch photo',
-      style: TextStyle(fontSize: 20),
-      textAlign: TextAlign.center,
-    ),
-  );
-
   Widget _buildPhoto(String photoUrl) => ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: FittedBox(

@@ -1,8 +1,7 @@
 import 'package:Dating_app/app/locator.dart';
-import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/photos_cubit/photos_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
-import 'package:Dating_app/presentation/helpers/photos_cubit_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/main_view/main_view.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class MyPhotosView extends StatelessWidget {
               } else if (state is PhotosMultipleFetched) {
                 _currentImages = state.photosUrls;
               } else if (state is PhotosFailure) {
-                PhotosCubitHelpers.showErrorSnackbar(state);
+                SnackbarHelpers.showFailureSnackbar(state.message);
               }
             },
             builder: (context, state) {

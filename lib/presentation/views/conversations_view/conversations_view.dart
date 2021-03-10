@@ -3,7 +3,7 @@ import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
-import 'package:Dating_app/presentation/helpers/conversations_cubit_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/chat_view/chat_view.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class ConversationsView extends StatelessWidget {
           return BlocConsumer<ConversationsCubit, ConversationsState>(
             listener: (context, state) {
               if (state is ConversationsFetchingFailure) {
-                ConversationsCubitHelpers.showFailureSnackbar(state);
+                SnackbarHelpers.showFailureSnackbar(state.message);
               }
             },
             builder: (context, state) {

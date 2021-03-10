@@ -2,7 +2,7 @@ import 'package:Dating_app/data/models/enums.dart';
 import 'package:Dating_app/data/models/custom_location.dart';
 import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
-import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/my_photos_view/my_photos_view.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
@@ -45,7 +45,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
           } else if (state is CurrentUserLocationReceived) {
             _location = state.location;
           } else if (state is CurrentUserFailure) {
-            CurrentUserCubitHelpers.showFailureSnackbar(state);
+            SnackbarHelpers.showFailureSnackbar(state.message);
           }
         },
         child: Padding(

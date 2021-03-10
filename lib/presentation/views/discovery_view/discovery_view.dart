@@ -4,8 +4,7 @@ import 'package:Dating_app/data/models/user.dart';
 import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
 import 'package:Dating_app/logic/dicovery_bloc/discovery_bloc.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
-import 'package:Dating_app/presentation/helpers/current_user_cubit_helpers.dart';
-import 'package:Dating_app/presentation/helpers/discovery_bloc_helpers.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/user_profile_item/user_profile_item.dart';
 import 'package:Dating_app/presentation/views/discovery_settings_view/discovery_settings_view.dart';
@@ -30,7 +29,7 @@ class DiscoveryView extends StatelessWidget {
               goToDiscoverySettingsView();
             }
           } else if (state is CurrentUserFailure) {
-            CurrentUserCubitHelpers.showFailureSnackbar(state);
+            SnackbarHelpers.showFailureSnackbar(state.message);
             Future.delayed(Duration(seconds: 5), () {
               BlocProvider.of<CurrentUserCubit>(context)
                   .checkIfProfileIsComplete();
@@ -49,7 +48,7 @@ class DiscoveryView extends StatelessWidget {
               child: BlocConsumer<DiscoveryBloc, DiscoveryState>(
                 listener: (context, state) {
                   if (state is DiscoveryActionException) {
-                    DiscoveryBlocHelpers.showErrorSnackbar(state);
+                    SnackbarHelpers.showFailureSnackbar(state.message);
                   }
                 },
                 builder: (context, state) {
