@@ -69,9 +69,8 @@ class ConversationsList extends StatelessWidget {
 
   void goToConversation(
           BuildContext context, ConversationOverview conversationOverview) =>
-      Get.to(
-        ChatView(conversationOverview: conversationOverview),
-      ).then((_) => refreshConversations(context));
+      Get.to(ChatView(conversationOverview: conversationOverview))
+          .then((_) => refreshConversations(context));
 
   void refreshConversations(BuildContext context) {
     final userId = locator<CurrentUserData>().userId;

@@ -14,4 +14,8 @@ class ConversationsRepository {
 
   Future getMessagesRef(String conversationId) async =>
       await _firestoreProvider.getMessagesRef(conversationId);
+
+  Future<void> markLastMessageAsRead(
+          String userId, String conversationId) async =>
+      await _firestoreProvider.markLastMessageAsRead(userId, conversationId);
 }

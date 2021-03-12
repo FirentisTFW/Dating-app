@@ -128,6 +128,7 @@ async function createConversationOverviewRecord(userRef, otherUserData, conversa
         userId: otherUserData.data().id,
         userName: otherUserData.data().name,
         lastMessage: null,
+        lastMessageRead: false
     });
 }
 
@@ -148,12 +149,18 @@ exports.messageSent = functions.firestore.document('/conversations/{conversation
         const firstUserRef = getGenderCollection(firstUid).doc(firstUid);
         const secondUserRef = getGenderCollection(secondUid).doc(secondUid);
 
-        await updateLastMessageInConversation(firstUserRef, conversationId, snap.data());
-        await updateLastMessageInConversation(secondUserRef, conversationId, snap.data());
+        if(snap.data().userId == firstUid) {
+            await updateLastMessageInConversation(firstUserRef, conversationId, snap.data(), true);
+            await updateLastMessageInConversation(secondUserRef, conversationId, snap.data(), false);
+        } else {
+            await updateLastMessageInConversation(firstUserRef, conversationId, snap.data(), false);
+            await updateLastMessageInConversation(secondUserRef, conversationId, snap.data(), true);
+        }
     });
 
-async function updateLastMessageInConversation(userRef, conversationId, message) {
+async function updateLastMessageInConversation(userRef, conversationId, message, readByDefault) {
     await userRef.collection('conversations').doc(conversationId).update({
-        lastMessage: message
+        lastMessage: message,
+        lastMessageRead: readByDefault
     });
 }

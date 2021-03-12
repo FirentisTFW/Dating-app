@@ -5,6 +5,7 @@ import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/universal_components/photo_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ConversationItem extends StatelessWidget {
   final ConversationOverview conversation;
@@ -14,6 +15,8 @@ class ConversationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final photosRepository = PhotosRepository();
+    final fontWeight =
+        conversation.lastMessageRead ? FontWeight.normal : FontWeight.bold;
 
     return Column(
       children: [
@@ -50,13 +53,19 @@ class ConversationItem extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         conversation.userName,
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: fontWeight,
+                        ),
                       ),
                     ),
                     SizedBox(height: 4),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(getMessageContent()),
+                      child: Text(
+                        getMessageContent(),
+                        style: TextStyle(fontWeight: fontWeight),
+                      ),
                     ),
                   ],
                 ),
@@ -73,14 +82,15 @@ class ConversationItem extends StatelessWidget {
   }
 
   String getMessageContent() {
-    return conversation.lastMessage.content
-        .substring(0, min(conversation.lastMessage.content.length, 50));
+    final trimmedStr = conversation.lastMessage.content.trim();
+    return trimmedStr.substring(0, min(trimmedStr.length, 50));
   }
 
   String getLastMessageDate() {
-    // TODO: check for days
-    return conversation.lastMessage.date.hour.toString() +
-        ':' +
-        conversation.lastMessage.date.minute.toString();
+    if (DateTime.now().difference(conversation.lastMessage.date) >
+        Duration(days: 1)) {
+      return DateFormat.MMMd().format(conversation.lastMessage.date).toString();
+    }
+    return DateFormat('HH:mm').format(conversation.lastMessage.date);
   }
 }

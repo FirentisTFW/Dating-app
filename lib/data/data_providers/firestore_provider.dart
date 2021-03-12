@@ -155,4 +155,11 @@ class FirestoreProvider {
 
   Future<CollectionReference> getMessagesRef(String conversationId) async =>
       _conversationsCollection.doc(conversationId).collection('messages');
+
+  Future<void> markLastMessageAsRead(String uid, String conversationId) async =>
+      _getGenderCollectionForUser(uid)
+          .doc(uid)
+          .collection('conversations')
+          .doc(conversationId)
+          .update({'lastMessageRead': true});
 }

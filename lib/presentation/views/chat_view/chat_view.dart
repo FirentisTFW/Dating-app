@@ -1,6 +1,7 @@
 import 'package:Dating_app/app/locator.dart';
 import 'package:Dating_app/data/models/conversation_overview.dart';
 import 'package:Dating_app/data/models/message.dart';
+import 'package:Dating_app/data/repositories/conversations_repository.dart';
 import 'package:Dating_app/data/repositories/photos_repository.dart';
 import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
@@ -23,6 +24,9 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!conversationOverview.lastMessageRead) {
+      markLastMessageAsRead();
+    }
     return Scaffold(
         appBar: AppBar(
           title: conversationOverview != null
@@ -129,6 +133,15 @@ class ChatView extends StatelessWidget {
         MessageInput(conversationId: conversationId, matchedUserId: userId),
       ],
     );
+  }
+
+  void markLastMessageAsRead() {
+    final conversationsRepository = ConversationsRepository();
+
+    final userId = locator<CurrentUserData>().userId;
+
+    conversationsRepository.markLastMessageAsRead(
+        userId, conversationOverview.conversationId);
   }
 }
 
