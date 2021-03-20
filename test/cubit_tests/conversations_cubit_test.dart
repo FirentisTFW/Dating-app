@@ -29,6 +29,7 @@ void main() {
           date: DateTime(2021, 02, 02),
           userId: 'def',
         ),
+        lastMessageRead: true,
       ),
       ConversationOverview(
         conversationId: 'abcrty',
@@ -39,6 +40,7 @@ void main() {
           date: DateTime(2021, 02, 02),
           userId: 'abc',
         ),
+        lastMessageRead: true,
       ),
     ];
     final exceptionMessage = 'An error occured';
