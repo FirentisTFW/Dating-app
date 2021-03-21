@@ -24,7 +24,7 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!conversationOverview.lastMessageRead) {
+    if (conversationOverview != null && !conversationOverview.lastMessageRead) {
       markLastMessageAsRead();
     }
     return Scaffold(

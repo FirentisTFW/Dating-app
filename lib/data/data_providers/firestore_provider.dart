@@ -29,10 +29,10 @@ class FirestoreProvider {
     _womenCollection = _db.collection('users').doc('women').collection('women');
     _conversationsCollection = _db.collection('conversations');
   }
-  Future getUserById(String uid) async =>
+  Future<DocumentSnapshot> getUserById(String uid) async =>
       await _getGenderCollectionForUser(uid).doc(uid).get();
 
-  Future getUserByAuthId(String uid) async {
+  Future<DocumentSnapshot> getUserByAuthId(String uid) async {
     final user = await _menCollection.doc('m' + uid).get();
     if (user.data() != null) {
       return user;
@@ -40,7 +40,7 @@ class FirestoreProvider {
     return await _womenCollection.doc('w' + uid).get();
   }
 
-  Future getUsersByDiscoverySettings(
+  Future<List<DocumentSnapshot>> getUsersByDiscoverySettings(
       DiscoverySettings discoverySettings, CustomLocation userLocation) async {
     final geo = locator<Geoflutterfire>();
     final genderCollection =
@@ -66,41 +66,41 @@ class FirestoreProvider {
     return filteredResult;
   }
 
-  Future updateUser(String uid, dynamic user) async =>
+  Future<void> updateUser(String uid, dynamic user) async =>
       await _getGenderCollectionForUser(uid).doc(uid).set(user);
 
-  Future createUser(String uid, dynamic user) async =>
+  Future<void> createUser(String uid, dynamic user) async =>
       await _getGenderCollectionForUser(uid).doc(uid).set(user);
 
-  Future updateDiscoverySettings(
+  Future<void> updateDiscoverySettings(
           String uid, Gender gender, dynamic discoverySettings) async =>
       await _getGenderCollectionForUser(uid).doc(uid).update(discoverySettings);
 
-  Future getUserRejections(String uid) async =>
+  Future<QuerySnapshot> getUserRejections(String uid) async =>
       await _getGenderCollectionForUser(uid)
           .doc(uid)
           .collection('rejections')
           .get();
 
-  Future getUserAcceptances(String uid) async =>
+  Future<QuerySnapshot> getUserAcceptances(String uid) async =>
       await _getGenderCollectionForUser(uid)
           .doc(uid)
           .collection('acceptances')
           .get();
 
-  Future getUserMatches(String uid) async =>
+  Future<QuerySnapshot> getUserMatches(String uid) async =>
       await _getGenderCollectionForUser(uid)
           .doc(uid)
           .collection('matches')
           .get();
 
-  Future getUserConversations(String uid) async =>
+  Future<QuerySnapshot> getUserConversations(String uid) async =>
       await _getGenderCollectionForUser(uid)
           .doc(uid)
           .collection('conversations')
           .get();
 
-  Future getMatch(String uid, String matchId) async =>
+  Future<DocumentSnapshot> getMatch(String uid, String matchId) async =>
       await _getGenderCollectionForUser(uid)
           .doc(uid)
           .collection('matches')

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Dating app inspired by Tinder. Written in Flutter (BLoC as a state management solution), uses Firebase as a backend (backend functions written in JavaScript).
+Dating app inspired by Tinder. Written in Flutter (BLoC as architecture), uses Firebase as a backend (backend functions written in JavaScript).
 
 ## Features
 

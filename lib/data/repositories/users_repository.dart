@@ -44,7 +44,7 @@ class UsersRepository {
 
   Future<List<String>> getUserRejections(String userId) async {
     final rejectionsSnapshots =
-        await _firestoreProvider.getUserRejections(userId) as QuerySnapshot;
+        await _firestoreProvider.getUserRejections(userId);
 
     if (rejectionsSnapshots.docs.length > 0) {
       return rejectionsSnapshots.docs
@@ -56,7 +56,7 @@ class UsersRepository {
 
   Future<List<String>> getUserAcceptances(String userId) async {
     final acceptancesSnapshots =
-        await _firestoreProvider.getUserAcceptances(userId) as QuerySnapshot;
+        await _firestoreProvider.getUserAcceptances(userId);
 
     if (acceptancesSnapshots.docs.length > 0) {
       return acceptancesSnapshots.docs
@@ -67,8 +67,7 @@ class UsersRepository {
   }
 
   Future<List<UserMatch>> getUserMatches(String userId) async {
-    final matchesSnapshots =
-        await _firestoreProvider.getUserMatches(userId) as QuerySnapshot;
+    final matchesSnapshots = await _firestoreProvider.getUserMatches(userId);
 
     if (matchesSnapshots.docs.length > 0) {
       return matchesSnapshots.docs
@@ -80,7 +79,7 @@ class UsersRepository {
 
   Future<List<ConversationOverview>> getUserConversations(String userId) async {
     final conversationsSnapshots =
-        await _firestoreProvider.getUserConversations(userId) as QuerySnapshot;
+        await _firestoreProvider.getUserConversations(userId);
 
     if (conversationsSnapshots.docs.length > 0) {
       return conversationsSnapshots.docs
@@ -90,13 +89,13 @@ class UsersRepository {
     return [];
   }
 
-  Future createUser(User user) async =>
+  Future<void> createUser(User user) async =>
       await _firestoreProvider.createUser(user.id, user.toMap());
 
-  Future updateUser(User user) async =>
+  Future<void> updateUser(User user) async =>
       await _firestoreProvider.updateUser(user.id, user.toMap());
 
-  Future updateDiscoverySettings(
+  Future<void> updateDiscoverySettings(
       String uid, Gender gender, DiscoverySettings discoverySettings) async {
     final discoverySettingsMap = {
       'discoverySettings': discoverySettings.toMap()
@@ -105,20 +104,20 @@ class UsersRepository {
         uid, gender, discoverySettingsMap);
   }
 
-  Future acceptUser({String acceptingUid, Acceptance acceptance}) async =>
+  Future<void> acceptUser({String acceptingUid, Acceptance acceptance}) async =>
       await _firestoreProvider.acceptUser(
           acceptingUid: acceptingUid, acceptance: acceptance.toMap());
 
-  Future rejectUser({String rejectingUid, Rejection rejection}) async =>
+  Future<void> rejectUser({String rejectingUid, Rejection rejection}) async =>
       await _firestoreProvider.rejectUser(
           rejectingUid: rejectingUid, rejection: rejection.toMap());
 
-  Future unmatchUser(String unmatchingUid, String unmatchedUid) async =>
+  Future<void> unmatchUser(String unmatchingUid, String unmatchedUid) async =>
       await _firestoreProvider.unmatchUser(unmatchingUid, unmatchedUid);
 
-  Future getConversationIdForMatch({String userId, String matchId}) async {
-    final matchData =
-        await _firestoreProvider.getMatch(userId, matchId) as DocumentSnapshot;
+  Future<String> getConversationIdForMatch(
+      {String userId, String matchId}) async {
+    final matchData = await _firestoreProvider.getMatch(userId, matchId);
 
     return matchData.data()['conversationId'];
   }
