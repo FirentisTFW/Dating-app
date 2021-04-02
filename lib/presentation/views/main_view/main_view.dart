@@ -16,8 +16,6 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   var _currentTab = CurrentMainTab.Discovery;
-
-  // TODO: find better way to check user profile completness
   var _startup = true;
 
   @override

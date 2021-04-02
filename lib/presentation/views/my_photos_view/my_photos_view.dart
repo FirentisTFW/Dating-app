@@ -105,8 +105,9 @@ class MyPhotosView extends StatelessWidget {
 
       rows.add(
         PhotosRow(
-          addImage,
+          addImage: addImage,
           removeOldImage: removeOldImage,
+          removePickedImage: removePickedImage,
           initialPhotosUrls: initialPhotosUrls,
         ),
       );
@@ -135,6 +136,9 @@ class MyPhotosView extends StatelessWidget {
   void removeOldImage(BuildContext context, String photoUrl) =>
       BlocProvider.of<PhotosCubit>(context)
           .deletePhotoByUrl(photoUrl, _currentImages);
+
+  void removePickedImage(PickedFile pickedImage) =>
+      _pickedImages.removeWhere((element) => element == pickedImage);
 
   Future<void> uploadPhotos(BuildContext context) async {
     final userData = locator<CurrentUserData>();

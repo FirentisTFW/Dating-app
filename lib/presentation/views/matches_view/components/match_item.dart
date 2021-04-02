@@ -67,9 +67,7 @@ class MatchItem extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(6, 0, 0, 8),
         child: Text(
           '${match.name},  ${age.toString()}',
-          style: isPhotoFetched
-              ? const TextStyle(color: Colors.black, fontSize: 18)
-              : const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
     );

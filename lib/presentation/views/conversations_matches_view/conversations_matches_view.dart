@@ -1,8 +1,11 @@
 import 'package:Dating_app/data/models/enums.dart';
+import 'package:Dating_app/logic/current_user_cubit/current_user_cubit.dart';
+import 'package:Dating_app/presentation/helpers/snackbar_helpers.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
 import 'package:Dating_app/presentation/views/conversations_view/conversations_view.dart';
 import 'package:Dating_app/presentation/views/matches_view/matches_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ConversationsMatchesView extends StatefulWidget {
   ConversationsMatchesView({Key key}) : super(key: key);
@@ -62,8 +65,20 @@ class _ConversationsMatchesViewState extends State<ConversationsMatchesView> {
             ),
           ],
         ),
-        Expanded(
-          child: _getViewForCurrentTab(),
+        BlocConsumer<CurrentUserCubit, CurrentUserState>(
+          listener: (context, state) {
+            if (state is CurrentUserFailure) {
+              SnackbarHelpers.showFailureSnackbar(state.message);
+            }
+          },
+          builder: (context, state) {
+            if (state is CurrentUserReady) {
+              return Expanded(
+                child: _getViewForCurrentTab(),
+              );
+            }
+            return Expanded(child: LoadingSpinner());
+          },
         ),
       ],
     );
