@@ -23,11 +23,19 @@ class PhotosCubit extends Cubit<PhotosState> {
   }
 
   Future<bool> uploadPhoto(String userId, PickedFile photo) async {
+    List<String> currentPhotosUrls = [];
+
+    if (state is PhotosMultipleFetched) {
+      final currentState = state as PhotosMultipleFetched;
+      currentPhotosUrls = currentState.photosUrls;
+    }
+
     emit(PhotosWaiting());
 
     try {
       await _photosRepository.uploadPhoto(photo, userId);
       emit(PhotosSingleUploaded());
+      emit(PhotosMultipleFetched(currentPhotosUrls));
       return true;
     } on FirebaseException catch (err) {
       emit(PhotosFailureSending(message: err.message));

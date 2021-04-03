@@ -16,7 +16,7 @@ class ConversationsMatchesView extends StatefulWidget {
 }
 
 class _ConversationsMatchesViewState extends State<ConversationsMatchesView> {
-  var _currentSubTab = CurrentSubTab.Matches;
+  var _currentSubTab = CurrentSubTab.Conversations;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _ConversationsMatchesViewState extends State<ConversationsMatchesView> {
             Expanded(
               flex: 2,
               child: InkWell(
-                onTap: switchToMatchesView,
+                onTap: _switchToMatchesView,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   child: Text(
@@ -47,7 +47,7 @@ class _ConversationsMatchesViewState extends State<ConversationsMatchesView> {
             Expanded(
               flex: 2,
               child: InkWell(
-                onTap: switchToConversationsView,
+                onTap: _switchToConversationsView,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   child: Text(
@@ -95,9 +95,9 @@ class _ConversationsMatchesViewState extends State<ConversationsMatchesView> {
     }
   }
 
-  void switchToConversationsView() =>
+  void _switchToConversationsView() =>
       setState(() => _currentSubTab = CurrentSubTab.Conversations);
 
-  void switchToMatchesView() =>
+  void _switchToMatchesView() =>
       setState(() => _currentSubTab = CurrentSubTab.Matches);
 }

@@ -59,7 +59,7 @@ class ConversationItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -82,9 +82,16 @@ class ConversationItem extends StatelessWidget {
   }
 
   String getMessageContent() {
-    final trimmedStr = conversation.lastMessage.content.trim();
+    var messagePrefix = '';
+    if (_didUserSendLastMessage()) {
+      messagePrefix = 'You: ';
+    }
+    final trimmedStr = messagePrefix + conversation.lastMessage.content.trim();
     return trimmedStr.substring(0, min(trimmedStr.length, 50));
   }
+
+  bool _didUserSendLastMessage() =>
+      conversation.lastMessage.userId != conversation.userId;
 
   String getLastMessageDate() {
     if (DateTime.now().difference(conversation.lastMessage.date) >

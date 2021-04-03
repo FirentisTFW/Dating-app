@@ -7,9 +7,11 @@ import 'package:Dating_app/data/repositories/users_repository.dart';
 import 'package:Dating_app/logic/current_user_data.dart';
 import 'package:Dating_app/logic/messages_cubit/messages_cubit.dart';
 import 'package:Dating_app/presentation/universal_components/loading_spinner.dart';
+import 'package:Dating_app/presentation/views/user_profile_view/user_profile_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/route_manager.dart';
 
 import 'components/message_bubble.dart';
 import 'components/message_input.dart';
@@ -25,7 +27,7 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (conversationOverview != null && !conversationOverview.lastMessageRead) {
-      markLastMessageAsRead();
+      _markLastMessageAsRead();
     }
     return Scaffold(
         appBar: AppBar(
@@ -93,11 +95,14 @@ class ChatView extends StatelessWidget {
         PhotoIcon(
             photoUrl: photoUrl, size: AppBar().preferredSize.height * 0.8),
         const SizedBox(width: 20),
-        Align(
-          alignment: Alignment.center,
-          child: Text(
-            userName,
-            style: const TextStyle(fontSize: 24),
+        InkWell(
+          onTap: _goToUserProfileView,
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              userName,
+              style: const TextStyle(fontSize: 24),
+            ),
           ),
         ),
         const Expanded(child: SizedBox()),
@@ -135,7 +140,7 @@ class ChatView extends StatelessWidget {
     );
   }
 
-  void markLastMessageAsRead() {
+  void _markLastMessageAsRead() {
     final conversationsRepository = ConversationsRepository();
 
     final userId = locator<CurrentUserData>().userId;
@@ -143,6 +148,9 @@ class ChatView extends StatelessWidget {
     conversationsRepository.markLastMessageAsRead(
         userId, conversationOverview.conversationId);
   }
+
+  void _goToUserProfileView() =>
+      Get.off(UserProfileView(userId ?? conversationOverview.userId));
 }
 
 class MessagesList extends StatelessWidget {

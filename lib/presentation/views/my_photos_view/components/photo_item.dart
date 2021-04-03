@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 
 class PhotoItem extends StatefulWidget {
   final Function addImage;
-  final Function removeOldImage;
-  final Function removePickedImage;
+  final Function(BuildContext context, String photoUrl) removeOldImage;
+  final Function(PickedFile pickedImage) removePickedImage;
   final String initialPhotoUrl;
 
   const PhotoItem({

@@ -12,9 +12,10 @@ import 'package:Dating_app/presentation/views/profile_creation_view/profile_crea
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/route_manager.dart';
+import 'dart:math' as math;
 
 class DiscoveryView extends StatelessWidget {
-  const DiscoveryView({Key key}) : super(key: key);
+  DiscoveryView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,16 +55,9 @@ class DiscoveryView extends StatelessWidget {
                 builder: (context, state) {
                   if (state is DiscoveryUsersFetched) {
                     if (state.users.length > 0) {
-                      return UserProfileItem(
-                        user: state.users.first,
-                        profileRelation: ProfileRelation.Discovered,
-                        acceptUser: () => acceptUser(
-                            context, state.users, state.users.first.id),
-                        rejectUser: () => rejectUser(
-                            context, state.users, state.users.first.id),
-                      );
+                      return _buildUserProfileItem(context, state);
                     }
-                    return noUsersInfo;
+                    return _noUsersInfo;
                   }
                   return LoadingSpinner();
                 },
@@ -76,7 +70,7 @@ class DiscoveryView extends StatelessWidget {
     );
   }
 
-  final noUsersInfo = const Padding(
+  final _noUsersInfo = const Padding(
     padding: EdgeInsets.all(20),
     child: Center(
       child: Text(
@@ -86,6 +80,52 @@ class DiscoveryView extends StatelessWidget {
       ),
     ),
   );
+
+  final _dismissibleFirstBackground = Row(
+    children: [
+      const _DismissibleBackgroundText(
+        text: 'LIKE',
+        color: const Color(0xFF00CC00),
+        isLike: true,
+      ),
+    ],
+  );
+
+  final _dismissibleSecondBackground = Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      const _DismissibleBackgroundText(
+        text: 'NOPE',
+        color: const Color(0xFFCC0000),
+        isLike: false,
+      ),
+    ],
+  );
+
+  Widget _buildUserProfileItem(
+      BuildContext context, DiscoveryUsersFetched state) {
+    return Dismissible(
+      key: ValueKey(state.users.first.id),
+      onDismissed: (direction) {
+        if (direction == DismissDirection.startToEnd) {
+          acceptUser(context, state.users, state.users.first.id);
+        } else if (direction == DismissDirection.endToStart) {
+          rejectUser(context, state.users, state.users.first.id);
+        }
+      },
+      crossAxisEndOffset: -0.2,
+      background: _dismissibleFirstBackground,
+      secondaryBackground: _dismissibleSecondBackground,
+      child: UserProfileItem(
+        user: state.users.first,
+        profileRelation: ProfileRelation.Discovered,
+        acceptUser: () =>
+            acceptUser(context, state.users, state.users.first.id),
+        rejectUser: () =>
+            rejectUser(context, state.users, state.users.first.id),
+      ),
+    );
+  }
 
   void goToProfileCreationView() => Get.off(ProfileCreationView());
 
@@ -110,5 +150,49 @@ class DiscoveryView extends StatelessWidget {
       BlocProvider.of<DiscoveryBloc>(context).add(RejectUser(currentStateUsers,
           rejectingUid: userData.userId, rejectedUid: acceptedUid));
     }
+  }
+}
+
+class _DismissibleBackgroundText extends StatelessWidget {
+  final String text;
+  final Color color;
+  final bool isLike;
+
+  const _DismissibleBackgroundText(
+      {Key key,
+      @required this.text,
+      @required this.color,
+      @required this.isLike})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: isLike
+          ? const EdgeInsets.only(left: 30)
+          : const EdgeInsets.only(right: 30),
+      child: Transform(
+        alignment: isLike ? Alignment.topRight : Alignment.topLeft,
+        transform: isLike
+            ? Matrix4.rotationZ(-math.pi / 10.0)
+            : Matrix4.rotationZ(math.pi / 10.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 3.0,
+              color: color,
+            ),
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 40,
+              color: color,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
