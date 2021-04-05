@@ -159,7 +159,7 @@ class UserProfileItem extends StatelessWidget {
   }
 
   void messageUser() => Get.to(ChatView(
-        userId: user.id,
-        userName: user.name,
+        matchedUserId: user.id,
+        matchedUserName: user.name,
       ));
 }

@@ -121,4 +121,7 @@ class UsersRepository {
 
     return matchData.data()['conversationId'];
   }
+
+  Future<bool> areUsersMatched(String firstUid, String secondUid) async =>
+      await _firestoreProvider.areUsersMatched(firstUid, secondUid);
 }

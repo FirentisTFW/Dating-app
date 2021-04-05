@@ -162,4 +162,12 @@ class FirestoreProvider {
           .collection('conversations')
           .doc(conversationId)
           .update({'lastMessageRead': true});
+
+  Future<bool> areUsersMatched(String firstUid, String secondUid) async =>
+      await _getGenderCollectionForUser(firstUid)
+          .doc(firstUid)
+          .collection('matches')
+          .doc(secondUid)
+          .get()
+          .then((doc) => doc.exists);
 }

@@ -50,7 +50,7 @@ void main() {
     group('uploadPhoto -', () {
       final photo = PickedFile('photoPath');
       blocTest(
-        'When successful, emits [PhotosWaiting, PhotosSingleUploaded]',
+        'When successful, emits [PhotosWaiting, PhotosSingleUploaded, PhotosMultipleFetched]',
         build: () {
           when(photosRepository.uploadPhoto(any, any))
               .thenAnswer((_) async => null);
@@ -60,6 +60,7 @@ void main() {
         expect: [
           PhotosWaiting(),
           PhotosSingleUploaded(),
+          PhotosMultipleFetched([]),
         ],
       );
       blocTest(
