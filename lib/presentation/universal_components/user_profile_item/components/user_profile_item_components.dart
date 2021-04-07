@@ -104,7 +104,7 @@ class NameAgeLocationBar extends StatelessWidget {
         child: Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-              padding: const EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BlocBuilder<CurrentUserCubit, CurrentUserState>(
                 builder: (context, state) {
                   if (state is CurrentUserWithUserInstance) {

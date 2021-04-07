@@ -53,7 +53,8 @@ class _DiscoverySettingsViewState extends State<DiscoverySettingsView> {
               }
             },
             builder: (context, state) {
-              if (state is CurrentUserReady) {
+              if (state is CurrentUserReady ||
+                  state is CurrentUserProfileIncomplete) {
                 return DefaultTextStyle(
                   style: TextStyle(color: Colors.grey[700], fontSize: 18),
                   child: ListView(
