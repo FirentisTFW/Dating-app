@@ -12,3 +12,9 @@ Dating app inspired by Tinder. Written in Flutter (BLoC as architecture), uses F
 - Accepting or rejecting discovered users
 - Managing your matches (users accepted by you who accepted you as well)
 - Conversating with matched users
+
+## App Preview
+
+![Matches and conversations](demo_gifs/matches_conversations.gif) ![Discovering people](demo_gifs/discovery.gif)\
+![Writing messages](demo_gifs/conversations.gif) ![Registration process](demo_gifs/registration_fast.gif)\
+![Editing profile](demo_gifs/profile_editing.gif) ![Managing photos](demo_gifs/photos_editing.gif)
