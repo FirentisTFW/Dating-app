@@ -108,4 +108,13 @@ class CurrentUserCubit extends Cubit<CurrentUserState> {
       rethrow;
     }
   }
+
+  @override
+  void onChange(Change<CurrentUserState> change) {
+    super.onChange(change);
+
+    print('CurrentUserCubit: ');
+    print(
+        'Current state: ${change.currentState}, Next state: ${change.nextState}');
+  }
 }

@@ -82,4 +82,13 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
       yield DiscoveryUsersFetched(event.users);
     }
   }
+
+  @override
+  void onChange(Change<DiscoveryState> change) {
+    super.onChange(change);
+
+    print('DiscoveryBloc');
+    print(
+        'Current state: ${change.currentState}, Next state: ${change.nextState}');
+  }
 }
