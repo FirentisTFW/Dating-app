@@ -119,12 +119,54 @@ void main() {
       await _pumpViewWithBlocProviders(
           tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
 
-      expect(find.byType(LoadingSpinner), findsOneWidget);
+      // expect(find.byType(LoadingSpinner), findsOneWidget);
+      expect(find.byKey(ValueKey('DiscoveryViewCurrentUserLoadingSpinner')),
+          findsOneWidget);
     });
-    testWidgets('When first started, current shown tab is Discovery View',
+    testWidgets('When first started, current shown tab is discovery View',
         (tester) async {
       await _pumpViewWithBlocProviders(
           tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
+
+      expect(find.byType(DiscoveryView), findsOneWidget);
+      expect(find.byType(ConversationsMatchesView), findsNothing);
+      expect(find.byType(MyProfileView), findsNothing);
+    });
+    testWidgets('When user clicks on account icon, navigates to user profile',
+        (tester) async {
+      await _pumpViewWithBlocProviders(
+          tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
+
+      await tester.tap(find.byIcon(Icons.account_circle));
+      await tester.pump();
+
+      expect(find.byType(MyProfileView), findsOneWidget);
+      expect(find.byType(DiscoveryView), findsNothing);
+      expect(find.byType(ConversationsMatchesView), findsNothing);
+    });
+    testWidgets(
+        'When user clicks on chat icon, navigates to conversations and matches',
+        (tester) async {
+      await _pumpViewWithBlocProviders(
+          tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
+
+      await tester.tap(find.byIcon(Icons.chat));
+      await tester.pump();
+
+      expect(find.byType(ConversationsMatchesView), findsOneWidget);
+      expect(find.byType(MyProfileView), findsNothing);
+      expect(find.byType(DiscoveryView), findsNothing);
+    });
+    testWidgets(
+        'When user cliks on plus icon, navigates back to discovery view',
+        (tester) async {
+      await _pumpViewWithBlocProviders(
+          tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
+
+      await tester.tap(find.byIcon(Icons.chat));
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.add_circle));
+      await tester.pump();
 
       expect(find.byType(DiscoveryView), findsOneWidget);
       expect(find.byType(ConversationsMatchesView), findsNothing);
@@ -164,7 +206,7 @@ void main() {
 
       group('When user profile is complete -', () {
         testWidgets(
-            'When users for DiscoveryBloc are not fetched, shows loading spinner',
+            'When users for DiscoveryBloc are being fetched, shows loading spinner',
             (tester) async {
           await _pumpViewWithBlocProviders(
               tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
@@ -174,11 +216,11 @@ void main() {
 
           await tester.pump();
 
-          expect(
-              find.byKey(ValueKey('DiscoveryLoadingSpinner')), findsOneWidget);
+          expect(find.byKey(ValueKey('DiscoveryViewDiscoveryLoadingSpinner')),
+              findsOneWidget);
         });
         testWidgets(
-            'When users for DiscoveryBloc are fetched, shows profile of first user',
+            'When users for DiscoveryBloc are fetched, shows profile of the first user',
             (tester) async {
           await _pumpViewWithBlocProviders(
               tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
@@ -190,6 +232,20 @@ void main() {
 
           expect(find.byKey(ValueKey(_usersFetched.first.id)), findsOneWidget);
           expect(find.byType(UserProfileItem), findsOneWidget);
+        });
+        testWidgets(
+            'When there is an exception thrown when fetching users, shows loading spinner',
+            (tester) async {
+          await _pumpViewWithBlocProviders(
+              tester, authBloc, currentUserCubit, discoveryBloc, photosCubit);
+
+          currentUserCubit.emit(CurrentUserReady(_user));
+          discoveryBloc.emit(DiscoveryFetchingException());
+
+          await tester.pump();
+
+          expect(find.byKey(ValueKey('DiscoveryViewDiscoveryLoadingSpinner')),
+              findsOneWidget);
         });
       });
     });

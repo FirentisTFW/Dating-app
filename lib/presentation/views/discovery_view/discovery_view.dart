@@ -60,13 +60,15 @@ class DiscoveryView extends StatelessWidget {
                     return _noUsersInfo;
                   }
                   return LoadingSpinner(
-                    key: ValueKey('DiscoveryLoadingSpinner'),
+                    key: ValueKey('DiscoveryViewDiscoveryLoadingSpinner'),
                   );
                 },
               ),
             );
           }
-          return LoadingSpinner();
+          return LoadingSpinner(
+            key: ValueKey('DiscoveryViewCurrentUserLoadingSpinner'),
+          );
         },
       ),
     );
